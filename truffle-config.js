@@ -12,7 +12,7 @@ module.exports = {
   plugins: ["solidity-coverage"],
   compilers: {
     solc: {
-      version: "^0.4.24",
+      version: "^0.6.0",
       docker: false,
       parser: "solcjs",
     }

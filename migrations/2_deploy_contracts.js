@@ -1,8 +1,8 @@
-const TrustSwap = artifacts.require("TrustSwap");
+const LockedDeal = artifacts.require("LockedDeal");
 const TestToken = artifacts.require("TestToken");
 
 module.exports = function(deployer) {
-  deployer.deploy(TrustSwap);
-  deployer.link(TrustSwap, TestToken);
+  deployer.deploy(LockedDeal);
+  deployer.link(LockedDeal, TestToken);
   deployer.deploy(TestToken);
 };
