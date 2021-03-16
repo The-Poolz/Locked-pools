@@ -14,14 +14,15 @@ contract LockedPoolz is Manageable {
     // add contract name
     string public name;
 
-    event NewPoolCreated(address Token, uint64 FinishTime, uint256 StartAmount, address Owner);
+    event NewPoolCreated(uint256 PoolId, address Token, uint64 FinishTime, uint256 StartAmount, address Owner);
+    event PoolOwnershipTransfered(uint256 PoolId, address NewOwner, address OldOwner);
 
     struct Pool {
         uint64 UnlockTime;
         uint256 Amount;
         address Owner;
         address Token;
-        mapping(address => uint) allowance;
+        mapping(address => uint) Allowance;
     }
     // transfer ownership
     // allowance
@@ -36,6 +37,22 @@ contract LockedPoolz is Manageable {
         _;
     }
 
+    modifier isPoolOwner(uint256 _PoolId){
+        require(AllPoolz[_PoolId].Owner == msg.sender, "You are not Pool Owner");
+        _;
+    }
+
+    modifier isLocked(uint256 _PoolId){
+        require(AllPoolz[_PoolId].UnlockTime > now, "Pool is Unlocked");
+        _;
+    }
+
+    function transferPoolOwnership(uint256 _PoolId, address _NewOwner) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+        Pool storage pool = AllPoolz[_PoolId];
+        pool.Owner = _NewOwner;
+        emit PoolOwnershipTransfered(_PoolId, _NewOwner, msg.sender);
+    }
+
     //create a new pool
     function CreatePool(
         address _Token, //token to lock address
@@ -48,8 +65,17 @@ contract LockedPoolz is Manageable {
         //register the pool
         AllPoolz[Index] = Pool(_FinishTime, _StartAmount, _Owner, _Token);
         MyPoolz[_Owner].push(Index);
+        emit NewPoolCreated(Index, _Token, _FinishTime, _StartAmount, _Owner);
         Index = SafeMath.add(Index, 1); //joke - overflowfrom 0 on int256 = 1.16E77
-        emit NewPoolCreated(_Token, _FinishTime, _StartAmount, _Owner);
+    }
+
+    function CreateNewPool(
+        address _Token, //token to lock address
+        uint64 _FinishTime, //Until what time the pool will work
+        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
+        address _Owner // Who the tokens belong to
+    ) external isTokenValid(_Token){
+        CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
     }
 
     function CreatePoolsInBulk(
