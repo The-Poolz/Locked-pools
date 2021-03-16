@@ -22,7 +22,7 @@ contract LockedPoolz is Manageable {
         uint256 Amount;
         address Owner;
         address Token;
-        mapping(address => uint) Allowance;
+        // mapping(address => uint) Allowance;
     }
     // transfer ownership
     // allowance
@@ -47,18 +47,31 @@ contract LockedPoolz is Manageable {
         _;
     }
 
-    function transferPoolOwnership(uint256 _PoolId, address _NewOwner) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+    function TransferPoolOwnership(uint256 _PoolId, address _NewOwner) external isPoolOwner(_PoolId) isLocked(_PoolId) {
         Pool storage pool = AllPoolz[_PoolId];
         pool.Owner = _NewOwner;
         emit PoolOwnershipTransfered(_PoolId, _NewOwner, msg.sender);
     }
 
-    function splitPoolAmount(uint256 _PoolId, uint256 _NewAmount) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+    function SplitPool(uint256 _PoolId, uint256 _NewAmount , address _NewOwner) internal {
         Pool storage pool = AllPoolz[_PoolId];
         require(pool.Amount >= _NewAmount, "Not Enough Amount Balance");
         uint256 poolAmount = SafeMath.sub(pool.Amount, _NewAmount);
         pool.Amount = poolAmount;
-        CreatePool(pool.Token, pool.UnlockTime, _NewAmount, pool.Owner);
+        CreatePool(pool.Token, pool.UnlockTime, _NewAmount, _NewOwner);
+    }
+
+    function SplitPoolAmount(uint256 _PoolId, uint256 _NewAmount) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+        SplitPool(_PoolId, _NewAmount, msg.sender);
+    }
+
+    function ApproveAllowance(
+        uint256 _PoolId,
+        uint256 _NewAmount,
+        address _NewOwner
+    ) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+        require(_NewOwner != address(0x0), "Invalid New Address");
+        SplitPool(_PoolId, _NewAmount, _NewOwner);
     }
 
     //create a new pool
@@ -116,5 +129,7 @@ contract LockedPoolz is Manageable {
             }
         }
     }
+
+    // all one dimenional
 
 }
