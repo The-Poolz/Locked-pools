@@ -53,6 +53,14 @@ contract LockedPoolz is Manageable {
         emit PoolOwnershipTransfered(_PoolId, _NewOwner, msg.sender);
     }
 
+    function splitPoolAmount(uint256 _PoolId, uint256 _NewAmount) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+        Pool storage pool = AllPoolz[_PoolId];
+        require(pool.Amount >= _NewAmount, "Not Enough Amount Balance");
+        uint256 poolAmount = SafeMath.sub(pool.Amount, _NewAmount);
+        pool.Amount = poolAmount;
+        CreatePool(pool.Token, pool.UnlockTime, _NewAmount, pool.Owner);
+    }
+
     //create a new pool
     function CreatePool(
         address _Token, //token to lock address
@@ -60,8 +68,6 @@ contract LockedPoolz is Manageable {
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) internal {
-        require(_Owner != address(0x0), "can't lock for zero");
-        TransferInToken(_Token, msg.sender, _StartAmount);
         //register the pool
         AllPoolz[Index] = Pool(_FinishTime, _StartAmount, _Owner, _Token);
         MyPoolz[_Owner].push(Index);
@@ -74,7 +80,9 @@ contract LockedPoolz is Manageable {
         uint64 _FinishTime, //Until what time the pool will work
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) external isTokenValid(_Token){
+    ) public isTokenValid(_Token){
+        require(_Owner != address(0x0), "can't lock for zero");
+        TransferInToken(_Token, msg.sender, _StartAmount);
         CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
     }
 
@@ -88,7 +96,7 @@ contract LockedPoolz is Manageable {
         for(uint i=0 ; i<_Owner.length; i++){
             for(uint j=0 ; j < _FinishTime[i].length ; j++){
                 if(_FinishTime[j][0] == i && _StartAmount[j][0] == i){
-                    CreatePool(_Token, _FinishTime[j][1], _StartAmount[j][1], _Owner[i]);
+                    CreateNewPool(_Token, _FinishTime[j][1], _StartAmount[j][1], _Owner[i]);
                 }
             }
         }
@@ -104,7 +112,7 @@ contract LockedPoolz is Manageable {
         require(_Owner.length == _FinishTime.length, "Invalid array length of FinishTime");
         for(uint i=0 ; i < _Owner.length ; i++){
             for(uint j=0 ; j < _FinishTime[i].length ; j++){
-                CreatePool(_Token, _FinishTime[i][j], _StartAmount[i], _Owner[i]);
+                CreateNewPool(_Token, _FinishTime[i][j], _StartAmount[i], _Owner[i]);
             }
         }
     }

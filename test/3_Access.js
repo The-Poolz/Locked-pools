@@ -3,12 +3,11 @@ const TestToken = artifacts.require("TestToken");
 const { assert } = require('chai');
 
 contract('Access to Locked Deal', accounts => {
-    let instance, Token, fromAddress = accounts[0], owner = accounts[9], poolId
+    let instance, Token, fromAddress = accounts[0], owner = accounts[9], poolId, allow = 100
 
     before(async () => {
         instance = await LockedDeal.new()
         Token = await TestToken.new()
-        const allow = 100
         await Token.approve(instance.address, allow, {from: fromAddress})
         let date = new Date()
         date.setDate(date.getDate() + 1)
@@ -20,8 +19,17 @@ contract('Access to Locked Deal', accounts => {
     it('Transfers Ownership', async () => {
         const newOwner = accounts[8]
         await instance.transferPoolOwnership(poolId, newOwner, {from: owner})
-        const o = await instance.GetPoolData(poolId, {from: newOwner})
-        assert.equal(o[2], newOwner)
+        const pool = await instance.GetPoolData(poolId, {from: newOwner})
+        assert.equal(pool[2], newOwner)
         owner = newOwner
+    })
+
+    it('Split Pool Amount', async () => {
+        const amount = allow / 2
+        allow = allow - amount
+        const tx = await instance.splitPoolAmount(poolId, amount, {from: owner})
+        assert.equal(amount , tx.logs[0].args.StartAmount)
+        const pool = await instance.GetPoolData(poolId, {from: owner})
+        assert.equal(pool[1], allow)
     })
 })
