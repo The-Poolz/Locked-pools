@@ -99,37 +99,32 @@ contract LockedPoolz is Manageable {
         CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
     }
 
-    function CreatePoolsInBulk(
+    function CreateMassPools(
         address _Token,
-        uint64[2][] calldata _FinishTime,
-        uint256[2][] calldata _StartAmount,
-        address[] calldata _Owner
-    ) external isTokenValid(_Token) {
-        require(_FinishTime.length == _StartAmount.length, "Invalid Arguments" );
-        for(uint i=0 ; i<_Owner.length; i++){
-            for(uint j=0 ; j < _FinishTime[i].length ; j++){
-                if(_FinishTime[j][0] == i && _StartAmount[j][0] == i){
-                    CreateNewPool(_Token, _FinishTime[j][1], _StartAmount[j][1], _Owner[i]);
-                }
-            }
-        }
-    }
-    
-    function CreatePoolsInBulk2(
-        address _Token,
-        uint64[][] calldata _FinishTime,
+        uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external isTokenValid(_Token) {
-        require(_Owner.length == _StartAmount.length, "Invalid array length of Owners or Amounts");
-        require(_Owner.length == _FinishTime.length, "Invalid array length of FinishTime");
-        for(uint i=0 ; i < _Owner.length ; i++){
-            for(uint j=0 ; j < _FinishTime[i].length ; j++){
-                CreateNewPool(_Token, _FinishTime[i][j], _StartAmount[i], _Owner[i]);
-            }
+    ) external {
+        require(_Owner.length <= 400 && _Owner.length > 0, "Array length Invalid");
+        require(_Owner.length == _FinishTime.length, "Date Array Invalid");
+        require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        for(uint i=0 ; i < _Owner.length; i++){
+            CreateNewPool(_Token, _FinishTime[i], _StartAmount[i], _Owner[i]);
         }
     }
 
-    // all one dimenional
-
+    function CreatePoolsWrtTime(
+        address _Token,
+        uint64[] calldata _FinishTime,
+        uint256[] calldata _StartAmount,
+        address[] calldata _Owner
+    ) external {
+        require(_Owner.length * _FinishTime.length <= 400 && _Owner.length > 0, "Array length Invalid");
+        require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        for(uint i=0 ; i < _FinishTime.length ; i++){
+            for(uint j=0 ; j < _Owner.length ; j++){
+                CreateNewPool(_Token, _FinishTime[i], _StartAmount[j], _Owner[j]);
+            }
+        }
+    }
 }
