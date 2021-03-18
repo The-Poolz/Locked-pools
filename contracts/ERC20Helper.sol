@@ -38,5 +38,5 @@ contract ERC20Helper {
     function IsERC20(address _contractAddress) internal view returns (bool) {
         if (ERC20(_contractAddress).totalSupply() > 0) return true;
         return false;
-    }
+    }// check whitelist
 }

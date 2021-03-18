@@ -33,6 +33,7 @@ contract LockedPoolz is Manageable {
     uint256 internal Index;
 
     modifier isTokenValid(address _Token){
+        // use whitelist
         require(IsERC20(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
         _;
     }
@@ -47,7 +48,15 @@ contract LockedPoolz is Manageable {
         _;
     }
 
-    function TransferPoolOwnership(uint256 _PoolId, address _NewOwner) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+    modifier notZeroAddress(address _address){
+        require(_address != address(0x0), "Zero Address is not allowed");
+        _;
+    }
+
+    function TransferPoolOwnership(
+        uint256 _PoolId,
+        address _NewOwner
+    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
         Pool storage pool = AllPoolz[_PoolId];
         pool.Owner = _NewOwner;
         emit PoolOwnershipTransfered(_PoolId, _NewOwner, msg.sender);
@@ -61,7 +70,10 @@ contract LockedPoolz is Manageable {
         CreatePool(pool.Token, pool.UnlockTime, _NewAmount, _NewOwner);
     }
 
-    function SplitPoolAmount(uint256 _PoolId, uint256 _NewAmount) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+    function SplitPoolAmount(
+        uint256 _PoolId,
+        uint256 _NewAmount
+    ) external isPoolOwner(_PoolId) isLocked(_PoolId) {
         SplitPool(_PoolId, _NewAmount, msg.sender);
     }
 
@@ -69,8 +81,7 @@ contract LockedPoolz is Manageable {
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
-    ) external isPoolOwner(_PoolId) isLocked(_PoolId) {
-        require(_NewOwner != address(0x0), "Invalid New Address");
+    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
         SplitPool(_PoolId, _NewAmount, _NewOwner);
     }
 
@@ -93,8 +104,7 @@ contract LockedPoolz is Manageable {
         uint64 _FinishTime, //Until what time the pool will work
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) public isTokenValid(_Token){
-        require(_Owner != address(0x0), "can't lock for zero");
+    ) public isTokenValid(_Token) notZeroAddress(_Owner) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
     }
@@ -113,6 +123,7 @@ contract LockedPoolz is Manageable {
         }
     }
 
+    // create pools with respect to finish time
     function CreatePoolsWrtTime(
         address _Token,
         uint64[] calldata _FinishTime,
