@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.24 <0.7.0;
+pragma experimental ABIEncoderV2;
 
 import "./LockedPoolz.sol";
 
 contract LockedPoolzData is LockedPoolz {
-    function GetMyPoolsId() public view returns (uint256[]) {
+    function GetMyPoolsId() public view returns (uint256[] memory) {
         return MyPoolz[msg.sender];
     }
 

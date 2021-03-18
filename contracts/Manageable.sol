@@ -40,7 +40,7 @@ contract Manageable is PozBenefit {
         PozFee = _fee;
     }
 
-    function WithdrawETHFee(address _to) public onlyOwner {
+    function WithdrawETHFee(address payable _to) public onlyOwner {
         _to.transfer(address(this).balance); // keeps only fee eth on contract //To Do need to take 16% to burn!!!
     }
 
