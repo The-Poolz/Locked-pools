@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for contracts\ERC20Helper.sol</title>
+    <title>Code coverage report for contracts/ERC20Helper.sol</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">70% </span>
+        <span class="strong">92.86% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>7/10</span>
+        <span class='fraction'>13/14</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">50% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>2/4</span>
+        <span class='fraction'>5/10</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">80% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>4/5</span>
+        <span class='fraction'>5/5</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">75% </span>
+        <span class="strong">92.86% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>6/8</span>
+        <span class='fraction'>13/14</span>
       </div>
     </div>
   </div>
-  <div class='status-line medium'></div>
+  <div class='status-line high'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -78,7 +78,13 @@
 33
 34
 35
-36</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+36
+37
+38
+39
+40
+41
+42</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -91,8 +97,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">23×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -101,22 +108,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">48×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">23×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">23×</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
 pragma solidity &gt;=0.4.24 &lt;0.7.0;
 &nbsp;
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 &nbsp;
 contract ERC20Helper {
     event TransferOut(uint256 Amount, address To, address Token);
@@ -126,23 +139,28 @@ contract ERC20Helper {
         address _owner,
         uint256 _amount
     ) {
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (ERC20(_token).allowance(_owner, address(this)) &gt;= _amount) _;
-        else <span class="cstat-no" title="statement not covered" >revert("No allownce")</span>;
-    }   
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(ERC20(_token).allowance(_owner, address(this)) &gt;= _amount, "No allownce");
+        _;
+    }
     function TransferToken(
         address _Token,
         address _Reciver,
-        uint256 _ammount
+        uint256 _Amount
     ) internal {
-        emit TransferOut(_ammount, _Reciver, _Token);
-        ERC20(_Token).transfer(_Reciver, _ammount);
+        uint256 OldBalance = CheckBalance(_Token, address(this));
+        emit TransferOut(_Amount, _Reciver, _Token);
+        ERC20(_Token).transfer(_Reciver, _Amount);
+        <span class="missing-if-branch" title="else path not taken" >E</span>assert((SafeMath.add(CheckBalance(_Token, address(this)), _Amount)) == OldBalance);
     } 
-<span class="fstat-no" title="function not covered" >    function CheckBalance(address _Token,address _Subject) internal view returns(uint256) {</span>
-<span class="cstat-no" title="statement not covered" >          return ERC20(_Token).balanceOf(_Subject);</span>
+    function CheckBalance(address _Token,address _Subject) internal view returns(uint256) {
+        return ERC20(_Token).balanceOf(_Subject);
     }
     function TransferInToken(address _Token,address _Subject,uint256 _Amount) internal TestAllownce(_Token,_Subject,_Amount) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(_Amount &gt; 0, "Amount should be greater than zero");
+        uint256 OldBalance = CheckBalance(_Token, address(this));
         ERC20(_Token).transferFrom(_Subject, address(this), _Amount);
         emit TransferIn(_Amount, _Subject, _Token);
+        <span class="missing-if-branch" title="else path not taken" >E</span>assert(SafeMath.add(OldBalance, _Amount) == CheckBalance(_Token, address(this)));
     }
     function IsERC20(address _contractAddress) internal view returns (bool) {
         <span class="missing-if-branch" title="else path not taken" >E</span>if (ERC20(_contractAddress).totalSupply() &gt; 0) return true;
@@ -154,7 +172,7 @@ contract ERC20Helper {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 14 2020 11:53:51 GMT+0000 (Greenwich Mean Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Mar 17 2021 21:10:10 GMT+0530 (India Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>
