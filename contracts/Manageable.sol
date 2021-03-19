@@ -3,6 +3,7 @@
 pragma solidity >=0.4.24 <0.7.0;
 
 import "./PozBenefit.sol";
+import "./IWhiteList.sol";
 
 contract Manageable is PozBenefit {
     constructor() public {
@@ -13,6 +14,26 @@ contract Manageable is PozBenefit {
     //@dev for percent use uint16
     uint16 internal Fee; //the fee for the pool
     uint16 internal MinDuration; //the minimum duration of a pool, in seconds
+
+    address public WhiteList_Address;
+    bool public isTokenFilterOn;
+    uint public WhiteListId;
+
+    function setWhiteListAddress(address _address) external onlyOwner{
+        WhiteList_Address = _address;
+    }
+
+    function setWhiteListId(uint256 _id) external onlyOwner{
+        WhiteListId= _id;
+    }
+
+    function swapTokenFilter() external onlyOwner{
+        isTokenFilterOn = !isTokenFilterOn;
+    }
+
+    function isTokenWhiteListed(address _tokenAddress) public view returns(bool) {
+        return isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, WhiteListId) > 0;
+    }
 
     function GetMinDuration() public view returns (uint16) {
         return MinDuration;

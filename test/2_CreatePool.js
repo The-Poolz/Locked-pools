@@ -72,14 +72,11 @@ contract('Create Pool', accounts => {
         assert.equal(pids.length, numberOfPools)
     })
 
-    it('Fail to Create Pool with invalid Token address', async () => {
-        await Token.approve(instance.address , 100, { from: fromAddress })
+    it('Fail to Create Pool when approval is not given', async () => {
         let date = new Date()
         date.setDate(date.getDate() + 1)
         const future = Math.floor(date.getTime() / 1000)
-        console.log(Token.address)
-        console.log(accounts[2])
-        await truffleAssert.reverts(instance.CreateNewPool(accounts[2], future, 100, fromAddress, {from:fromAddress}))
+        await truffleAssert.reverts(instance.CreateNewPool(Token.address, future, 100, fromAddress, {from:fromAddress}))
     })
 
 })

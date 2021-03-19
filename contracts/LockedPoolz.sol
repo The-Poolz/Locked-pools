@@ -34,7 +34,7 @@ contract LockedPoolz is Manageable {
 
     modifier isTokenValid(address _Token){
         // use whitelist
-        require(IsERC20(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
+        require(isTokenWhiteListed(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
         _;
     }
 
@@ -104,7 +104,7 @@ contract LockedPoolz is Manageable {
         uint64 _FinishTime, //Until what time the pool will work
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) public isTokenValid(_Token) notZeroAddress(_Owner) {
+    ) public  notZeroAddress(_Owner) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
     }
