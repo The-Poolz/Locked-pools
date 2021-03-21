@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.24 <0.7.0;
-pragma experimental ABIEncoderV2;
 
 import "./Manageable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
