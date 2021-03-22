@@ -113,7 +113,7 @@ contract LockedPoolz is Manageable {
         uint64 _FinishTime, //Until what time the pool will work
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) public  notZeroAddress(_Owner) {
+    ) public isTokenValid(_Token) notZeroAddress(_Owner) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
     }

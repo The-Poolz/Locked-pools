@@ -34,7 +34,7 @@ contract Manageable is PozBenefit {
     }
 
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool) {
-        return isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, WhiteListId) > 0;
+        return !isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, WhiteListId) > 0;
     }
 
     function setMaxTransactionLimit(uint256 _newLimit) external onlyOwner{
