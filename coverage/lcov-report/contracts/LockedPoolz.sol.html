@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">96.77% </span>
+        <span class="strong">96.88% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>30/31</span>
+        <span class='fraction'>31/32</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">65% </span>
+        <span class="strong">72.73% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>13/20</span>
+        <span class='fraction'>16/22</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">92.31% </span>
+        <span class="strong">93.33% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>12/13</span>
+        <span class='fraction'>14/15</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">94.29% </span>
+        <span class="strong">94.74% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>33/35</span>
+        <span class='fraction'>36/38</span>
       </div>
     </div>
   </div>
@@ -184,7 +184,20 @@
 139
 140
 141
-142</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -192,8 +205,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">7×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -237,6 +249,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">32×</span>
 <span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -301,11 +323,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -327,7 +353,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
 pragma solidity &gt;=0.4.24 &lt;0.7.0;
-pragma experimental ABIEncoderV2;
 &nbsp;
 import "./Manageable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -377,6 +402,16 @@ contract LockedPoolz is Manageable {
 &nbsp;
     modifier notZeroAddress(address _address){
         require(_address != address(0x0), "Zero Address is not allowed");
+        _;
+    }
+&nbsp;
+    modifier isGreaterThanZero(uint256 _num){
+        require(_num &gt; 0, "Array length should be greater than zero");
+        _;
+    }
+&nbsp;
+    modifier isBelowLimit(uint256 _num){
+        require(_num &lt;= maxTransactionLimit, "Max array length limit exceeded");
         _;
     }
 &nbsp;
@@ -441,8 +476,8 @@ contract LockedPoolz is Manageable {
         uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external {
-        <span class="missing-if-branch" title="else path not taken" >E</span>require(_Owner.length &lt;= 400 &amp;&amp; _Owner.length &gt; 0, "Array length Invalid");
+    ) external isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
+        // require(_Owner.length &lt;= maxTransactionLimit, "Array length Invalid");
         <span class="missing-if-branch" title="else path not taken" >E</span>require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         <span class="missing-if-branch" title="else path not taken" >E</span>require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         for(uint i=0 ; i &lt; _Owner.length; i++){
@@ -456,8 +491,12 @@ contract LockedPoolz is Manageable {
         uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external {
-        <span class="missing-if-branch" title="else path not taken" >E</span>require(_Owner.length * _FinishTime.length &lt;= 400 &amp;&amp; _Owner.length &gt; 0, "Array length Invalid");
+    )   external 
+        isGreaterThanZero(_Owner.length)
+        isGreaterThanZero(_FinishTime.length)
+        isBelowLimit(_Owner.length * _FinishTime.length)
+    {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(_Owner.length * _FinishTime.length &lt;= maxTransactionLimit, "Array length Invalid");
         <span class="missing-if-branch" title="else path not taken" >E</span>require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         for(uint i=0 ; i &lt; _FinishTime.length ; i++){
             for(uint j=0 ; j &lt; _Owner.length ; j++){
@@ -472,7 +511,7 @@ contract LockedPoolz is Manageable {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 19 2021 20:37:17 GMT+0530 (India Standard Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Mar 22 2021 15:29:06 GMT+0530 (India Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>
