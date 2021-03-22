@@ -9,6 +9,7 @@ contract Manageable is PozBenefit {
     constructor() public {
         Fee = 20; // *10000
         MinDuration = 0; //need to set
+        maxTransactionLimit = 400;
     }
     mapping (address => uint256) FeeMap;
     //@dev for percent use uint16
@@ -18,7 +19,8 @@ contract Manageable is PozBenefit {
     address public WhiteList_Address;
     bool public isTokenFilterOn;
     uint public WhiteListId;
-
+    uint256 public maxTransactionLimit;
+    
     function setWhiteListAddress(address _address) external onlyOwner{
         WhiteList_Address = _address;
     }
@@ -33,6 +35,10 @@ contract Manageable is PozBenefit {
 
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool) {
         return isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, WhiteListId) > 0;
+    }
+
+    function setMaxTransactionLimit(uint256 _newLimit) external onlyOwner{
+        maxTransactionLimit = _newLimit;
     }
 
     function GetMinDuration() public view returns (uint16) {

@@ -71,12 +71,4 @@ contract('Create Pool', accounts => {
         });
         assert.equal(pids.length, numberOfPools)
     })
-
-    it('Fail to Create Pool when approval is not given', async () => {
-        let date = new Date()
-        date.setDate(date.getDate() + 1)
-        const future = Math.floor(date.getTime() / 1000)
-        await truffleAssert.reverts(instance.CreateNewPool(Token.address, future, 100, fromAddress, {from:fromAddress}))
-    })
-
 })

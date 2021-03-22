@@ -52,6 +52,16 @@ contract LockedPoolz is Manageable {
         _;
     }
 
+    modifier isGreaterThanZero(uint256 _num){
+        require(_num > 0, "Array length should be greater than zero");
+        _;
+    }
+
+    modifier isBelowLimit(uint256 _num){
+        require(_num <= maxTransactionLimit, "Max array length limit exceeded");
+        _;
+    }
+
     function TransferPoolOwnership(
         uint256 _PoolId,
         address _NewOwner
@@ -113,8 +123,8 @@ contract LockedPoolz is Manageable {
         uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external {
-        require(_Owner.length <= 400 && _Owner.length > 0, "Array length Invalid");
+    ) external isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
+        // require(_Owner.length <= maxTransactionLimit, "Array length Invalid");
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         for(uint i=0 ; i < _Owner.length; i++){
@@ -128,8 +138,12 @@ contract LockedPoolz is Manageable {
         uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external {
-        require(_Owner.length * _FinishTime.length <= 400 && _Owner.length > 0, "Array length Invalid");
+    )   external 
+        isGreaterThanZero(_Owner.length)
+        isGreaterThanZero(_FinishTime.length)
+        isBelowLimit(_Owner.length * _FinishTime.length)
+    {
+        require(_Owner.length * _FinishTime.length <= maxTransactionLimit, "Array length Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         for(uint i=0 ; i < _FinishTime.length ; i++){
             for(uint j=0 ; j < _Owner.length ; j++){
