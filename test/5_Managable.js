@@ -52,10 +52,10 @@ contract('Managable', accounts => {
         const PozFee = await instance.GetPOZFee()
         assert.equal(newPozFee, PozFee)
     })
-    it('should set Min POZ', async () => {
-        const newMinPoz = 100
-        await instance.SetMinPoz(newMinPoz, {from: ownerAddress})
-        const minPoz = await instance.GetMinPoz()
-        assert.equal(newMinPoz, minPoz)
-    })
+    // it('should set Min POZ', async () => {
+    //     const newMinPoz = 100
+    //     await instance.SetMinPoz(newMinPoz, {from: ownerAddress})
+    //     const minPoz = await instance.GetMinPoz()
+    //     assert.equal(newMinPoz, minPoz)
+    // })
 })
