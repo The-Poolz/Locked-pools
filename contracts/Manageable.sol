@@ -48,12 +48,13 @@ contract Manageable is PozBenefit {
     function SetMinDuration(uint16 _minDuration) public onlyOwner {
         MinDuration = _minDuration;
     }
-        function GetFee() public view returns (uint16) {
+
+    function GetFee() public view returns (uint16) {
         return Fee;
     }
 
     function SetFee(uint16 _fee) public onlyOwner
-            PercentCheckOk(_fee)
+        PercentCheckOk(_fee)
         LeftIsBigger( _fee, PozFee) {
         Fee = _fee;
     }
