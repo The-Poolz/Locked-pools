@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.24 <0.7.0;
+pragma solidity ^0.6.0;
 
 import "./Manageable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -15,13 +15,14 @@ contract LockedPoolz is Manageable {
 
     event NewPoolCreated(uint256 PoolId, address Token, uint64 FinishTime, uint256 StartAmount, address Owner);
     event PoolOwnershipTransfered(uint256 PoolId, address NewOwner, address OldOwner);
+    event PoolApproval(uint256 PoolId, address Spender, uint256 Amount);
 
     struct Pool {
         uint64 UnlockTime;
         uint256 Amount;
         address Owner;
         address Token;
-        // mapping(address => uint) Allowance;
+        mapping(address => uint) Allowance;
     }
     // transfer ownership
     // allowance
@@ -39,6 +40,11 @@ contract LockedPoolz is Manageable {
 
     modifier isPoolOwner(uint256 _PoolId){
         require(AllPoolz[_PoolId].Owner == msg.sender, "You are not Pool Owner");
+        _;
+    }
+
+    modifier isAllowed(uint256 _PoolId, uint256 _amount){
+        require(_amount <= AllPoolz[_PoolId].Allowance[msg.sender], "Not enough Allowance");
         _;
     }
 
@@ -81,17 +87,43 @@ contract LockedPoolz is Manageable {
 
     function SplitPoolAmount(
         uint256 _PoolId,
-        uint256 _NewAmount
+        uint256 _NewAmount,
+        address _NewOwner
     ) external isPoolOwner(_PoolId) isLocked(_PoolId) {
-        SplitPool(_PoolId, _NewAmount, msg.sender);
+        SplitPool(_PoolId, _NewAmount, _NewOwner);
     }
+
+    // function ApproveAllowance(
+    //     uint256 _PoolId,
+    //     uint256 _NewAmount,
+    //     address _NewOwner
+    // ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
+    //     SplitPool(_PoolId, _NewAmount, _NewOwner);
+    // }
 
     function ApproveAllowance(
         uint256 _PoolId,
-        uint256 _NewAmount,
-        address _NewOwner
-    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
-        SplitPool(_PoolId, _NewAmount, _NewOwner);
+        uint256 _Amount,
+        address _Spender
+    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_Spender) {
+        Pool storage pool = AllPoolz[_PoolId];
+        pool.Allowance[_Spender] = _Amount;
+        emit PoolApproval(_PoolId, _Spender, _Amount);
+    }
+
+    function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256){
+        return AllPoolz[_PoolId].Allowance[_Address];
+    }
+
+    function SplitPoolAmountFrom(
+        uint256 _PoolId,
+        uint256 _Amount,
+        address _Address
+    ) external isAllowed(_PoolId, _Amount) isLocked(_PoolId) {
+        SplitPool(_PoolId, _Amount, _Address);
+        Pool storage pool = AllPoolz[_PoolId];
+        uint256 _NewAmount = SafeMath.sub(pool.Allowance[msg.sender], _Amount);
+        pool.Allowance[_Address]  = _NewAmount;
     }
 
     //create a new pool
