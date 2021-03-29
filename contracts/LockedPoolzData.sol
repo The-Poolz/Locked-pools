@@ -11,6 +11,7 @@ contract LockedPoolzData is LockedPoolz {
     function GetPoolData(uint256 _id)
         public
         view
+        isPoolValid(_id)
         returns (
             uint64,
             uint256,
@@ -18,7 +19,6 @@ contract LockedPoolzData is LockedPoolz {
             address
         )
     {
-        require(_id < Index, "Wrong Id");
         require(AllPoolz[_id].Owner == msg.sender, "Private Information");
         return (
             AllPoolz[_id].UnlockTime,

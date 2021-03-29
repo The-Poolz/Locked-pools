@@ -38,6 +38,11 @@ contract LockedPoolz is Manageable {
         _;
     }
 
+    modifier isPoolValid(uint256 _PoolId){
+        require(_PoolId < Index, "Pool does not exist");
+        _;
+    }
+
     modifier isPoolOwner(uint256 _PoolId){
         require(AllPoolz[_PoolId].Owner == msg.sender, "You are not Pool Owner");
         _;
@@ -71,7 +76,7 @@ contract LockedPoolz is Manageable {
     function TransferPoolOwnership(
         uint256 _PoolId,
         address _NewOwner
-    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
+    ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
         Pool storage pool = AllPoolz[_PoolId];
         pool.Owner = _NewOwner;
         emit PoolOwnershipTransfered(_PoolId, _NewOwner, msg.sender);
@@ -89,7 +94,7 @@ contract LockedPoolz is Manageable {
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
-    ) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+    ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) isLocked(_PoolId) {
         SplitPool(_PoolId, _NewAmount, _NewOwner);
     }
 
@@ -105,13 +110,13 @@ contract LockedPoolz is Manageable {
         uint256 _PoolId,
         uint256 _Amount,
         address _Spender
-    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_Spender) {
+    ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_Spender) {
         Pool storage pool = AllPoolz[_PoolId];
         pool.Allowance[_Spender] = _Amount;
         emit PoolApproval(_PoolId, _Spender, _Amount);
     }
 
-    function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256){
+    function GetPoolAllowance(uint256 _PoolId, address _Address) public view isPoolValid(_PoolId) returns(uint256){
         return AllPoolz[_PoolId].Allowance[_Address];
     }
 
@@ -119,7 +124,7 @@ contract LockedPoolz is Manageable {
         uint256 _PoolId,
         uint256 _Amount,
         address _Address
-    ) external isAllowed(_PoolId, _Amount) isLocked(_PoolId) {
+    ) external isPoolValid(_PoolId) isAllowed(_PoolId, _Amount) isLocked(_PoolId) {
         SplitPool(_PoolId, _Amount, _Address);
         Pool storage pool = AllPoolz[_PoolId];
         uint256 _NewAmount = SafeMath.sub(pool.Allowance[msg.sender], _Amount);

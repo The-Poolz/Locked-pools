@@ -108,6 +108,10 @@ contract('Access to Locked Deal', accounts => {
             const amount = data[1] + 1
             await truffleAssert.reverts(instance.SplitPoolAmount(poolId, amount, owner, {from: owner}), "Not Enough Amount Balance")
         })
+
+        it('Fail to execute when Pool ID is invalid', async () => {
+            await truffleAssert.reverts(instance.TransferPoolOwnership(99, accounts[5], {from: owner}), "Pool does not exist")
+        })
     })
 
 })
