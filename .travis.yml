@@ -2,7 +2,6 @@ dist: xenial
 sudo: required
 language: node_js
 node_js:
-  - "9.4.0"
  
 matrix:
   include:
