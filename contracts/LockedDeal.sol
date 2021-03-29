@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.24 <0.7.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.6.0;
 
 import "./LockedPoolzData.sol";
 
@@ -10,21 +9,6 @@ contract LockedDeal is LockedPoolzData {
     }
 
     uint256 internal StartIndex;
-
-    function Work() internal returns (uint256) {
-        uint256 WorkDone = 0;
-        bool FixStart = true;
-        for (uint256 index = StartIndex; index <= Index; index++) {
-            if (WithdrawToken(index)) WorkDone++;
-            if (FixStart && AllPoolz[index].Amount == 0) {
-                //do nothing - no need De Morgan law here
-            } else {
-                FixStart = false;
-                StartIndex = index - 1;
-            }
-        }
-        return WorkDone;
-    }
 
     //@dev no use of revert to make sure the loop will work
     function WithdrawToken(uint256 _PoolId) public returns (bool) {

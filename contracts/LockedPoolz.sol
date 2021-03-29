@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.24 <0.7.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.6.0;
 
 import "./Manageable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -16,13 +15,14 @@ contract LockedPoolz is Manageable {
 
     event NewPoolCreated(uint256 PoolId, address Token, uint64 FinishTime, uint256 StartAmount, address Owner);
     event PoolOwnershipTransfered(uint256 PoolId, address NewOwner, address OldOwner);
+    event PoolApproval(uint256 PoolId, address Spender, uint256 Amount);
 
     struct Pool {
         uint64 UnlockTime;
         uint256 Amount;
         address Owner;
         address Token;
-        // mapping(address => uint) Allowance;
+        mapping(address => uint) Allowance;
     }
     // transfer ownership
     // allowance
@@ -33,7 +33,8 @@ contract LockedPoolz is Manageable {
     uint256 internal Index;
 
     modifier isTokenValid(address _Token){
-        require(IsERC20(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
+        // use whitelist
+        require(isTokenWhiteListed(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
         _;
     }
 
@@ -42,12 +43,35 @@ contract LockedPoolz is Manageable {
         _;
     }
 
+    modifier isAllowed(uint256 _PoolId, uint256 _amount){
+        require(_amount <= AllPoolz[_PoolId].Allowance[msg.sender], "Not enough Allowance");
+        _;
+    }
+
     modifier isLocked(uint256 _PoolId){
         require(AllPoolz[_PoolId].UnlockTime > now, "Pool is Unlocked");
         _;
     }
 
-    function TransferPoolOwnership(uint256 _PoolId, address _NewOwner) external isPoolOwner(_PoolId) isLocked(_PoolId) {
+    modifier notZeroAddress(address _address){
+        require(_address != address(0x0), "Zero Address is not allowed");
+        _;
+    }
+
+    modifier isGreaterThanZero(uint256 _num){
+        require(_num > 0, "Array length should be greater than zero");
+        _;
+    }
+
+    modifier isBelowLimit(uint256 _num){
+        require(_num <= maxTransactionLimit, "Max array length limit exceeded");
+        _;
+    }
+
+    function TransferPoolOwnership(
+        uint256 _PoolId,
+        address _NewOwner
+    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
         Pool storage pool = AllPoolz[_PoolId];
         pool.Owner = _NewOwner;
         emit PoolOwnershipTransfered(_PoolId, _NewOwner, msg.sender);
@@ -61,17 +85,45 @@ contract LockedPoolz is Manageable {
         CreatePool(pool.Token, pool.UnlockTime, _NewAmount, _NewOwner);
     }
 
-    function SplitPoolAmount(uint256 _PoolId, uint256 _NewAmount) external isPoolOwner(_PoolId) isLocked(_PoolId) {
-        SplitPool(_PoolId, _NewAmount, msg.sender);
-    }
-
-    function ApproveAllowance(
+    function SplitPoolAmount(
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
     ) external isPoolOwner(_PoolId) isLocked(_PoolId) {
-        require(_NewOwner != address(0x0), "Invalid New Address");
         SplitPool(_PoolId, _NewAmount, _NewOwner);
+    }
+
+    // function ApproveAllowance(
+    //     uint256 _PoolId,
+    //     uint256 _NewAmount,
+    //     address _NewOwner
+    // ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
+    //     SplitPool(_PoolId, _NewAmount, _NewOwner);
+    // }
+
+    function ApproveAllowance(
+        uint256 _PoolId,
+        uint256 _Amount,
+        address _Spender
+    ) external isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_Spender) {
+        Pool storage pool = AllPoolz[_PoolId];
+        pool.Allowance[_Spender] = _Amount;
+        emit PoolApproval(_PoolId, _Spender, _Amount);
+    }
+
+    function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256){
+        return AllPoolz[_PoolId].Allowance[_Address];
+    }
+
+    function SplitPoolAmountFrom(
+        uint256 _PoolId,
+        uint256 _Amount,
+        address _Address
+    ) external isAllowed(_PoolId, _Amount) isLocked(_PoolId) {
+        SplitPool(_PoolId, _Amount, _Address);
+        Pool storage pool = AllPoolz[_PoolId];
+        uint256 _NewAmount = SafeMath.sub(pool.Allowance[msg.sender], _Amount);
+        pool.Allowance[_Address]  = _NewAmount;
     }
 
     //create a new pool
@@ -93,8 +145,7 @@ contract LockedPoolz is Manageable {
         uint64 _FinishTime, //Until what time the pool will work
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) public isTokenValid(_Token){
-        require(_Owner != address(0x0), "can't lock for zero");
+    ) public isTokenValid(_Token) notZeroAddress(_Owner) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
     }
@@ -104,8 +155,8 @@ contract LockedPoolz is Manageable {
         uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external {
-        require(_Owner.length <= 400 && _Owner.length > 0, "Array length Invalid");
+    ) external isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
+        // require(_Owner.length <= maxTransactionLimit, "Array length Invalid");
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         for(uint i=0 ; i < _Owner.length; i++){
@@ -113,13 +164,18 @@ contract LockedPoolz is Manageable {
         }
     }
 
+    // create pools with respect to finish time
     function CreatePoolsWrtTime(
         address _Token,
         uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external {
-        require(_Owner.length * _FinishTime.length <= 400 && _Owner.length > 0, "Array length Invalid");
+    )   external 
+        isGreaterThanZero(_Owner.length)
+        isGreaterThanZero(_FinishTime.length)
+        isBelowLimit(_Owner.length * _FinishTime.length)
+    {
+        require(_Owner.length * _FinishTime.length <= maxTransactionLimit, "Array length Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         for(uint i=0 ; i < _FinishTime.length ; i++){
             for(uint j=0 ; j < _Owner.length ; j++){

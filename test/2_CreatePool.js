@@ -1,6 +1,7 @@
 const LockedDeal = artifacts.require("LockedDeal");
 const TestToken = artifacts.require("TestToken");
 const { assert } = require('chai');
+const truffleAssert = require('truffle-assertions');
 
 contract('Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
@@ -8,6 +9,19 @@ contract('Create Pool', accounts => {
     before(async () => {
         instance = await LockedDeal.new()
         Token = await TestToken.new()
+    })
+
+    it('should create a single new pool', async () => {
+        const allow = 100
+        await Token.approve(instance.address , allow, { from: fromAddress })
+        let date = new Date()
+        date.setDate(date.getDate() + 1)
+        const future = Math.floor(date.getTime() / 1000)
+        const owner = accounts[1]
+        const tx = await instance.CreateNewPool(Token.address, future, allow, owner, {from: fromAddress})
+        const poolId = tx.logs[1].args.PoolId
+        const result = await instance.GetPoolData(poolId, {from: owner})
+        assert.equal(result[2], owner)
     })
 
     it('should create pools in mass', async () => {
@@ -57,5 +71,4 @@ contract('Create Pool', accounts => {
         });
         assert.equal(pids.length, numberOfPools)
     })
-
 })

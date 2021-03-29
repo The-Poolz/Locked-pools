@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.24 <0.7.0;
+pragma solidity ^0.6.0;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -38,5 +38,5 @@ contract ERC20Helper {
     function IsERC20(address _contractAddress) internal view returns (bool) {
         if (ERC20(_contractAddress).totalSupply() > 0) return true;
         return false;
-    }
+    }// check whitelist
 }
