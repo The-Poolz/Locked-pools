@@ -73,7 +73,10 @@ contract('Access to Locked Deal', accounts => {
         it('giving approval', async () => {
             await instance.ApproveAllowance(poolId, approvalAmount, spender, {from: owner})
             const amount = await instance.GetPoolAllowance(poolId, spender)
+            const dataOwner = await instance.GetPoolData(poolId, {from: owner})
+            const dataSpender = await instance.GetPoolData(poolId, {from: spender})
             assert.equal(approvalAmount, amount)
+            assert.deepEqual(dataOwner, dataSpender)
         })
 
         it('spliting pool from approved address', async () => {

@@ -69,7 +69,6 @@ contract('Create Pool', accounts => {
         const result = await instance.CreatePoolsWrtTime.call(Token.address, futureTimeStamps, startAmounts, owners, {from: fromAddress})
         const firstPoolId = result[0].toNumber()
         const lastPoolId = result[1].toNumber()
-        console.log(firstPoolId, lastPoolId)
         const tx = await instance.CreatePoolsWrtTime(Token.address, futureTimeStamps, startAmounts, owners, {from: fromAddress})
         const pids = []
         tx.logs.forEach(element => {
