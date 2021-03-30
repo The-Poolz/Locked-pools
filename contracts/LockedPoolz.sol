@@ -156,13 +156,16 @@ contract LockedPoolz is Manageable {
         uint64[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
+    ) external isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) returns(uint256, uint256) {
         // require(_Owner.length <= maxTransactionLimit, "Array length Invalid");
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        uint256 firstPoolId = Index;
         for(uint i=0 ; i < _Owner.length; i++){
             CreateNewPool(_Token, _FinishTime[i], _StartAmount[i], _Owner[i]);
         }
+        uint256 lastPoolId = SafeMath.sub(Index, 1);
+        return (firstPoolId, lastPoolId);
     }
 
     // create pools with respect to finish time
@@ -175,13 +178,17 @@ contract LockedPoolz is Manageable {
         isGreaterThanZero(_Owner.length)
         isGreaterThanZero(_FinishTime.length)
         isBelowLimit(_Owner.length * _FinishTime.length)
+        returns(uint256, uint256)
     {
         require(_Owner.length * _FinishTime.length <= maxTransactionLimit, "Array length Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        uint256 firstPoolId = Index;
         for(uint i=0 ; i < _FinishTime.length ; i++){
             for(uint j=0 ; j < _Owner.length ; j++){
                 CreateNewPool(_Token, _FinishTime[i], _StartAmount[j], _Owner[j]);
             }
         }
+        uint256 lastPoolId = SafeMath.sub(Index, 1);
+        return (firstPoolId, lastPoolId);
     }
 }
