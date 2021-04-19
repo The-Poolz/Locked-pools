@@ -19,7 +19,8 @@ contract LockedPoolzData is LockedPoolz {
             address
         )
     {
-        require(AllPoolz[_id].Owner == msg.sender, "Private Information");
+        Pool storage pool = AllPoolz[_id];
+        require(pool.Owner == msg.sender || pool.Allowance[msg.sender] > 0, "Private Information");
         return (
             AllPoolz[_id].UnlockTime,
             AllPoolz[_id].Amount,

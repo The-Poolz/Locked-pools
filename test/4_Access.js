@@ -30,6 +30,8 @@ contract('Access to Locked Deal', accounts => {
     it('Split Pool Amount with owner address', async () => {
         const amount = 25
         allow = allow - amount
+        // const tx = await instance.SplitPoolAmount.call(poolId, amount, owner, {from: owner})
+        // console.log(tx.toString())
         const tx = await instance.SplitPoolAmount(poolId, amount, owner, {from: owner})
         const pid = tx.logs[0].args.PoolId
         const pAmount = tx.logs[0].args.StartAmount
@@ -52,8 +54,16 @@ contract('Access to Locked Deal', accounts => {
         assert.equal(newPool[1], amount)
     })
 
+    it('returns new pool id', async () => {
+        const amount = 10
+        allow = allow - amount
+        const pid = await instance.SplitPoolAmount.call(poolId, amount, owner, {from: owner})
+        const tx = await instance.SplitPoolAmount(poolId, amount, owner, {from: owner})
+        assert.equal(pid.toString(), tx.logs[0].args.PoolId.toString())
+    })
+
     describe('Giving approval and splitting pool', () => {
-        const approvalAmount = 20, spender = accounts[1]
+        const approvalAmount = 10, spender = accounts[1]
 
         // it('print all data', async () => {
         //     const data = await instance.GetPoolData(poolId, {from: owner})
@@ -63,7 +73,10 @@ contract('Access to Locked Deal', accounts => {
         it('giving approval', async () => {
             await instance.ApproveAllowance(poolId, approvalAmount, spender, {from: owner})
             const amount = await instance.GetPoolAllowance(poolId, spender)
+            const dataOwner = await instance.GetPoolData(poolId, {from: owner})
+            const dataSpender = await instance.GetPoolData(poolId, {from: spender})
             assert.equal(approvalAmount, amount)
+            assert.deepEqual(dataOwner, dataSpender)
         })
 
         it('spliting pool from approved address', async () => {
