@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.6.0;
 
-import "./PozBenefit.sol";
-import "./IWhiteList.sol";
+import "poolz-helper/contracts/ERC20Helper.sol";
+import "poolz-helper/contracts/PozBenefit.sol";
+import "poolz-helper/contracts/ETHHelper.sol";
+import "poolz-helper/contracts/IWhiteList.sol";
 
-contract Manageable is PozBenefit {
+contract Manageable is ETHHelper, ERC20Helper, PozBenefit {
     constructor() public {
         Fee = 20; // *10000
         MinDuration = 0; //need to set

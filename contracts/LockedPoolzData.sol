@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
-import "./LockedPoolz.sol";
+import "./LockedControl.sol";
 
-contract LockedPoolzData is LockedPoolz {
+contract LockedPoolzData is LockedControl {
     function GetMyPoolsId() public view returns (uint256[] memory) {
         return MyPoolz[msg.sender];
     }
