@@ -10,7 +10,7 @@ contract('Access to Locked Deal', accounts => {
 
     before(async () => {
         instance = await LockedDeal.new()
-        Token = await TestToken.new()
+        Token = await TestToken.deployed()
         await Token.approve(instance.address, allow, {from: fromAddress})
         let date = new Date()
         date.setDate(date.getDate() + 1)

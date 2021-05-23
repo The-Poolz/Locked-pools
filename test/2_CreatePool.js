@@ -8,7 +8,7 @@ contract('Create Pool', accounts => {
 
     before(async () => {
         instance = await LockedDeal.new()
-        Token = await TestToken.new()
+        Token = await TestToken.deployed()
     })
 
     it('should create a single new pool', async () => {
