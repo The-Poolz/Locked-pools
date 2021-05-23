@@ -7,7 +7,7 @@ import "openzeppelin-solidity/contracts/access/Ownable.sol";
 /**
 * @title TestToken is a basic ERC20 Token
 */
-contract TestToken is ERC20, Ownable{
+contract Token is ERC20, Ownable{
 
     // uint256 public totalSupply;
     // string public name;

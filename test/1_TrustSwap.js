@@ -1,5 +1,5 @@
 const LockedDeal = artifacts.require("LockedDeal");
-const TestToken = artifacts.require("TestToken");
+const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 //const truffleAssert = require('truffle-assertions');
 
