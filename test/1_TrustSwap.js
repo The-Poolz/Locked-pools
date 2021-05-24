@@ -6,7 +6,7 @@ const { assert } = require('chai');
 contract('LockedDeal', (accounts) => {
   it('Lock 1 test token for account2 from acount 0', async () => {
     const allow = 1;
-    let Token = await TestToken.deployed();
+    let Token = await TestToken.new('TestToken', 'TEST')
     let instance = await LockedDeal.deployed();
     await Token.approve(instance.address , allow, { from: accounts[0] });
     let date = new Date();
@@ -23,7 +23,7 @@ contract('LockedDeal', (accounts) => {
   it('open new pool for account 1 ', async () => {
     const allow = 1;
     let instance = await LockedDeal.deployed();
-    let Token = await TestToken.deployed();
+    let Token = await TestToken.new('TestToken', 'TEST')
     await Token.approve(instance.address , allow, { from: accounts[0] });
     let date = new Date();
     date.setDate(date.getDate() - 1);   // sub a day

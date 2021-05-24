@@ -7,7 +7,7 @@ contract('Fail Create Pool', accounts => {
 
     before(async () => {
         instance = await LockedDeal.new()
-        Token = await TestToken.deployed()
+        Token = await TestToken.new('TestToken', 'TEST')
     })
 
     it('Fail to Create Pool when approval is not given', async () => {
