@@ -1,5 +1,5 @@
 const LockedDeal = artifacts.require("LockedDeal");
-const TestToken = artifacts.require("TestToken");
+const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 const truffleAssert = require('truffle-assertions');
 const timeMachine = require('ganache-time-traveler');
@@ -10,7 +10,7 @@ contract('Access to Locked Deal', accounts => {
 
     before(async () => {
         instance = await LockedDeal.new()
-        Token = await TestToken.new()
+        Token = await TestToken.new('TestToken', 'TEST')
         await Token.approve(instance.address, allow, {from: fromAddress})
         let date = new Date()
         date.setDate(date.getDate() + 1)

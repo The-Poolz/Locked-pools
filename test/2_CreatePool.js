@@ -1,5 +1,5 @@
 const LockedDeal = artifacts.require("LockedDeal");
-const TestToken = artifacts.require("TestToken");
+const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 const truffleAssert = require('truffle-assertions');
 
@@ -8,7 +8,7 @@ contract('Create Pool', accounts => {
 
     before(async () => {
         instance = await LockedDeal.new()
-        Token = await TestToken.new()
+        Token = await TestToken.new('TestToken', 'TEST')
     })
 
     it('should create a single new pool', async () => {
