@@ -55,13 +55,14 @@ contract('Create Pool', accounts => {
 
     it('should create pools with respect to finish time', async () => {
         const allow = 100
-        const numberOfPools = 15
-        await Token.approve(instance.address , allow * numberOfPools, { from: fromAddress })
+        const numberOfOwners = 3
+        const numberOfTimestamps = 6
+        await Token.approve(instance.address , allow * numberOfOwners * numberOfTimestamps, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
         const future = Math.floor(date.getTime() / 1000)
         const futureTimeStamps = []
-        for(let i=1 ; i<= 5 ; i++){ // generating array of length 5
+        for(let i=1 ; i<= numberOfTimestamps ; i++){ // generating array of length 5
             futureTimeStamps.push(future + 3600*i)
         }
         const startAmounts = [allow, allow, allow]
@@ -76,7 +77,7 @@ contract('Create Pool', accounts => {
                 pids.push(element.args.PoolId.toString())
             }
         });
-        assert.equal(pids.length, numberOfPools)
+        assert.equal(pids.length, numberOfOwners * numberOfTimestamps)
         assert.equal(pids.length, lastPoolId - firstPoolId + 1)
     })
 })
