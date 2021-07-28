@@ -95,7 +95,7 @@ contract('Access to Locked Deal', accounts => {
             await truffleAssert.reverts(instance.TransferPoolOwnership(poolId, accounts[5], {from: fromAddress}), "You are not Pool Owner")
         })
     
-        it('Fail to transfer ownership after pool is unlocked', async () => {
+        xit('Fail to transfer ownership after pool is unlocked', async () => {
             const data = await instance.GetPoolData(poolId, {from: owner})
             const unlockTime = data[0].toString()
             const currentTime = Math.floor(new Date().getTime() / 1000)

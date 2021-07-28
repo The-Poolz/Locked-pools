@@ -8,7 +8,7 @@ contract LockedControl is LockedPoolz{
     function TransferPoolOwnership(
         uint256 _PoolId,
         address _NewOwner
-    ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_NewOwner) {
+    ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) notZeroAddress(_NewOwner) {
         Pool storage pool = AllPoolz[_PoolId];
         pool.Owner = _NewOwner;
         emit PoolOwnershipTransfered(_PoolId, _NewOwner, msg.sender);
