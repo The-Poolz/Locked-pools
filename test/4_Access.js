@@ -32,11 +32,6 @@ contract('Access to Locked Deal', accounts => {
         await instance.TransferPoolOwnership(poolId, newOwner, {from: owner})
         const pool = await instance.GetPoolData(poolId, {from: newOwner})
         const newPools = await instance.GetMyPoolsId({from: newOwner})
-        const oldPools = await instance.GetMyPoolsId({from: owner})
-        console.log(oldPools[0].toString())
-        // console.log(oldPools[1].toString())
-        console.log(oldPools)
-
         assert.equal(newPools[0].toString(), poolId)
         assert.equal(pool[2], newOwner)
         owner = newOwner
@@ -108,15 +103,6 @@ contract('Access to Locked Deal', accounts => {
     describe('Fail Tests', () => {
         it('Fail to transfer ownership when called from wrong address', async () => {
             await truffleAssert.reverts(instance.TransferPoolOwnership(poolId, accounts[5], {from: fromAddress}), "You are not Pool Owner")
-        })
-    
-        xit('Fail to transfer ownership after pool is unlocked', async () => {
-            const data = await instance.GetPoolData(poolId, {from: owner})
-            const unlockTime = data[0].toString()
-            const currentTime = Math.floor(new Date().getTime() / 1000)
-            await timeMachine.advanceBlockAndSetTime(unlockTime)
-            await truffleAssert.reverts(instance.TransferPoolOwnership(poolId, accounts[5], {from: owner}), "Pool is Unlocked")
-            await timeMachine.advanceBlockAndSetTime(currentTime)
         })
     
         it('Fail to Create Pool with 0 address owner', async () => {
