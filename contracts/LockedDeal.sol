@@ -8,6 +8,8 @@ contract LockedDeal is LockedPoolzData {
         StartIndex = 0;
     }
 
+    event TokenWithdrawn(uint256 PoolId, address Recipient, uint256 Amount);
+
     uint256 internal StartIndex;
 
     //@dev no use of revert to make sure the loop will work
@@ -23,6 +25,7 @@ contract LockedDeal is LockedPoolzData {
                 AllPoolz[_PoolId].Owner,
                 AllPoolz[_PoolId].Amount
             );
+            emit TokenWithdrawn(_PoolId, AllPoolz[_PoolId].Owner, AllPoolz[_PoolId].Amount);
             AllPoolz[_PoolId].Amount = 0;
             return true;
         }
