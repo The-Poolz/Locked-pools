@@ -15,6 +15,7 @@ contract LockedPoolz is Manageable {
     event NewPoolCreated(uint256 PoolId, address Token, uint64 FinishTime, uint256 StartAmount, address Owner);
     event PoolOwnershipTransfered(uint256 PoolId, address NewOwner, address OldOwner);
     event PoolApproval(uint256 PoolId, address Spender, uint256 Amount);
+    event PoolSplit(uint256 OldPoolId, uint256 NewPoolId, uint256 NewAmount, address NewOwner);
 
     struct Pool {
         uint64 UnlockTime;
@@ -77,6 +78,7 @@ contract LockedPoolz is Manageable {
         uint256 poolAmount = SafeMath.sub(pool.Amount, _NewAmount);
         pool.Amount = poolAmount;
         uint256 poolId = CreatePool(pool.Token, pool.UnlockTime, _NewAmount, _NewOwner);
+        emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
         return poolId;
     }
 
