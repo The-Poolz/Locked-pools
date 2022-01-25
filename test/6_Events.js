@@ -12,6 +12,14 @@ contract('Pools - events', (accounts) => {
   let lockedPoolz;
   let testToken;
 
+  let fromAddress = accounts[0];
+  let owner = accounts[9];
+
+  let poolId;
+  let allow = 100;
+  let result;
+  let date;
+
   before(async () => {
     lockedControl = await LockedControl.new();
     lockedDeal = await LockedDeal.new();
@@ -20,29 +28,40 @@ contract('Pools - events', (accounts) => {
   });
 
   describe('TokenWithdrawn event emitted', async () => {
-    let result;
 
     before(async () => {
-      result = await lockedDeal.WithdrawToken(0);
-      // result = await truffleAssert.createTransactionResult(lockedDeal, lockedDeal.transactionHash);
+      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
+
+      let date = new Date();
+      date.setDate(date.getDate() - 1);
+      let future = Math.floor(date.getTime() / 1000);
+
+      const tx = await lockedDeal.CreateNewPool(testToken.address, future, allow, owner, { from: fromAddress });
+      poolId = tx.logs[1].args.PoolId;
     });
 
     it('TokenWithdrawn event emitted', async () => {
+      result = await lockedDeal.WithdrawToken(poolId.toNumber());
       // Check event
-      console.log(result);
       truffleAssert.eventEmitted(result, 'TokenWithdrawn');
     });
 
   });
 
   describe('NewPoolCreated event is emitted', async () => {
-    let result;
-    // let ownerAddress = lockedPoolz.address;
-    // console.log(lockedPoolz);
 
     before(async () => {
-      result = await lockedControl.CreateNewPool(testToken.address, 5, 1, ownerAddress);
-      // result = await truffleAssert.createTransactionResult(lockedPoolz, lockedPoolz.transactionHash);
+      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
+
+      let date = new Date();
+      date.setDate(date.getDate() + 1);
+
+      const future = Math.floor(date.getTime() / 1000);
+      const owner = accounts[1];
+      const tx = await lockedDeal.CreateNewPool(testToken.address, future, allow, owner, { from: fromAddress });
+      const poolId = tx.logs[1].args.PoolId;
+
+      result = tx;
     });
 
     it('NewPoolCreated event is emitted', async () => {
@@ -53,14 +72,29 @@ contract('Pools - events', (accounts) => {
   });
 
   describe('PoolOwnershipTransfered event emitted', async () => {
-    let result;
 
     before(async () => {
-      result = await lockedControl.TransferPoolOwnership();
-      // result = await truffleAssert.createTransactionResult(lockedControl, lockedControl.transactionHash);
+      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
+
+      let date = new Date();
+      date.setDate(date.getDate() + 1);
+
+      let future = Math.floor(date.getTime() / 1000);
+      await lockedDeal.CreateNewPool(testToken.address, future, allow, owner, { from: fromAddress });
+      // poolId = tx.logs[1].args.PoolId
+
+      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
+      // let date = new Date()
+      date.setDate(date.getDate() + 1);
+      future = Math.floor(date.getTime() / 1000);
+      const tx = await lockedDeal.CreateNewPool(testToken.address, future, allow, owner, { from: fromAddress });
+      poolId = tx.logs[1].args.PoolId;
     });
 
     it('PoolOwnershipTransfered event emitted', async () => {
+      const newOwner = accounts[8];
+
+      result = await lockedDeal.TransferPoolOwnership(poolId, newOwner, { from: owner });
       // Check event
       truffleAssert.eventEmitted(result, 'PoolOwnershipTransfered');
     });
@@ -68,14 +102,23 @@ contract('Pools - events', (accounts) => {
   });
 
   describe('PoolApproval event emitted', async () => {
-    let result;
+
+    const approvalAmount = 10;
+    const spender = accounts[1];
 
     before(async () => {
-      result = await lockedControl.ApproveAllowance();
-      // result = await truffleAssert.createTransactionResult(lockedControl, lockedControl.transactionHash);
+      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
+
+      let date = new Date();
+      date.setDate(date.getDate() + 1);
+
+      let future = Math.floor(date.getTime() / 1000);
+      const tx = await lockedDeal.CreateNewPool(testToken.address, future, allow, owner, { from: fromAddress });
+      poolId = tx.logs[1].args.PoolId;
     });
 
     it('PoolApproval event emitted', async () => {
+      result = await lockedDeal.ApproveAllowance(poolId, approvalAmount, spender, { from: owner });
       // Check event
       truffleAssert.eventEmitted(result, 'PoolApproval');
     });
@@ -83,14 +126,24 @@ contract('Pools - events', (accounts) => {
   });
 
   describe('PoolSplit event emitted', async () => {
-    let result;
+    const amount = 10;
 
     before(async () => {
-      result = await lockedControl.SplitPoolAmount();
-      // result = await truffleAssert.createTransactionResult(lockedPoolz, lockedPoolz.transactionHash);
+      allow -= amount;
+
+      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
+
+      let date = new Date();
+      date.setDate(date.getDate() + 1);
+
+      let future = Math.floor(date.getTime() / 1000);
+
+      const tx = await lockedDeal.CreateNewPool(testToken.address, future, allow, owner, { from: fromAddress });
+      poolId = tx.logs[1].args.PoolId;
     });
 
     it('PoolSplit event emitted', async () => {
+      result = await lockedDeal.SplitPoolAmount(poolId, amount, owner, { from: owner });
       // Check event
       truffleAssert.eventEmitted(result, 'PoolSplit');
     });
