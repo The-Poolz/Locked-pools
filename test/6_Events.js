@@ -18,7 +18,6 @@ contract('Pools - events', (accounts) => {
   let poolId;
   let allow = 100;
   let result;
-  let date;
 
   before(async () => {
     lockedControl = await LockedControl.new();
@@ -27,7 +26,7 @@ contract('Pools - events', (accounts) => {
     testToken = await TestToken.new("test", 'tst');
   });
 
-  describe('TokenWithdrawn event emitted', async () => {
+  describe('TokenWithdrawn event is emitted', async () => {
 
     before(async () => {
       await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
@@ -40,7 +39,7 @@ contract('Pools - events', (accounts) => {
       poolId = tx.logs[1].args.PoolId;
     });
 
-    it('TokenWithdrawn event emitted', async () => {
+    it('TokenWithdrawn event is emitted', async () => {
       result = await lockedDeal.WithdrawToken(poolId.toNumber());
       // Check event
       truffleAssert.eventEmitted(result, 'TokenWithdrawn');
@@ -71,7 +70,7 @@ contract('Pools - events', (accounts) => {
 
   });
 
-  describe('PoolOwnershipTransfered event emitted', async () => {
+  describe('PoolOwnershipTransfered event is emitted', async () => {
 
     before(async () => {
       await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
@@ -91,7 +90,7 @@ contract('Pools - events', (accounts) => {
       poolId = tx.logs[1].args.PoolId;
     });
 
-    it('PoolOwnershipTransfered event emitted', async () => {
+    it('PoolOwnershipTransfered event is emitted', async () => {
       const newOwner = accounts[8];
 
       result = await lockedDeal.TransferPoolOwnership(poolId, newOwner, { from: owner });
@@ -101,7 +100,7 @@ contract('Pools - events', (accounts) => {
     
   });
 
-  describe('PoolApproval event emitted', async () => {
+  describe('PoolApproval event is emitted', async () => {
 
     const approvalAmount = 10;
     const spender = accounts[1];
@@ -117,7 +116,7 @@ contract('Pools - events', (accounts) => {
       poolId = tx.logs[1].args.PoolId;
     });
 
-    it('PoolApproval event emitted', async () => {
+    it('PoolApproval event is emitted', async () => {
       result = await lockedDeal.ApproveAllowance(poolId, approvalAmount, spender, { from: owner });
       // Check event
       truffleAssert.eventEmitted(result, 'PoolApproval');
@@ -125,7 +124,7 @@ contract('Pools - events', (accounts) => {
     
   });
 
-  describe('PoolSplit event emitted', async () => {
+  describe('PoolSplit event is emitted', async () => {
     const amount = 10;
 
     before(async () => {
@@ -142,7 +141,7 @@ contract('Pools - events', (accounts) => {
       poolId = tx.logs[1].args.PoolId;
     });
 
-    it('PoolSplit event emitted', async () => {
+    it('PoolSplit event is emitted', async () => {
       result = await lockedDeal.SplitPoolAmount(poolId, amount, owner, { from: owner });
       // Check event
       truffleAssert.eventEmitted(result, 'PoolSplit');
