@@ -62,12 +62,14 @@ contract('Managable', accounts => {
     //     assert.equal(newMinPoz, minPoz)
     // })
 
-    it('should withdraw ETH Fee', async () => {        
-        const previousBalance = await web3.eth.getBalance(accounts[0]);
-        await instance.WithdrawETHFee(accounts[0], { from: ownerAddress });
-        const balance = await web3.eth.getBalance(accounts[0],  { from: ownerAddress });
-        assert.notEqual(previousBalance, balance);
-    })
+    // it('should withdraw ETH Fee', async () => {    
+
+
+        // const previousBalance = await web3.eth.getBalance(accounts[0], { from: ownerAddress });
+        // await instance.WithdrawETHFee(accounts[0], { from: ownerAddress });
+        // const balance = await web3.eth.getBalance(accounts[0], { from: ownerAddress });
+        // assert.notEqual(previousBalance, balance);
+    // })
 
     // it('should withdraw ERC20 Fee', async () => {
     //     // ERC20(_Token).transfer(_to, FeeMap[_Token]);
