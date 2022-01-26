@@ -27,7 +27,7 @@ contract('Access to Locked Deal', accounts => {
     })
 
     it('Transfers Ownership', async () => {
-        const newOwner = accounts[8]
+        const newOwner = accounts[8] 
         poolId = 1
         await instance.TransferPoolOwnership(poolId, newOwner, {from: owner})
         const pool = await instance.GetPoolData(poolId, {from: newOwner})

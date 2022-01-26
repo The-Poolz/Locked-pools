@@ -12,9 +12,9 @@ contract LockedDeal is LockedPoolzData {
 
     uint256 internal StartIndex;
 
-    //@dev no use of revert to make sure the loop will work
+    // @dev no use of revert to make sure the loop will work
     function WithdrawToken(uint256 _PoolId) public returns (bool) {
-        //pool is finished + got left overs + did not took them
+        // pool is finished + got left overs + did not took them
         if (
             _PoolId < Index &&
             AllPoolz[_PoolId].UnlockTime <= now &&
