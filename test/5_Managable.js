@@ -61,25 +61,4 @@ contract('Managable', accounts => {
     //     const minPoz = await instance.GetMinPoz()
     //     assert.equal(newMinPoz, minPoz)
     // })
-
-    // it('should withdraw ETH Fee', async () => {    
-
-
-        // const previousBalance = await web3.eth.getBalance(accounts[0], { from: ownerAddress });
-        // await instance.WithdrawETHFee(accounts[0], { from: ownerAddress });
-        // const balance = await web3.eth.getBalance(accounts[0], { from: ownerAddress });
-        // assert.notEqual(previousBalance, balance);
-    // })
-
-    // it('should withdraw ERC20 Fee', async () => {
-    //     // ERC20(_Token).transfer(_to, FeeMap[_Token]);
-    //     // FeeMap[_Token] = 0 ;
-
-    //    // console.log(instance.FeeMap[testToken.address]);
-    //     const previousBalance = await web3.eth.getBalance(accounts[0]);
-    //     instance.FeeMap = 10;
-    //     await instance.WithdrawERC20Fee(testToken.address, accounts[0]);
-    //     console.log(instance.FeeMap[testToken.address]);
-    //     assert(instance.FeeMap[testToken.address], 0);
-    // })
 })
