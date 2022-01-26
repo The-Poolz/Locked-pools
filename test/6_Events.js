@@ -143,7 +143,6 @@ contract('Pools - events', (accounts) => {
 
     it('PoolSplit event is emitted', async () => {
       result = await lockedDeal.SplitPoolAmount(poolId, amount, owner, { from: owner });
-      console.log(result.logs);
       // Check event
       truffleAssert.eventEmitted(result, 'PoolSplit');
     });
