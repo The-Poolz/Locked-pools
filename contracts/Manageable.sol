@@ -9,13 +9,13 @@ import "poolz-helper/contracts/IWhiteList.sol";
 contract Manageable is ETHHelper, ERC20Helper, PozBenefit {
     constructor() public {
         Fee = 20; // *10000
-        MinDuration = 0; // need to set
+        MinDuration = 0; //need to set
         maxTransactionLimit = 400;
     }
     mapping (address => uint256) FeeMap;
     // @dev for percent use uint16
-    uint16 internal Fee; // the fee for the pool
-    uint16 internal MinDuration; // the minimum duration of a pool, in seconds
+    uint16 internal Fee; //the fee for the pool
+    uint16 internal MinDuration; //the minimum duration of a pool, in seconds
 
     address public WhiteList_Address;
     bool public isTokenFilterOn;
@@ -66,11 +66,11 @@ contract Manageable is ETHHelper, ERC20Helper, PozBenefit {
         PercentCheckOk(_fee)
         LeftIsBigger( Fee,_fee)
     {
-        PozFee = _fee; 
+        PozFee = _fee;
     }
 
     function WithdrawETHFee(address payable _to) public onlyOwner {
-        _to.transfer(address(this).balance); // keeps only fee eth on contract // To Do need to take 16% to burn!!!
+        _to.transfer(address(this).balance); // keeps only fee eth on contract //To Do need to take 16% to burn!!!
     }
 
     function WithdrawERC20Fee(address _Token, address _to) public onlyOwner {    

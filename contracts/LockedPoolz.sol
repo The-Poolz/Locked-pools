@@ -82,19 +82,19 @@ contract LockedPoolz is Manageable {
         return poolId;
     }
 
-    // create a new pool 
+    //create a new pool 
     function CreatePool(
-        address _Token, // token to lock address
-        uint64 _FinishTime, // Until what time the pool will work
-        uint256 _StartAmount, // Total amount of the tokens to sell in the pool
+        address _Token, //token to lock address
+        uint64 _FinishTime, //Until what time the pool will work
+        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) internal returns(uint256){
-        // register the pool
+        //register the pool
         AllPoolz[Index] = Pool(_FinishTime, _StartAmount, _Owner, _Token);
         MyPoolz[_Owner].push(Index);
         emit NewPoolCreated(Index, _Token, _FinishTime, _StartAmount, _Owner);
         uint256 poolId = Index;
-        Index = SafeMath.add(Index, 1); // joke - overflowfrom 0 on int256 = 1.16E77
+        Index = SafeMath.add(Index, 1); //joke - overflowfrom 0 on int256 = 1.16E77
         return poolId;
     }
 }

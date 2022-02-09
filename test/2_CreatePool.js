@@ -9,7 +9,7 @@ contract('Create Pool', accounts => {
     before(async () => {
         instance = await LockedDeal.new()
         Token = await TestToken.new('TestToken', 'TEST')
-    }) 
+    })
 
     it('should create a single new pool', async () => {
         const allow = 100
@@ -62,7 +62,7 @@ contract('Create Pool', accounts => {
         date.setDate(date.getDate() + 1)
         const future = Math.floor(date.getTime() / 1000)
         const futureTimeStamps = []
-        for(let i=1 ; i<= numberOfTimestamps ; i++){ //generating array of length 5
+        for(let i=1 ; i<= numberOfTimestamps ; i++){ // generating array of length 5
             futureTimeStamps.push(future + 3600*i)
         }
         const startAmounts = [allow, allow, allow]

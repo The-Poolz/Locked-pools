@@ -3,7 +3,7 @@ pragma solidity ^0.6.0;
 
 import "./LockedPoolz.sol";
 
-contract LockedControl is LockedPoolz {
+contract LockedControl is LockedPoolz{
 
     function TransferPoolOwnership(
         uint256 _PoolId,
@@ -58,16 +58,16 @@ contract LockedControl is LockedPoolz {
     }
 
     function CreateNewPool(
-        address _Token, // token to lock address
-        uint64 _FinishTime, // Until what time the pool will work
-        uint256 _StartAmount, // Total amount of the tokens to sell in the pool
+        address _Token, //token to lock address
+        uint64 _FinishTime, //Until what time the pool will work
+        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) public isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         uint256 poolId = CreatePool(_Token, _FinishTime, _StartAmount, _Owner);
         return poolId;
     }
- 
+
     function CreateMassPools(
         address _Token,
         uint64[] calldata _FinishTime,
