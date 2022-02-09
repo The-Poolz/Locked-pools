@@ -13,7 +13,7 @@ contract Manageable is ETHHelper, ERC20Helper, PozBenefit {
         maxTransactionLimit = 400;
     }
     mapping (address => uint256) FeeMap;
-    // @dev for percent use uint16
+    //@dev for percent use uint16
     uint16 internal Fee; //the fee for the pool
     uint16 internal MinDuration; //the minimum duration of a pool, in seconds
 

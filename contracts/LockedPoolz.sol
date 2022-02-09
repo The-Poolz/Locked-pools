@@ -82,7 +82,7 @@ contract LockedPoolz is Manageable {
         return poolId;
     }
 
-    //create a new pool 
+    //create a new pool
     function CreatePool(
         address _Token, //token to lock address
         uint64 _FinishTime, //Until what time the pool will work
