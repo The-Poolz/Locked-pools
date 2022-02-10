@@ -1,13 +1,16 @@
 const LockedDeal = artifacts.require("LockedDeal");
+const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 
 contract('Managable', accounts => {
-    let instance, ownerAddress
+    let instance, ownerAddress;
+    let testToken;
 
     before(async () => {
         instance = await LockedDeal.new()
         const owner = await instance.owner()
         ownerAddress = owner.toString()
+        testToken = await TestToken.new("test", 'tst');
     })
 
     it('should set whitelist address', async () => {
