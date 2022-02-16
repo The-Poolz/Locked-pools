@@ -14,6 +14,8 @@ contract LockedPoolzData is LockedControl {
         isPoolValid(_id)
         returns (
             uint64,
+            uint64,
+            uint256,
             uint256,
             address,
             address
@@ -22,10 +24,12 @@ contract LockedPoolzData is LockedControl {
         Pool storage pool = AllPoolz[_id];
         require(pool.Owner == msg.sender || pool.Allowance[msg.sender] > 0, "Private Information");
         return (
-            AllPoolz[_id].UnlockTime,
-            AllPoolz[_id].Amount,
-            AllPoolz[_id].Owner,
-            AllPoolz[_id].Token
+            pool.StartTime,
+            pool.FinishTime,
+            pool.StartAmount,
+            pool.DebitedAmount,
+            pool.Owner,
+            pool.Token
         );
     }
 }

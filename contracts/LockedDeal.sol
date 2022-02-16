@@ -12,21 +12,34 @@ contract LockedDeal is LockedPoolzData {
 
     uint256 internal StartIndex;
 
+    function getWithdrawableAmount(uint256 _PoolId) public view isPoolValid(_PoolId) returns(uint256){
+        Pool storage pool = AllPoolz[_PoolId];
+        if(pool.StartAmount > now) return 0;
+        uint64 totalPoolDuration = pool.FinishTime - pool.StartTime;
+        uint256 timePassed = now - pool.StartTime;
+        uint256 timePassedPermille = SafeMath.mul(timePassed, 1000);
+        uint256 ratioPermille = SafeMath.div(timePassedPermille, totalPoolDuration);
+        uint256 debitableAmount = SafeMath.div(SafeMath.mul(pool.StartAmount, ratioPermille), 1000);
+        return SafeMath.sub(debitableAmount, pool.DebitedAmount);
+    }
+
     //@dev no use of revert to make sure the loop will work
-    function WithdrawToken(uint256 _PoolId) public returns (bool) {
+    function WithdrawToken(uint256 _PoolId) external returns (bool) {
         //pool is finished + got left overs + did not took them
+        Pool storage pool = AllPoolz[_PoolId];
         if (
             _PoolId < Index &&
-            AllPoolz[_PoolId].UnlockTime <= now &&
-            AllPoolz[_PoolId].Amount > 0
+            pool.StartTime <= now &&
+            SafeMath.sub(pool.StartTime, pool.DebitedAmount) > 0
         ) {
+            uint256 tokenAmount = getWithdrawableAmount(_PoolId);
+            pool.DebitedAmount = SafeMath.add(tokenAmount, pool.DebitedAmount);
             TransferToken(
-                AllPoolz[_PoolId].Token,
-                AllPoolz[_PoolId].Owner,
-                AllPoolz[_PoolId].Amount
+                pool.Token,
+                pool.Owner,
+                tokenAmount
             );
-            emit TokenWithdrawn(_PoolId, AllPoolz[_PoolId].Owner, AllPoolz[_PoolId].Amount);
-            AllPoolz[_PoolId].Amount = 0;
+            emit TokenWithdrawn(_PoolId, pool.Owner, tokenAmount);
             return true;
         }
         return false;
