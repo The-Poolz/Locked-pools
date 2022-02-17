@@ -66,6 +66,12 @@ contract LockedPoolz is Manageable {
         _;
     }
 
+    // modifier isTimeLengthValid(uint256 _startLength, uint256 _finishLength){
+    //     require(_startLength > 0, "Time Array length should be greater than zero");
+    //     require(_startLength == _finishLength, "Start and Finish Arrays should have same length");
+    //     _;
+    // }
+
     modifier isBelowLimit(uint256 _num){
         require(_num <= maxTransactionLimit, "Max array length limit exceeded");
         _;
@@ -89,6 +95,7 @@ contract LockedPoolz is Manageable {
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) internal returns(uint256){
+        require(_StartTime <= _FinishTime, "StartTime is greater than FinishTime");
         //register the pool
         AllPoolz[Index] = Pool(_StartTime, _FinishTime, _StartAmount, 0, _Owner, _Token);
         MyPoolz[_Owner].push(Index);

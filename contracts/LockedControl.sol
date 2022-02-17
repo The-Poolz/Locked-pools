@@ -79,6 +79,7 @@ contract LockedControl is LockedPoolz{
         address[] calldata _Owner
     ) external isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
+        require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         TransferInToken(_Token, msg.sender, getArraySum(_StartAmount));
         uint256 firstPoolId = Index;
@@ -98,10 +99,11 @@ contract LockedControl is LockedPoolz{
         address[] calldata _Owner
     )   external 
         isGreaterThanZero(_Owner.length)
-        isGreaterThanZero(_FinishTime.length)
+        isGreaterThanZero(_StartTime.length)
         isBelowLimit(_Owner.length * _FinishTime.length)
     {
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        require(_FinishTime.length == _StartTime.length, "Date Array Invalid");
         TransferInToken(_Token, msg.sender, getArraySum(_StartAmount) * _FinishTime.length);
         uint256 firstPoolId = Index;
         for(uint i=0 ; i < _FinishTime.length ; i++){
