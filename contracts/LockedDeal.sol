@@ -14,7 +14,8 @@ contract LockedDeal is LockedPoolzData {
 
     function getWithdrawableAmount(uint256 _PoolId) public view isPoolValid(_PoolId) returns(uint256){
         Pool storage pool = AllPoolz[_PoolId];
-        if(pool.StartAmount > now) return 0;
+        if(now < pool.StartTime) return 0;
+        if(pool.FinishTime < now) return SafeMath.sub(pool.StartAmount, pool.DebitedAmount);
         uint64 totalPoolDuration = pool.FinishTime - pool.StartTime;
         uint256 timePassed = now - pool.StartTime;
         uint256 timePassedPermille = SafeMath.mul(timePassed, 1000);
