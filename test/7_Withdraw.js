@@ -3,24 +3,29 @@ const TestToken = artifacts.require("Token")
 const { assert } = require('chai')
 const timeMachine = require('ganache-time-traveler')
 
-contract('LockedDeal', (accounts) => {
+contract('Withdraw', (accounts) => {
     let instance, Token, fromAddress, poolId
     const investor = accounts[1], allow = 10000
 
     before(async () => {
         instance = await LockedDeal.new()
         Token = await TestToken.new('TestToken', 'TEST')
+        FeeToken = await TestToken.new('FeeToken', 'FEE')
         fromAddress = await instance.owner()
+        await instance.swapTokenFilter()
+        await instance.swapUserFilter()
+        await instance.SetTokenFee(FeeToken.address, '1')
     })
 
     it('should create a single new pool', async () => {
         await Token.approve(instance.address, allow, { from: fromAddress })
+        await FeeToken.approve(instance.address, allow, { from: fromAddress })
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, investor, { from: fromAddress })
-        poolId = tx.logs[1].args.PoolId.toString()
+        const tx = await instance.CreateNewPoolERC20(Token.address, startTime, finishTime, allow, investor, FeeToken.address, { from: fromAddress })
+        poolId = tx.logs[tx.logs.length - 1].args.PoolId.toString()
     })
 
     it('get withdrawable amount', async () => {
@@ -45,12 +50,13 @@ contract('LockedDeal', (accounts) => {
 
     it('finish time < now', async () => {
         await Token.approve(instance.address, allow, { from: fromAddress })
+        await FeeToken.approve(instance.address, allow, { from: fromAddress })
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 1)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, investor, { from: fromAddress })
-        poolId = tx.logs[1].args.PoolId.toString()
+        const tx = await instance.CreateNewPoolERC20(Token.address, startTime, finishTime, allow, investor, FeeToken.address, { from: fromAddress })
+        poolId = tx.logs[tx.logs.length - 1].args.PoolId.toString()
         const data = await instance.GetPoolData(poolId, { from: investor })
         const startAmount = data[2].toString()
         const debitedAmount = data[3].toString()
@@ -72,13 +78,14 @@ contract('LockedDeal', (accounts) => {
 
     it('Withdraw tokens', async () => {
         await Token.approve(instance.address, allow, { from: fromAddress })
+        await FeeToken.approve(instance.address, allow, { from: fromAddress })
         const date = new Date()
         date.setDate(date.getDate() - 1)
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, investor, { from: fromAddress })
-        poolId = tx.logs[1].args.PoolId.toString()
+        const tx = await instance.CreateNewPoolERC20(Token.address, startTime, finishTime, allow, investor, FeeToken.address, { from: fromAddress })
+        poolId = tx.logs[tx.logs.length - 1].args.PoolId.toString()
         date.setDate(date.getDate() - 1)
         await timeMachine.advanceBlockAndSetTime(Math.floor(date.getTime() / 1000))
         const data = await instance.WithdrawToken(poolId)

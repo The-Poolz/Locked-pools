@@ -10,7 +10,7 @@ contract('Pools - events', (accounts) => {
   let lockedControl;
   let lockedDeal;
   let lockedPoolz;
-  let testToken;
+  let testToken, FeeToken;
 
   let fromAddress = accounts[0];
   let owner = accounts[9];
@@ -24,6 +24,10 @@ contract('Pools - events', (accounts) => {
     lockedDeal = await LockedDeal.new();
     lockedPoolz = await LockedPoolz.new();
     testToken = await TestToken.new("test", 'tst');
+    FeeToken = await TestToken.new("FeeTest", "FEE")
+    await lockedDeal.swapTokenFilter();
+    await lockedDeal.swapUserFilter();
+    await lockedDeal.SetTokenFee(FeeToken.address, '1');
   });
 
   describe('TokenWithdrawn event is emitted', async () => {
@@ -36,7 +40,7 @@ contract('Pools - events', (accounts) => {
       const startTime = Math.floor(date.getTime() / 1000);
       const finishTime = startTime + 60*60*24
 
-      const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
+      const tx = await lockedDeal.CreateNewPoolMain(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
     });
 
@@ -59,7 +63,7 @@ contract('Pools - events', (accounts) => {
       const startTime = Math.floor(date.getTime() / 1000);
       const finishTime = startTime + 60*60*24
       const owner = accounts[1];
-      const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
+      const tx = await lockedDeal.CreateNewPoolMain(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       const poolId = tx.logs[1].args.PoolId;
 
       result = tx;
@@ -70,7 +74,7 @@ contract('Pools - events', (accounts) => {
       truffleAssert.eventEmitted(result, 'NewPoolCreated');
     });
 
-  });
+   });
 
   describe('PoolOwnershipTransfered event is emitted', async () => {
 
@@ -82,7 +86,7 @@ contract('Pools - events', (accounts) => {
 
       let startTime = Math.floor(date.getTime() / 1000);
       let finishTime = startTime + 60*60*24
-      await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
+      await lockedDeal.CreateNewPoolMain(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       // poolId = tx.logs[1].args.PoolId
 
       await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
@@ -90,7 +94,7 @@ contract('Pools - events', (accounts) => {
       date.setDate(date.getDate() + 1);
       startTime = Math.floor(date.getTime() / 1000);
       finishTime = startTime + 60*60*24
-      const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
+      const tx = await lockedDeal.CreateNewPoolMain(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
     });
 
@@ -117,7 +121,7 @@ contract('Pools - events', (accounts) => {
 
       const startTime = Math.floor(date.getTime() / 1000);
       const finishTime = startTime + 60*60*24
-      const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
+      const tx = await lockedDeal.CreateNewPoolMain(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
     });
 
@@ -143,7 +147,7 @@ contract('Pools - events', (accounts) => {
       const startTime = Math.floor(date.getTime() / 1000);
       const finishTime = startTime + 60*60*24
 
-      const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
+      const tx = await lockedDeal.CreateNewPoolMain(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
     });
 
