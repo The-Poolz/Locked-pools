@@ -27,7 +27,7 @@ contract('Pools - events', (accounts) => {
     FeeToken = await TestToken.new("FeeTest", "FEE")
     await lockedDeal.swapTokenFilter();
     await lockedDeal.swapUserFilter();
-    await lockedDeal.SetTokenFee(FeeToken.address, '1');
+    await lockedDeal.SetTokenFee(FeeToken.address, '20');
   });
 
   describe('TokenWithdrawn event is emitted', async () => {

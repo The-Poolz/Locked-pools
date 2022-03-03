@@ -15,7 +15,7 @@ contract('Access to Locked Deal', accounts => {
         FeeToken = await TestToken.new('FeeToken', 'FEE')
         await instance.swapTokenFilter()
         await instance.swapUserFilter()
-        await instance.SetTokenFee(FeeToken.address, '1')
+        await instance.SetTokenFee(FeeToken.address, '20')
         await Token.approve(instance.address, allow, { from: fromAddress })
         await FeeToken.approve(instance.address, allow, { from: fromAddress })
         let date = new Date()

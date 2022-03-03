@@ -12,7 +12,7 @@ contract('Fail Create Pool', accounts => {
         FeeToken = await TestToken.new('FeeToken', 'FEE')
         await instance.swapTokenFilter()
         await instance.swapUserFilter()
-        await instance.SetTokenFee(FeeToken.address, '1')
+        await instance.SetTokenFee(FeeToken.address, '20')
     })
 
     it('Fail to Create Pool when approval is not given', async () => {

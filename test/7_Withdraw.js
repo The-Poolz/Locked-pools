@@ -14,7 +14,7 @@ contract('Withdraw', (accounts) => {
         fromAddress = await instance.owner()
         await instance.swapTokenFilter()
         await instance.swapUserFilter()
-        await instance.SetTokenFee(FeeToken.address, '1')
+        await instance.SetTokenFee(FeeToken.address, '20')
     })
 
     it('should create a single new pool', async () => {
