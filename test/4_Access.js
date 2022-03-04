@@ -136,5 +136,10 @@ contract('Access to Locked Deal', accounts => {
         it('Fail to execute when Pool ID is invalid', async () => {
             await truffleAssert.reverts(instance.TransferPoolOwnership(99, accounts[5], { from: owner }), "Pool does not exist")
         })
+
+        it('Fail to access to private information', async () => {
+            const notOwner = accounts[5]
+            await truffleAssert.reverts(instance.GetPoolData(poolId, { from: notOwner }), "Private Information")
+        })
     })
 })
