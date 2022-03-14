@@ -65,55 +65,15 @@ contract LockedControl is LockedPoolz{
         uint64 _FinishTime, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) private isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
+    ) external isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
         TransferInToken(_Token, msg.sender, _StartAmount);
+        if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
+            AcceptFee(1);
+        }
         CreatePool(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
     }
 
-    function CreateNewPoolMain(
-        address _Token, //token to lock address
-        uint64 _StartTime, //Until what time the pool will start
-        uint64 _FinishTime, //Until what time the pool will end
-        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
-        address _Owner // Who the tokens belong to
-    ) external payable isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
-        if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
-            require(msg.value >= Fee, "Not Enough Fee Provided");
-        }
-        CreateNewPool(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
-    }
-
-    function CreateNewPoolERC20(
-        address _Token, //token to lock address
-        uint64 _StartTime, //Until what time the pool will start
-        uint64 _FinishTime, //Until what time the pool will end
-        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
-        address _Owner, // Who the tokens belong to
-        address _FeeToken
-    ) external payable isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
-        require(FeeMap[_FeeToken] > 0, "Invalid Fee Token");
-        TransferInToken(_FeeToken, msg.sender, FeeMap[_FeeToken]);
-        CreateNewPool(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
-    }
-
     function CreateMassPools(
-        address _Token,
-        uint64[] calldata _StartTime,
-        uint64[] calldata _FinishTime,
-        uint256[] calldata _StartAmount,
-        address[] calldata _Owner
-    ) private {
-        TransferInToken(_Token, msg.sender, getArraySum(_StartAmount));
-        uint256 firstPoolId = Index;
-        for(uint i=0 ; i < _Owner.length; i++){
-            CreatePool(_Token, _StartTime[i], _FinishTime[i], _StartAmount[i], _Owner[i]);
-        }
-        uint256 lastPoolId = SafeMath.sub(Index, 1);
-        emit MassPoolsCreated(firstPoolId, lastPoolId);
-    }
-
-
-    function CreateMassPoolsMain(
         address _Token,
         uint64[] calldata _StartTime,
         uint64[] calldata _FinishTime,
@@ -123,49 +83,21 @@ contract LockedControl is LockedPoolz{
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        TransferInToken(_Token, msg.sender, getArraySum(_StartAmount));
         if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
-            require(_Owner.length * Fee <= msg.value, "Not Enough Fee Provided");
+            AcceptFee(_Owner.length);
         }
-        CreateMassPools(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
-    }
-
-    function CreateMassPoolsERC20(
-        address _Token,
-        uint64[] calldata _StartTime,
-        uint64[] calldata _FinishTime,
-        uint256[] calldata _StartAmount,
-        address[] calldata _Owner,
-        address _FeeToken
-    ) external isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
-        require(_Owner.length == _FinishTime.length, "Date Array Invalid");
-        require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
-        require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
-        require(FeeMap[_FeeToken] > 0, "Invalid Fee Token");
-        TransferInToken(_FeeToken, msg.sender, _Owner.length * _FinishTime.length * FeeMap[_FeeToken]);
-        CreateMassPools(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
-    }
-
-    // create pools with respect to finish time
-    function CreatePoolsWrtTime(
-        address _Token,
-        uint64[] calldata _StartTime,
-        uint64[] calldata _FinishTime,
-        uint256[] calldata _StartAmount,
-        address[] calldata _Owner
-    )   private {
-        TransferInToken(_Token, msg.sender, getArraySum(_StartAmount) * _FinishTime.length);
         uint256 firstPoolId = Index;
-        for(uint i=0 ; i < _FinishTime.length ; i++){
-            for(uint j=0 ; j < _Owner.length ; j++){
-                CreatePool(_Token, _StartTime[i], _FinishTime[i], _StartAmount[j], _Owner[j]);
-            }
+        for(uint i=0 ; i < _Owner.length; i++){
+            CreatePool(_Token, _StartTime[i], _FinishTime[i], _StartAmount[i], _Owner[i]);
         }
         uint256 lastPoolId = SafeMath.sub(Index, 1);
         emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
 
 
-    function CreatePoolsWrtTimeMain(
+    // create pools with respect to finish time
+    function CreatePoolsWrtTime(
         address _Token,
         uint64[] calldata _StartTime,
         uint64[] calldata _FinishTime,
@@ -178,30 +110,29 @@ contract LockedControl is LockedPoolz{
     {
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         require(_FinishTime.length == _StartTime.length, "Date Array Invalid");
+        TransferInToken(_Token, msg.sender, getArraySum(_StartAmount) * _FinishTime.length);
+        uint256 firstPoolId = Index;
         if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
-            require(_Owner.length * _FinishTime.length * Fee <= msg.value, "Not Enough Fee Provided");
+            AcceptFee(_Owner.length * _FinishTime.length);
         }
-        CreatePoolsWrtTime(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
+        for(uint i=0 ; i < _FinishTime.length ; i++){
+            for(uint j=0 ; j < _Owner.length ; j++){
+                CreatePool(_Token, _StartTime[i], _FinishTime[i], _StartAmount[j], _Owner[j]);
+            }
+        }
+        uint256 lastPoolId = SafeMath.sub(Index, 1);
+        emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
-    
-    function CreatePoolsWrtTimeERC20(
-        address _Token,
-        uint64[] calldata _StartTime,
-        uint64[] calldata _FinishTime,
-        uint256[] calldata _StartAmount,
-        address[] calldata _Owner,
-        address _FeeToken
-    )   external
-        isGreaterThanZero(_Owner.length)
-        isGreaterThanZero(_StartTime.length)
-        isBelowLimit(_Owner.length * _FinishTime.length)
-    {
-        require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
-        require(_FinishTime.length == _StartTime.length, "Date Array Invalid");
-        require(FeeMap[_FeeToken] > 0, "Invalid Fee Token");
-        TransferInToken(_FeeToken, msg.sender, _Owner.length * _FinishTime.length * FeeMap[_FeeToken]);
-        CreatePoolsWrtTime(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
+
+    function AcceptFee(uint256 totalNumberOfPools) private {
+        if(FeeTokenAddress == address(0)){
+            require(totalNumberOfPools * Fee <= msg.value, "Not Enough Fee Provided");
+        } else {
+            FeeMap[FeeTokenAddress] = FeeMap[FeeTokenAddress] + (totalNumberOfPools * Fee);
+            TransferInToken(FeeTokenAddress, msg.sender, totalNumberOfPools * Fee);
+        }
     }
+
 
     function getArraySum(uint256[] calldata _array) internal pure returns(uint256) {
         uint256 sum = 0;

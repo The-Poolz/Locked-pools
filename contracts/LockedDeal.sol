@@ -4,13 +4,7 @@ pragma solidity ^0.6.0;
 import "./LockedPoolzData.sol";
 
 contract LockedDeal is LockedPoolzData {
-    constructor() public {
-        StartIndex = 0;
-    }
-
     event TokenWithdrawn(uint256 PoolId, address Recipient, uint256 Amount);
-
-    uint256 internal StartIndex;
 
     function getWithdrawableAmount(uint256 _PoolId) public view isPoolValid(_PoolId) returns(uint256){
         Pool storage pool = AllPoolz[_PoolId];
@@ -34,7 +28,8 @@ contract LockedDeal is LockedPoolzData {
             SafeMath.sub(pool.StartTime, pool.DebitedAmount) > 0
         ) {
             uint256 tokenAmount = getWithdrawableAmount(_PoolId);
-            pool.DebitedAmount = SafeMath.add(tokenAmount, pool.DebitedAmount);
+            uint256 tempDebitAmount = SafeMath.add(tokenAmount, pool.DebitedAmount);
+            pool.DebitedAmount = tempDebitAmount;
             TransferToken(
                 pool.Token,
                 pool.Owner,

@@ -12,9 +12,11 @@ contract Manageable is ETHHelper, ERC20Helper {
         isUserFilterOn = true;
     }
 
-    mapping (address => uint256) FeeMap;
-    uint256 internal Fee; //the fee for the pool
-    uint256 internal MinDuration; //the minimum duration of a pool, in seconds
+    mapping (address => uint256) public FeeMap; // to make sure admin takes only fee tokens
+    address public FeeTokenAddress;
+    uint256 public FeeERC20;
+    uint256 public Fee; //the fee for the pool
+    uint256 public MinDuration; //the minimum duration of a pool, in seconds
 
     address public WhiteList_Address;
     bool public isTokenFilterOn;
@@ -55,16 +57,8 @@ contract Manageable is ETHHelper, ERC20Helper {
         maxTransactionLimit = _newLimit;
     }
 
-    function GetMinDuration() public view returns (uint256) {
-        return MinDuration;
-    }
-
     function SetMinDuration(uint16 _minDuration) public onlyOwner {
         MinDuration = _minDuration;
-    }
-
-    function GetFee() public view returns (uint256) {
-        return Fee;
     }
 
     function SetFee(uint16 _fee) public onlyOwner{
