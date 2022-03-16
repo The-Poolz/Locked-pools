@@ -50,8 +50,8 @@ contract('Create Pool', accounts => {
         const startAmounts = [allow, allow, allow, allow, allow]
         const owners = [accounts[9], accounts [8], accounts[7], accounts[6], accounts[5]]
         const tx = await instance.CreateMassPools(Token.address, startTimeStamps, finishTimeStamps, startAmounts, owners, {from: fromAddress})
-        const firstPoolId = tx.logs.at[tx.logs.length - 1].args.FirstPoolId.toString()
-        const lastPoolId = tx.logs.at[tx.logs.length - 1].args.LastPoolId.toString()
+        const firstPoolId = tx.logs[tx.logs.length - 1].args.FirstPoolId.toString()
+        const lastPoolId = tx.logs[tx.logs.length - 1].args.LastPoolId.toString()
         const pids = []
         tx.logs.forEach(element => {
             if(element.event === 'NewPoolCreated'){
@@ -85,8 +85,8 @@ contract('Create Pool', accounts => {
         const owners = [accounts[9], accounts [8], accounts[7]]
         // const result = await instance.CreatePoolsWrtTime.call(Token.address, startTimeStamps, startAmounts, owners, {from: fromAddress})
         const tx = await instance.CreatePoolsWrtTime(Token.address, startTimeStamps, finishTimeStamps, startAmounts, owners, {from: fromAddress})
-        const firstPoolId = tx.logs.at(-1).args.FirstPoolId.toString()
-        const lastPoolId = tx.logs.at(-1).args.LastPoolId.toString()
+        const firstPoolId = tx.logs[tx.logs.length - 1].args.FirstPoolId.toString()
+        const lastPoolId = tx.logs[tx.logs.length - 1].args.LastPoolId.toString()
         const pids = []
         tx.logs.forEach(element => {
             if(element.event === 'NewPoolCreated'){
