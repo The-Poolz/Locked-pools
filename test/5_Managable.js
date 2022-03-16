@@ -3,8 +3,8 @@ const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 
 contract('Managable', accounts => {
-    let instance, ownerAddress;
-    let testToken;
+    let instance, ownerAddress
+    let testToken
 
     before(async () => {
         instance = await LockedDeal.new()
@@ -17,34 +17,40 @@ contract('Managable', accounts => {
 
     it('should set whitelist address', async () => {
         const whiteListAddress = accounts[9]
-        await instance.setWhiteListAddress(whiteListAddress, {from: ownerAddress})
+        await instance.setWhiteListAddress(whiteListAddress, { from: ownerAddress })
         const address = await instance.WhiteList_Address()
         assert.equal(whiteListAddress, address)
     })
+
     it('should set WhiteListId', async () => {
         const whiteListId = 1
         await instance.setTokenWhiteListId(whiteListId, {from: ownerAddress})
         const id = await instance.TokenWhiteListId()
         assert.equal(whiteListId, id)
+        assert.equal(whiteListId, userId)
     })
+
     it('should swap token filter', async () => {
         const currentFilter = await instance.isTokenFilterOn()
-        await instance.swapTokenFilter({from: ownerAddress})
+        await instance.swapTokenFilter({ from: ownerAddress })
         const newFilter = await instance.isTokenFilterOn()
         assert.equal(currentFilter, !newFilter)
     })
+
     it('should set max transaction limit', async () => {
         const newLimit = 300
-        await instance.setMaxTransactionLimit(newLimit, {from: ownerAddress})
+        await instance.setMaxTransactionLimit(newLimit, { from: ownerAddress })
         const limit = await instance.maxTransactionLimit()
         assert.equal(newLimit, limit)
     })
+
     it('shoule set min duration', async () => {
         const newMinDuration = 100
         await instance.SetMinDuration(newMinDuration, {from: ownerAddress})
         const minDuration = await instance.MinDuration()
         assert.equal(newMinDuration, minDuration)
     })
+
     it('should set fee', async () => {
         const newFee = 30
         await instance.SetFee(newFee, {from: ownerAddress})
