@@ -24,6 +24,8 @@ contract('Pools - events', (accounts) => {
     lockedDeal = await LockedDeal.new();
     lockedPoolz = await LockedPoolz.new();
     testToken = await TestToken.new("test", 'tst');
+    await lockedDeal.swapTokenFilter()
+    await lockedDeal.swapUserFilter()
   });
 
   describe('TokenWithdrawn event is emitted', async () => {

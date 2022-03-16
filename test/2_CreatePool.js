@@ -9,19 +9,21 @@ contract('Create Pool', accounts => {
     before(async () => {
         instance = await LockedDeal.new()
         Token = await TestToken.new('TestToken', 'TEST')
+        await instance.swapTokenFilter()
+        await instance.swapUserFilter()
     })
 
     it('should create a single new pool', async () => {
         const allow = 100
-        await Token.approve(instance.address , allow, { from: fromAddress })
+        await Token.approve(instance.address, allow, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
         const startTime = Math.floor(date.getTime() / 1000)
-        const finishTime = startTime + 60*60*24*30
+        const finishTime = startTime + 60 * 60 * 24 * 30
         const owner = accounts[1]
-        const tx = await instance.CreateNewPool(Token.address,  startTime, finishTime, allow, owner, {from: fromAddress})
+        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
         const poolId = tx.logs[1].args.PoolId
-        const result = await instance.GetPoolData(poolId, {from: owner})
+        const result = await instance.GetPoolData(poolId, { from: owner })
         assert.equal(result[4], owner)
     })
 

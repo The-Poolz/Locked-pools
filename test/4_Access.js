@@ -11,6 +11,8 @@ contract('Access to Locked Deal', accounts => {
     before(async () => {
         instance = await LockedDeal.new()
         Token = await TestToken.new('TestToken', 'TEST')
+        await instance.swapTokenFilter()
+        await instance.swapUserFilter()
         await Token.approve(instance.address, allow, {from: fromAddress})
         let date = new Date()
         date.setDate(date.getDate() + 1)
@@ -33,7 +35,7 @@ contract('Access to Locked Deal', accounts => {
         poolId = 1
         await instance.TransferPoolOwnership(poolId, newOwner, {from: owner})
         const pool = await instance.GetPoolData(poolId, {from: newOwner})
-        const newPools = await instance.GetMyPoolsId({from: newOwner})
+        const newPools = await instance.GetAllMyPoolsId({from: newOwner})
         assert.equal(newPools[0].toString(), poolId)
         assert.equal(pool[4], newOwner)
         owner = newOwner
