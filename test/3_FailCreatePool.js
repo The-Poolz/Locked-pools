@@ -1,4 +1,4 @@
-const LockedDeal = artifacts.require("LockedDeal");
+const LockedDealV2 = artifacts.require("LockedDealV2");
 const TestToken = artifacts.require("Token");
 const truffleAssert = require('truffle-assertions');
 
@@ -6,7 +6,7 @@ contract('Fail Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
 
     before(async () => {
-        instance = await LockedDeal.new()
+        instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
         await instance.swapTokenFilter()
         await instance.swapUserFilter()

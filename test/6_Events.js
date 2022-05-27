@@ -1,5 +1,5 @@
 const LockedControl = artifacts.require("LockedControl");
-const LockedDeal = artifacts.require("LockedDeal");
+const LockedDealV2 = artifacts.require("LockedDealV2");
 const LockedPoolz = artifacts.require("LockedPoolz");
 const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
@@ -21,7 +21,7 @@ contract('Pools - events', (accounts) => {
 
   before(async () => {
     lockedControl = await LockedControl.new();
-    lockedDeal = await LockedDeal.new();
+    lockedDeal = await LockedDealV2.new();
     lockedPoolz = await LockedPoolz.new();
     testToken = await TestToken.new("test", 'tst');
     await lockedDeal.swapTokenFilter()

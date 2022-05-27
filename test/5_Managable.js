@@ -1,4 +1,4 @@
-const LockedDeal = artifacts.require("LockedDeal");
+const LockedDealV2 = artifacts.require("LockedDealV2");
 const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 
@@ -7,7 +7,7 @@ contract('Managable', accounts => {
     let testToken;
 
     before(async () => {
-        instance = await LockedDeal.new()
+        instance = await LockedDealV2.new()
         const owner = await instance.owner()
         ownerAddress = owner.toString()
         testToken = await TestToken.new("test", 'tst')

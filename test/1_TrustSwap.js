@@ -1,14 +1,14 @@
-const LockedDeal = artifacts.require("LockedDeal");
+const LockedDealV2 = artifacts.require("LockedDealV2");
 const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 
-contract('LockedDeal', (accounts) => {
+contract('LockedDealV2', (accounts) => {
     let instance, Token
     const allow = 1, owner = accounts[2]
     const date = new Date()
 
     before(async () => {
-        instance = await LockedDeal.deployed()
+        instance = await LockedDealV2.deployed()
         Token = await TestToken.new('TestToken', 'TEST')
         await instance.swapTokenFilter()
         await instance.swapUserFilter()

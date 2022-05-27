@@ -1,14 +1,14 @@
-const LockedDeal = artifacts.require("LockedDeal")
+const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("Token")
 const { assert } = require('chai')
 const timeMachine = require('ganache-time-traveler')
 
-contract('LockedDeal', (accounts) => {
+contract('LockedDealV2', (accounts) => {
     let instance, Token, fromAddress, poolId
     const investor = accounts[1], allow = 10000
 
     before(async () => {
-        instance = await LockedDeal.new()
+        instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
         fromAddress = await instance.owner()
         await instance.swapTokenFilter()
