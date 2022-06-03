@@ -3,14 +3,14 @@ pragma solidity ^0.6.0;
 
 import "./LockedPoolzData.sol";
 
-contract LockedDeal is LockedPoolzData {
+contract LockedDealV2 is LockedPoolzData {
     event TokenWithdrawn(uint256 PoolId, address Recipient, uint256 Amount);
 
     function getWithdrawableAmount(uint256 _PoolId) public view isPoolValid(_PoolId) returns(uint256){
         Pool storage pool = AllPoolz[_PoolId];
         if(now < pool.StartTime) return 0;
         if(pool.FinishTime < now) return SafeMath.sub(pool.StartAmount, pool.DebitedAmount);
-        uint64 totalPoolDuration = pool.FinishTime - pool.StartTime;
+        uint256 totalPoolDuration = pool.FinishTime - pool.StartTime;
         uint256 timePassed = now - pool.StartTime;
         uint256 timePassedPermille = SafeMath.mul(timePassed, 1000);
         uint256 ratioPermille = SafeMath.div(timePassedPermille, totalPoolDuration);

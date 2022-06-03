@@ -1,4 +1,4 @@
-const LockedDeal = artifacts.require("LockedDeal");
+const LockedDealV2 = artifacts.require("LockedDealV2");
 const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 
@@ -7,10 +7,12 @@ contract('Managable', accounts => {
     let testToken;
 
     before(async () => {
-        instance = await LockedDeal.new()
+        instance = await LockedDealV2.new()
         const owner = await instance.owner()
         ownerAddress = owner.toString()
-        testToken = await TestToken.new("test", 'tst');
+        testToken = await TestToken.new("test", 'tst')
+        await instance.swapTokenFilter()
+        await instance.swapUserFilter()
     })
 
     it('should set whitelist address', async () => {
@@ -21,8 +23,8 @@ contract('Managable', accounts => {
     })
     it('should set WhiteListId', async () => {
         const whiteListId = 1
-        await instance.setWhiteListId(whiteListId, {from: ownerAddress})
-        const id = await instance.WhiteListId()
+        await instance.setTokenWhiteListId(whiteListId, {from: ownerAddress})
+        const id = await instance.TokenWhiteListId()
         assert.equal(whiteListId, id)
     })
     it('should swap token filter', async () => {
@@ -40,19 +42,19 @@ contract('Managable', accounts => {
     it('shoule set min duration', async () => {
         const newMinDuration = 100
         await instance.SetMinDuration(newMinDuration, {from: ownerAddress})
-        const minDuration = await instance.GetMinDuration()
+        const minDuration = await instance.MinDuration()
         assert.equal(newMinDuration, minDuration)
     })
     it('should set fee', async () => {
         const newFee = 30
         await instance.SetFee(newFee, {from: ownerAddress})
-        const fee = await instance.GetFee()
+        const fee = await instance.Fee()
         assert.equal(newFee, fee)
     })
     it('should set POZ fee', async () => {
         const newPozFee = 20
-        await instance.SetPOZFee(newPozFee, {from: ownerAddress})
-        const PozFee = await instance.PozFee()
+        await instance.SetTokenFee(testToken.address, newPozFee, {from: ownerAddress})
+        const PozFee = await instance.FeeMap(testToken.address)
         assert.equal(newPozFee, PozFee)
     })
     // it('should set Min POZ', async () => {

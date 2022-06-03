@@ -1,4 +1,4 @@
-const LockedDeal = artifacts.require("LockedDeal");
+const LockedDealV2 = artifacts.require("LockedDealV2");
 const TestToken = artifacts.require("Token");
 const { assert } = require('chai');
 const truffleAssert = require('truffle-assertions');
@@ -9,8 +9,10 @@ contract('Access to Locked Deal', accounts => {
     let instance, Token, fromAddress = accounts[0], owner = accounts[9], poolId, allow = 100
 
     before(async () => {
-        instance = await LockedDeal.new()
+        instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
+        await instance.swapTokenFilter()
+        await instance.swapUserFilter()
         await Token.approve(instance.address, allow, {from: fromAddress})
         let date = new Date()
         date.setDate(date.getDate() + 1)
@@ -33,7 +35,7 @@ contract('Access to Locked Deal', accounts => {
         poolId = 1
         await instance.TransferPoolOwnership(poolId, newOwner, {from: owner})
         const pool = await instance.GetPoolData(poolId, {from: newOwner})
-        const newPools = await instance.GetMyPoolsId({from: newOwner})
+        const newPools = await instance.GetAllMyPoolsId({from: newOwner})
         assert.equal(newPools[0].toString(), poolId)
         assert.equal(pool[4], newOwner)
         owner = newOwner

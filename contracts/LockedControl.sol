@@ -61,8 +61,8 @@ contract LockedControl is LockedPoolz{
 
     function CreateNewPool(
         address _Token, //token to lock address
-        uint64 _StartTime, //Until what time the pool will start
-        uint64 _FinishTime, //Until what time the pool will end
+        uint256 _StartTime, //Until what time the pool will start
+        uint256 _FinishTime, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) external isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
@@ -75,8 +75,8 @@ contract LockedControl is LockedPoolz{
 
     function CreateMassPools(
         address _Token,
-        uint64[] calldata _StartTime,
-        uint64[] calldata _FinishTime,
+        uint256[] calldata _StartTime,
+        uint256[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
     ) external payable isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
@@ -99,8 +99,8 @@ contract LockedControl is LockedPoolz{
     // create pools with respect to finish time
     function CreatePoolsWrtTime(
         address _Token,
-        uint64[] calldata _StartTime,
-        uint64[] calldata _FinishTime,
+        uint256[] calldata _StartTime,
+        uint256[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
     )   external payable

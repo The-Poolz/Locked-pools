@@ -28,8 +28,8 @@ contract LockedPoolzData is LockedControl {
         view
         isPoolValid(_id)
         returns (
-            uint64,
-            uint64,
+            uint256,
+            uint256,
             uint256,
             uint256,
             address,

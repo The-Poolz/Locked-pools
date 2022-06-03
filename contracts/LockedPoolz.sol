@@ -12,14 +12,14 @@ contract LockedPoolz is Manageable {
     // add contract name
     string public name;
 
-    event NewPoolCreated(uint256 PoolId, address Token, uint64 StartTime, uint64 FinishTime, uint256 StartAmount, address Owner);
+    event NewPoolCreated(uint256 PoolId, address Token, uint256 StartTime, uint256 FinishTime, uint256 StartAmount, address Owner);
     event PoolOwnershipTransfered(uint256 PoolId, address NewOwner, address OldOwner);
     event PoolApproval(uint256 PoolId, address Spender, uint256 Amount);
     event PoolSplit(uint256 OldPoolId, uint256 NewPoolId, uint256 NewAmount, address NewOwner);
 
     struct Pool {
-        uint64 StartTime;
-        uint64 FinishTime;
+        uint256 StartTime;
+        uint256 FinishTime;
         uint256 StartAmount;
         uint256 DebitedAmount;
         address Owner;
@@ -90,8 +90,8 @@ contract LockedPoolz is Manageable {
     //create a new pool
     function CreatePool(
         address _Token, // token to lock address
-        uint64 _StartTime, // Until what time the pool will Start
-        uint64 _FinishTime, // Until what time the pool will end
+        uint256 _StartTime, // Until what time the pool will Start
+        uint256 _FinishTime, // Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) internal returns(uint256){
