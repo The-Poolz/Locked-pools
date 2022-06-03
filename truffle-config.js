@@ -6,12 +6,17 @@ module.exports = {
     development: {
       host: "127.0.0.1",
       port: 8545,
-      network_id: "*" // Match any network id
+      network_id: "*", // Match any network id
+      gas: 6721975,
     }
   },
   plugins: ["solidity-coverage"],
   compilers: {
     solc: {
+      settings: {
+        evmVersion: "istanbul",
+        optimizer: { enabled: true, runs: 9999999 },
+      },
       version: "^0.6.0",
       docker: false,
       parser: "solcjs",

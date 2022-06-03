@@ -12,21 +12,20 @@ contract LockedPoolz is Manageable {
     // add contract name
     string public name;
 
-    event NewPoolCreated(uint256 PoolId, address Token, uint64 FinishTime, uint256 StartAmount, address Owner);
+    event NewPoolCreated(uint256 PoolId, address Token, uint256 StartTime, uint256 FinishTime, uint256 StartAmount, address Owner);
     event PoolOwnershipTransfered(uint256 PoolId, address NewOwner, address OldOwner);
     event PoolApproval(uint256 PoolId, address Spender, uint256 Amount);
     event PoolSplit(uint256 OldPoolId, uint256 NewPoolId, uint256 NewAmount, address NewOwner);
 
     struct Pool {
-        uint64 UnlockTime;
-        uint256 Amount;
+        uint256 StartTime;
+        uint256 FinishTime;
+        uint256 StartAmount;
+        uint256 DebitedAmount;
         address Owner;
         address Token;
         mapping(address => uint) Allowance;
     }
-    // transfer ownership
-    // allowance
-    // split amount
 
     mapping(uint256 => Pool) AllPoolz;
     mapping(address => uint256[]) MyPoolz;
@@ -53,7 +52,7 @@ contract LockedPoolz is Manageable {
     }
 
     modifier isLocked(uint256 _PoolId){
-        require(AllPoolz[_PoolId].UnlockTime > now, "Pool is Unlocked");
+        require(AllPoolz[_PoolId].StartTime > now, "Pool is Unlocked");
         _;
     }
 
@@ -67,6 +66,12 @@ contract LockedPoolz is Manageable {
         _;
     }
 
+    // modifier isTimeLengthValid(uint256 _startLength, uint256 _finishLength){
+    //     require(_startLength > 0, "Time Array length should be greater than zero");
+    //     require(_startLength == _finishLength, "Start and Finish Arrays should have same length");
+    //     _;
+    // }
+
     modifier isBelowLimit(uint256 _num){
         require(_num <= maxTransactionLimit, "Max array length limit exceeded");
         _;
@@ -74,25 +79,27 @@ contract LockedPoolz is Manageable {
 
     function SplitPool(uint256 _PoolId, uint256 _NewAmount , address _NewOwner) internal returns(uint256) {
         Pool storage pool = AllPoolz[_PoolId];
-        require(pool.Amount >= _NewAmount, "Not Enough Amount Balance");
-        uint256 poolAmount = SafeMath.sub(pool.Amount, _NewAmount);
-        pool.Amount = poolAmount;
-        uint256 poolId = CreatePool(pool.Token, pool.UnlockTime, _NewAmount, _NewOwner);
+        require(pool.StartAmount >= _NewAmount, "Not Enough Amount Balance");
+        uint256 poolAmount = SafeMath.sub(pool.StartAmount, _NewAmount);
+        pool.StartAmount = poolAmount;
+        uint256 poolId = CreatePool(pool.Token, pool.StartTime, pool.FinishTime, _NewAmount, _NewOwner);
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
         return poolId;
     }
 
     //create a new pool
     function CreatePool(
-        address _Token, //token to lock address
-        uint64 _FinishTime, //Until what time the pool will work
+        address _Token, // token to lock address
+        uint256 _StartTime, // Until what time the pool will Start
+        uint256 _FinishTime, // Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) internal returns(uint256){
+        require(_StartTime <= _FinishTime, "StartTime is greater than FinishTime");
         //register the pool
-        AllPoolz[Index] = Pool(_FinishTime, _StartAmount, _Owner, _Token);
+        AllPoolz[Index] = Pool(_StartTime, _FinishTime, _StartAmount, 0, _Owner, _Token);
         MyPoolz[_Owner].push(Index);
-        emit NewPoolCreated(Index, _Token, _FinishTime, _StartAmount, _Owner);
+        emit NewPoolCreated(Index, _Token, _StartTime, _FinishTime, _StartAmount, _Owner);
         uint256 poolId = Index;
         Index = SafeMath.add(Index, 1); //joke - overflowfrom 0 on int256 = 1.16E77
         return poolId;
