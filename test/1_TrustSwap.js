@@ -1,5 +1,5 @@
 const LockedDealV2 = artifacts.require("LockedDealV2");
-const TestToken = artifacts.require("Token");
+const TestToken = artifacts.require("ERC20Token");
 const { assert } = require('chai');
 
 contract('LockedDealV2', (accounts) => {

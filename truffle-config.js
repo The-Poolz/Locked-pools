@@ -17,7 +17,7 @@ module.exports = {
         evmVersion: "istanbul",
         optimizer: { enabled: true, runs: 9999999 },
       },
-      version: "^0.6.0",
+      version: "pragma",
       docker: false,
       parser: "solcjs",
     }

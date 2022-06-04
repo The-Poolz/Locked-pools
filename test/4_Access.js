@@ -1,9 +1,8 @@
-const LockedDealV2 = artifacts.require("LockedDealV2");
-const TestToken = artifacts.require("Token");
-const { assert } = require('chai');
-const truffleAssert = require('truffle-assertions');
-const timeMachine = require('ganache-time-traveler');
-const zero_address = "0x0000000000000000000000000000000000000000";
+const LockedDealV2 = artifacts.require("LockedDealV2")
+const TestToken = artifacts.require("ERC20Token")
+const { assert } = require('chai')
+const truffleAssert = require('truffle-assertions')
+const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('Access to Locked Deal', accounts => {
     let instance, Token, fromAddress = accounts[0], owner = accounts[9], poolId, allow = 100
@@ -115,11 +114,11 @@ contract('Access to Locked Deal', accounts => {
             date.setDate(date.getDate() + 1)
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 60*60*24
-            await truffleAssert.reverts(instance.CreateNewPool(Token.address, startTime, finishTime, allow, zero_address, {from: fromAddress}), "Zero Address is not allowed")
+            await truffleAssert.reverts(instance.CreateNewPool(Token.address, startTime, finishTime, allow, constants.ZERO_ADDRESS, {from: fromAddress}), "Zero Address is not allowed")
         })
     
         it('Fail to transfer ownership to 0 address', async () => {
-            await truffleAssert.reverts(instance.TransferPoolOwnership(poolId, zero_address, {from: owner}), "Zero Address is not allowed")
+            await truffleAssert.reverts(instance.TransferPoolOwnership(poolId, constants.ZERO_ADDRESS, {from: owner}), "Zero Address is not allowed")
         })
     
         it('Fail to split pool when balance is not enough', async () => {

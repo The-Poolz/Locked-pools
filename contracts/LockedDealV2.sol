@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
 import "./LockedPoolzData.sol";
 
@@ -8,14 +8,14 @@ contract LockedDealV2 is LockedPoolzData {
 
     function getWithdrawableAmount(uint256 _PoolId) public view isPoolValid(_PoolId) returns(uint256){
         Pool storage pool = AllPoolz[_PoolId];
-        if(now < pool.StartTime) return 0;
-        if(pool.FinishTime < now) return SafeMath.sub(pool.StartAmount, pool.DebitedAmount);
+        if(block.timestamp < pool.StartTime) return 0;
+        if(pool.FinishTime < block.timestamp) return pool.StartAmount - pool.DebitedAmount;
         uint256 totalPoolDuration = pool.FinishTime - pool.StartTime;
-        uint256 timePassed = now - pool.StartTime;
-        uint256 timePassedPermille = SafeMath.mul(timePassed, 1000);
-        uint256 ratioPermille = SafeMath.div(timePassedPermille, totalPoolDuration);
-        uint256 debitableAmount = SafeMath.div(SafeMath.mul(pool.StartAmount, ratioPermille), 1000);
-        return SafeMath.sub(debitableAmount, pool.DebitedAmount);
+        uint256 timePassed = block.timestamp - pool.StartTime;
+        uint256 timePassedPermille = timePassed * 1000;
+        uint256 ratioPermille = timePassedPermille / totalPoolDuration;
+        uint256 debitableAmount = pool.StartAmount * ratioPermille/ 1000;
+        return debitableAmount - pool.DebitedAmount;
     }
 
     //@dev no use of revert to make sure the loop will work
@@ -24,11 +24,11 @@ contract LockedDealV2 is LockedPoolzData {
         Pool storage pool = AllPoolz[_PoolId];
         if (
             _PoolId < Index &&
-            pool.StartTime <= now &&
-            SafeMath.sub(pool.StartTime, pool.DebitedAmount) > 0
+            pool.StartTime <= block.timestamp &&
+            pool.StartTime - pool.DebitedAmount > 0
         ) {
             uint256 tokenAmount = getWithdrawableAmount(_PoolId);
-            uint256 tempDebitAmount = SafeMath.add(tokenAmount, pool.DebitedAmount);
+            uint256 tempDebitAmount = tokenAmount + pool.DebitedAmount;
             pool.DebitedAmount = tempDebitAmount;
             TransferToken(
                 pool.Token,
