@@ -4,18 +4,14 @@ pragma solidity ^0.8.0;
 import "poolz-helper-v2/contracts/ERC20Helper.sol";
 import "poolz-helper-v2/contracts/ETHHelper.sol";
 import "poolz-helper-v2/contracts/interfaces/IWhiteList.sol";
+import "poolz-helper-v2/contracts/FeeBaseHelper.sol";
 
-contract Manageable is ETHHelper, ERC20Helper {
+contract Manageable is FeeBaseHelper {
     constructor() {
         maxTransactionLimit = 400;
         isTokenFilterOn = true;
         isUserFilterOn = true;
     }
-
-    mapping (address => uint256) public FeeMap; // to make sure admin takes only fee tokens
-    address public FeeTokenAddress;
-    uint256 public FeeERC20;
-    uint256 public Fee; //the fee for the pool
     uint256 public MinDuration; //the minimum duration of a pool, in seconds
 
     address public WhiteList_Address;
@@ -59,23 +55,5 @@ contract Manageable is ETHHelper, ERC20Helper {
 
     function SetMinDuration(uint16 _minDuration) public onlyOwner {
         MinDuration = _minDuration;
-    }
-
-    function SetFee(uint16 _fee) public onlyOwner{
-        Fee = _fee;
-    }
-
-    function SetTokenFee(address _tokenAddress, uint256 _fee) public onlyOwner{
-        FeeMap[_tokenAddress] = _fee;
-    }
-
-    function WithdrawETHFee(address payable _to) public onlyOwner {
-        _to.transfer(address(this).balance); // keeps only fee eth on contract //To Do need to take 16% to burn!!!
-    }
-
-    function WithdrawERC20Fee(address _Token, address _to) public onlyOwner {
-        // ERC20(_Token).transfer(_to, FeeMap[_Token]);
-        TransferToken(_Token, _to, FeeMap[_Token]);
-        FeeMap[_Token] = 0 ;
     }
 }

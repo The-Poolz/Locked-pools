@@ -47,15 +47,14 @@ contract('Managable', accounts => {
     })
     it('should set fee', async () => {
         const newFee = 30
-        await instance.SetFee(newFee, {from: ownerAddress})
+        await instance.SetFeeAmount(newFee, {from: ownerAddress})
         const fee = await instance.Fee()
         assert.equal(newFee, fee)
     })
-    it('should set POZ fee', async () => {
-        const newPozFee = 20
-        await instance.SetTokenFee(testToken.address, newPozFee, {from: ownerAddress})
-        const PozFee = await instance.FeeMap(testToken.address)
-        assert.equal(newPozFee, PozFee)
+    it('should set POZ token', async () => {
+        await instance.SetFeeToken(testToken.address, {from: ownerAddress})
+        const FeeToken = await instance.FeeToken()
+        assert.equal(FeeToken, testToken.address)
     })
     // it('should set Min POZ', async () => {
     //     const newMinPoz = 100
