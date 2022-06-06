@@ -68,7 +68,7 @@ contract LockedControl is LockedPoolz{
     ) external isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
-            AcceptFee(1);
+            PayFee(Fee);
         }
         CreatePool(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
     }
@@ -85,7 +85,7 @@ contract LockedControl is LockedPoolz{
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         TransferInToken(_Token, msg.sender, getArraySum(_StartAmount));
         if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
-            AcceptFee(_Owner.length);
+            PayFee(Fee * _Owner.length);
         }
         uint256 firstPoolId = Index;
         for(uint i=0 ; i < _Owner.length; i++){
@@ -113,7 +113,7 @@ contract LockedControl is LockedPoolz{
         TransferInToken(_Token, msg.sender, getArraySum(_StartAmount) * _FinishTime.length);
         uint256 firstPoolId = Index;
         if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
-            AcceptFee(_Owner.length * _FinishTime.length);
+            PayFee(Fee * _Owner.length * _FinishTime.length);
         }
         for(uint i=0 ; i < _FinishTime.length ; i++){
             for(uint j=0 ; j < _Owner.length ; j++){
@@ -123,16 +123,6 @@ contract LockedControl is LockedPoolz{
         uint256 lastPoolId = Index - 1;
         emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
-
-    function AcceptFee(uint256 totalNumberOfPools) private {
-        if(FeeTokenAddress == address(0)){
-            require(totalNumberOfPools * Fee <= msg.value, "Not Enough Fee Provided");
-        } else {
-            FeeMap[FeeTokenAddress] = FeeMap[FeeTokenAddress] + (totalNumberOfPools * Fee);
-            TransferInToken(FeeTokenAddress, msg.sender, totalNumberOfPools * Fee);
-        }
-    }
-
 
     function getArraySum(uint256[] calldata _array) internal pure returns(uint256) {
         uint256 sum = 0;
