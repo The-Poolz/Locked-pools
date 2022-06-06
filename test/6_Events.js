@@ -1,10 +1,9 @@
 const LockedControl = artifacts.require("LockedControl");
 const LockedDealV2 = artifacts.require("LockedDealV2");
 const LockedPoolz = artifacts.require("LockedPoolz");
-const TestToken = artifacts.require("Token");
+const TestToken = artifacts.require("ERC20Token");
 const { assert } = require('chai');
 const truffleAssert = require('truffle-assertions');
-const timeMachine = require('ganache-time-traveler');
 
 contract('Pools - events', (accounts) => {
   let lockedControl;

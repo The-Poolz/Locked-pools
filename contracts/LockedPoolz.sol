@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
 import "./Manageable.sol";
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract LockedPoolz is Manageable {
-    constructor() public {
+    constructor() {
         Index = 0;
     }
     
@@ -52,7 +51,7 @@ contract LockedPoolz is Manageable {
     }
 
     modifier isLocked(uint256 _PoolId){
-        require(AllPoolz[_PoolId].StartTime > now, "Pool is Unlocked");
+        require(AllPoolz[_PoolId].StartTime > block.timestamp, "Pool is Unlocked");
         _;
     }
 
@@ -80,7 +79,7 @@ contract LockedPoolz is Manageable {
     function SplitPool(uint256 _PoolId, uint256 _NewAmount , address _NewOwner) internal returns(uint256) {
         Pool storage pool = AllPoolz[_PoolId];
         require(pool.StartAmount >= _NewAmount, "Not Enough Amount Balance");
-        uint256 poolAmount = SafeMath.sub(pool.StartAmount, _NewAmount);
+        uint256 poolAmount = pool.StartAmount - _NewAmount;
         pool.StartAmount = poolAmount;
         uint256 poolId = CreatePool(pool.Token, pool.StartTime, pool.FinishTime, _NewAmount, _NewOwner);
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
@@ -97,11 +96,15 @@ contract LockedPoolz is Manageable {
     ) internal returns(uint256){
         require(_StartTime <= _FinishTime, "StartTime is greater than FinishTime");
         //register the pool
-        AllPoolz[Index] = Pool(_StartTime, _FinishTime, _StartAmount, 0, _Owner, _Token);
+        AllPoolz[Index].StartTime = _StartTime; //Since v 0.7.0 you cannot assign structs containing nested mappings
+        AllPoolz[Index].FinishTime = _FinishTime;
+        AllPoolz[Index].StartAmount = _StartAmount;
+        AllPoolz[Index].Owner = _Owner;
+        AllPoolz[Index].Token = _Token;
         MyPoolz[_Owner].push(Index);
         emit NewPoolCreated(Index, _Token, _StartTime, _FinishTime, _StartAmount, _Owner);
         uint256 poolId = Index;
-        Index = SafeMath.add(Index, 1); //joke - overflowfrom 0 on int256 = 1.16E77
+        Index++;
         return poolId;
     }
 }

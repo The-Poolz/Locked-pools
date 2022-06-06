@@ -1,6 +1,6 @@
-const LockedDealV2 = artifacts.require("LockedDealV2");
-const TestToken = artifacts.require("Token");
-const truffleAssert = require('truffle-assertions');
+const LockedDealV2 = artifacts.require("LockedDealV2")
+const TestToken = artifacts.require("ERC20Token")
+const truffleAssert = require('truffle-assertions')
 
 contract('Fail Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]

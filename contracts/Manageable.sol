@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
-import "poolz-helper/contracts/ERC20Helper.sol";
-import "poolz-helper/contracts/ETHHelper.sol";
-import "poolz-helper/contracts/IWhiteList.sol";
+import "poolz-helper-v2/contracts/ERC20Helper.sol";
+import "poolz-helper-v2/contracts/ETHHelper.sol";
+import "poolz-helper-v2/contracts/interfaces/IWhiteList.sol";
 
 contract Manageable is ETHHelper, ERC20Helper {
-    constructor() public {
+    constructor() {
         maxTransactionLimit = 400;
         isTokenFilterOn = true;
         isUserFilterOn = true;

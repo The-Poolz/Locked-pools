@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
 import "./LockedPoolz.sol";
 
@@ -54,7 +54,7 @@ contract LockedControl is LockedPoolz{
     ) external isPoolValid(_PoolId) isAllowed(_PoolId, _Amount) isLocked(_PoolId) returns(uint256) {
         uint256 poolId = SplitPool(_PoolId, _Amount, _Address);
         Pool storage pool = AllPoolz[_PoolId];
-        uint256 _NewAmount = SafeMath.sub(pool.Allowance[msg.sender], _Amount);
+        uint256 _NewAmount = pool.Allowance[msg.sender] - _Amount;
         pool.Allowance[_Address]  = _NewAmount;
         return poolId;
     }
@@ -91,7 +91,7 @@ contract LockedControl is LockedPoolz{
         for(uint i=0 ; i < _Owner.length; i++){
             CreatePool(_Token, _StartTime[i], _FinishTime[i], _StartAmount[i], _Owner[i]);
         }
-        uint256 lastPoolId = SafeMath.sub(Index, 1);
+        uint256 lastPoolId = Index - 1;
         emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
 
@@ -120,7 +120,7 @@ contract LockedControl is LockedPoolz{
                 CreatePool(_Token, _StartTime[i], _FinishTime[i], _StartAmount[j], _Owner[j]);
             }
         }
-        uint256 lastPoolId = SafeMath.sub(Index, 1);
+        uint256 lastPoolId = Index - 1;
         emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
 
