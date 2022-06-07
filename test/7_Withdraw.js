@@ -11,7 +11,6 @@ contract('LockedDealV2', (accounts) => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
         fromAddress = await instance.owner()
-        await instance.swapUserFilter()
     })
 
     it('should create a single new pool', async () => {

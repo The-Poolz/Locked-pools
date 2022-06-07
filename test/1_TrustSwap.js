@@ -10,7 +10,6 @@ contract('LockedDealV2', (accounts) => {
     before(async () => {
         instance = await LockedDealV2.deployed()
         Token = await TestToken.new('TestToken', 'TEST')
-        await instance.swapUserFilter()
     })
 
     it('Lock 1 test token for account2 from acount 0', async () => {

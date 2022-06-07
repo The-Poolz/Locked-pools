@@ -55,11 +55,6 @@ contract('Managable', accounts => {
         const FeeToken = await instance.FeeToken()
         assert.equal(FeeToken, testToken.address)
     })
-
-    it('should disable token to create new pool', async () => {
-        await instance.swapTokenFilter()
-
-    })
     // it('should set Min POZ', async () => {
     //     const newMinPoz = 100
     //     await instance.SetMinPoz(newMinPoz, {from: ownerAddress})
