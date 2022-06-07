@@ -8,7 +8,6 @@ contract('Create Pool', accounts => {
     before(async () => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
-        await instance.swapTokenFilter()
         await instance.swapUserFilter()
     })
 

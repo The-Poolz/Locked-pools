@@ -7,15 +7,16 @@ import "poolz-helper-v2/contracts/FeeBaseHelper.sol";
 contract Manageable is FeeBaseHelper {
     constructor() {
         maxTransactionLimit = 400;
-        isTokenFilterOn = true;
+        isTokenFilterOn = false; // disable token blacklist
         isUserFilterOn = true;
     }
     uint256 public MinDuration; //the minimum duration of a pool, in seconds
 
     address public WhiteList_Address;
-    bool public isTokenFilterOn;
+    bool public isTokenFilterOn; // use to enable/disable token blacklist
     bool public isUserFilterOn;
     uint public TokenWhiteListId;
+    uint public TokenBlackListId;
     uint public UserWhiteListId;
     uint256 public maxTransactionLimit;
     
@@ -25,6 +26,10 @@ contract Manageable is FeeBaseHelper {
 
     function setTokenWhiteListId(uint256 _id) external onlyOwner{
         TokenWhiteListId= _id;
+    }
+
+    function setTokenBlackListId(uint256 _id) external onlyOwner{
+        TokenBlackListId = _id;
     }
 
     function setUserWhiteListId(uint256 _id) external onlyOwner{
@@ -40,7 +45,11 @@ contract Manageable is FeeBaseHelper {
     }
 
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool) {
-        return !isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, TokenWhiteListId) > 0;
+        return IWhiteList(WhiteList_Address).Check(_tokenAddress, TokenWhiteListId) > 0;
+    }
+
+    function isTokenBlackListed(address _tokenAddress) public view returns(bool) {
+        return !isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, TokenBlackListId) > 0;
     }
 
     function isUserWhiteListed(address _UserAddress) public view returns(bool) {

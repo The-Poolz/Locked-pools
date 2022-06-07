@@ -31,7 +31,7 @@ contract LockedPoolz is Manageable {
     uint256 internal Index;
 
     modifier isTokenValid(address _Token){
-        require(isTokenWhiteListed(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
+        require(isTokenBlackListed(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
         _;
     }
 
@@ -96,7 +96,7 @@ contract LockedPoolz is Manageable {
     ) internal returns(uint256){
         require(_StartTime <= _FinishTime, "StartTime is greater than FinishTime");
         //register the pool
-        AllPoolz[Index].StartTime = _StartTime; //Since v 0.7.0 you cannot assign structs containing nested mappings
+        AllPoolz[Index].StartTime = _StartTime; //Since v 0.7.0 we cannot assign structs containing nested mappings
         AllPoolz[Index].FinishTime = _FinishTime;
         AllPoolz[Index].StartAmount = _StartAmount;
         AllPoolz[Index].Owner = _Owner;

@@ -79,7 +79,11 @@ contract LockedControl is LockedPoolz{
         uint256[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external payable isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
+    )   external payable
+        isTokenValid(_Token)
+        isGreaterThanZero(_Owner.length)
+        isBelowLimit(_Owner.length)
+    {
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
@@ -95,7 +99,6 @@ contract LockedControl is LockedPoolz{
         emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
 
-
     // create pools with respect to finish time
     function CreatePoolsWrtTime(
         address _Token,
@@ -104,7 +107,7 @@ contract LockedControl is LockedPoolz{
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
     )   external payable
-        isGreaterThanZero(_Owner.length)
+        isTokenValid(_Token)
         isGreaterThanZero(_StartTime.length)
         isBelowLimit(_Owner.length * _FinishTime.length)
     {
@@ -131,5 +134,4 @@ contract LockedControl is LockedPoolz{
         }
         return sum;
     }
-
 }

@@ -11,7 +11,6 @@ contract('Managable', accounts => {
         const owner = await instance.owner()
         ownerAddress = owner.toString()
         testToken = await TestToken.new("test", 'tst')
-        await instance.swapTokenFilter()
         await instance.swapUserFilter()
     })
 
@@ -55,6 +54,11 @@ contract('Managable', accounts => {
         await instance.SetFeeToken(testToken.address, {from: ownerAddress})
         const FeeToken = await instance.FeeToken()
         assert.equal(FeeToken, testToken.address)
+    })
+
+    it('should disable token to create new pool', async () => {
+        await instance.swapTokenFilter()
+
     })
     // it('should set Min POZ', async () => {
     //     const newMinPoz = 100
