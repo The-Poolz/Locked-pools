@@ -1,14 +1,10 @@
-const LockedControl = artifacts.require("LockedControl");
 const LockedDealV2 = artifacts.require("LockedDealV2");
-const LockedPoolz = artifacts.require("LockedPoolz");
 const TestToken = artifacts.require("ERC20Token");
-const { assert } = require('chai');
+const WhiteList = artifacts.require("WhiteList")
 const truffleAssert = require('truffle-assertions');
 
 contract('Pools - events', (accounts) => {
-  let lockedControl;
-  let lockedDeal;
-  let lockedPoolz;
+  let lockedDeal, whiteList;
   let testToken;
 
   let fromAddress = accounts[0];
@@ -19,10 +15,10 @@ contract('Pools - events', (accounts) => {
   let result;
 
   before(async () => {
-    lockedControl = await LockedControl.new();
     lockedDeal = await LockedDealV2.new();
-    lockedPoolz = await LockedPoolz.new();
     testToken = await TestToken.new("test", 'tst');
+    whiteList = await WhiteList.new()
+    await lockedDeal.setWhiteListAddress(whiteList.address);
   });
 
   describe('TokenWithdrawn event is emitted', async () => {

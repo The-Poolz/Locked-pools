@@ -1,13 +1,17 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
+const WhiteList = artifacts.require("WhiteList")
 const { assert } = require('chai')
 
 contract('Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
+    let whiteList
 
     before(async () => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
+        whiteList = await WhiteList.new()
+        await instance.setWhiteListAddress(whiteList.address)
     })
 
     it('should create a single new pool', async () => {

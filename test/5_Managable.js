@@ -1,17 +1,19 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
+const WhiteList = artifacts.require("WhiteList")
 const { assert } = require('chai')
 
 contract('Managable', accounts => {
-    let instance, ownerAddress;
-    let testToken;
+    let instance, ownerAddress
+    let testToken, whiteList
 
     before(async () => {
         instance = await LockedDealV2.new()
+        whiteList = await WhiteList.new()
+        await instance.setWhiteListAddress(whiteList.address)
         const owner = await instance.owner()
         ownerAddress = owner.toString()
         testToken = await TestToken.new("test", 'tst')
-        await instance.swapUserFilter()
     })
 
     it('should set whitelist address', async () => {
@@ -22,8 +24,8 @@ contract('Managable', accounts => {
     })
     it('should set WhiteListId', async () => {
         const whiteListId = 1
-        await instance.setTokenWhiteListId(whiteListId, {from: ownerAddress})
-        const id = await instance.TokenWhiteListId()
+        await instance.setTokenFeeWhiteListId(whiteListId, {from: ownerAddress})
+        const id = await instance.TokenFeeWhiteListId()
         assert.equal(whiteListId, id)
     })
     it('should swap token filter', async () => {
