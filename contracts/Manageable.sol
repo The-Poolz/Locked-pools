@@ -52,7 +52,7 @@ contract Manageable is FeeBaseHelper {
         return !isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, TokenFilterWhiteListId) > 0;
     }
 
-    function isUserWhiteListed(address _UserAddress) notZeroAddress(WhiteList_Address) public view returns(bool) {
+    function isUserWithoutFee(address _UserAddress) notZeroAddress(WhiteList_Address) public view returns(bool) {
         return IWhiteList(WhiteList_Address).Check(_UserAddress, UserWhiteListId) > 0;
     }
 

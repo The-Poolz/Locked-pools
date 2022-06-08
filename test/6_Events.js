@@ -29,7 +29,7 @@ contract('Pools - events', (accounts) => {
       let date = new Date();
       date.setDate(date.getDate() - 1);
       const startTime = Math.floor(date.getTime() / 1000);
-      const finishTime = startTime + 60*60*24
+      const finishTime = startTime + 60 * 60 * 24
 
       const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
@@ -52,7 +52,7 @@ contract('Pools - events', (accounts) => {
       date.setDate(date.getDate() + 1);
 
       const startTime = Math.floor(date.getTime() / 1000);
-      const finishTime = startTime + 60*60*24
+      const finishTime = startTime + 60 * 60 * 24
       const owner = accounts[1];
       const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       const poolId = tx.logs[1].args.PoolId;
@@ -76,7 +76,7 @@ contract('Pools - events', (accounts) => {
       date.setDate(date.getDate() + 1);
 
       let startTime = Math.floor(date.getTime() / 1000);
-      let finishTime = startTime + 60*60*24
+      let finishTime = startTime + 60 * 60 * 24
       await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       // poolId = tx.logs[1].args.PoolId
 
@@ -84,7 +84,7 @@ contract('Pools - events', (accounts) => {
       // let date = new Date()
       date.setDate(date.getDate() + 1);
       startTime = Math.floor(date.getTime() / 1000);
-      finishTime = startTime + 60*60*24
+      finishTime = startTime + 60 * 60 * 24
       const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
     });
@@ -96,7 +96,7 @@ contract('Pools - events', (accounts) => {
       // Check event
       truffleAssert.eventEmitted(result, 'PoolOwnershipTransfered');
     });
-    
+
   });
 
   describe('PoolApproval event is emitted', async () => {
@@ -111,7 +111,7 @@ contract('Pools - events', (accounts) => {
       date.setDate(date.getDate() + 1);
 
       const startTime = Math.floor(date.getTime() / 1000);
-      const finishTime = startTime + 60*60*24
+      const finishTime = startTime + 60 * 60 * 24
       const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
     });
@@ -121,7 +121,7 @@ contract('Pools - events', (accounts) => {
       // Check event
       truffleAssert.eventEmitted(result, 'PoolApproval');
     });
-    
+
   });
 
   describe('PoolSplit event is emitted', async () => {
@@ -136,7 +136,7 @@ contract('Pools - events', (accounts) => {
       date.setDate(date.getDate() + 1);
 
       const startTime = Math.floor(date.getTime() / 1000);
-      const finishTime = startTime + 60*60*24
+      const finishTime = startTime + 60 * 60 * 24
 
       const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
       poolId = tx.logs[1].args.PoolId;
@@ -147,7 +147,7 @@ contract('Pools - events', (accounts) => {
       // Check event
       truffleAssert.eventEmitted(result, 'PoolSplit');
     });
-    
+
   });
 
 });
