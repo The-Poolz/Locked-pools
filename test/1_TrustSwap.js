@@ -1,17 +1,18 @@
-const LockedDealV2 = artifacts.require("LockedDealV2");
-const TestToken = artifacts.require("ERC20Token");
-const { assert } = require('chai');
+const LockedDealV2 = artifacts.require("LockedDealV2")
+const TestToken = artifacts.require("ERC20Token")
+const WhiteList = artifacts.require("WhiteList")
+const { assert } = require('chai')
 
 contract('LockedDealV2', (accounts) => {
-    let instance, Token
+    let instance, Token, whiteList
     const allow = 1, owner = accounts[2]
     const date = new Date()
 
     before(async () => {
         instance = await LockedDealV2.deployed()
         Token = await TestToken.new('TestToken', 'TEST')
-        await instance.swapTokenFilter()
-        await instance.swapUserFilter()
+        whiteList = await WhiteList.new()
+        await instance.setWhiteListAddress(whiteList.address)
     })
 
     it('Lock 1 test token for account2 from acount 0', async () => {
@@ -20,7 +21,7 @@ contract('LockedDealV2', (accounts) => {
         const startTime = Math.floor(date.getTime() / 1000)
         const finishTime = startTime + 60 * 60 * 24 * 30
         await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner)
-        const mypoolz = await instance.GetAllMyPoolsId({from: owner})
+        const mypoolz = await instance.GetAllMyPoolsId({ from: owner })
         assert.equal(mypoolz.length, 1)
     })
 

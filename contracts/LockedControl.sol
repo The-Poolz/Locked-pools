@@ -65,9 +65,9 @@ contract LockedControl is LockedPoolz{
         uint256 _FinishTime, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) external isTokenValid(_Token) notZeroAddress(_Owner) returns(uint256) {
+    ) external notZeroAddress(_Owner) returns(uint256) {
         TransferInToken(_Token, msg.sender, _StartAmount);
-        if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
+        if(!(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))){
             PayFee(Fee);
         }
         CreatePool(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
@@ -79,12 +79,15 @@ contract LockedControl is LockedPoolz{
         uint256[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
-    ) external payable isGreaterThanZero(_Owner.length) isBelowLimit(_Owner.length) {
+    )   external payable
+        isGreaterThanZero(_Owner.length)
+        isBelowLimit(_Owner.length)
+    {
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         TransferInToken(_Token, msg.sender, getArraySum(_StartAmount));
-        if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
+        if(!(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))){
             PayFee(Fee * _Owner.length);
         }
         uint256 firstPoolId = Index;
@@ -95,7 +98,6 @@ contract LockedControl is LockedPoolz{
         emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
 
-
     // create pools with respect to finish time
     function CreatePoolsWrtTime(
         address _Token,
@@ -104,7 +106,6 @@ contract LockedControl is LockedPoolz{
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
     )   external payable
-        isGreaterThanZero(_Owner.length)
         isGreaterThanZero(_StartTime.length)
         isBelowLimit(_Owner.length * _FinishTime.length)
     {
@@ -112,7 +113,7 @@ contract LockedControl is LockedPoolz{
         require(_FinishTime.length == _StartTime.length, "Date Array Invalid");
         TransferInToken(_Token, msg.sender, getArraySum(_StartAmount) * _FinishTime.length);
         uint256 firstPoolId = Index;
-        if(!(isUserWhiteListed(msg.sender) || isTokenWhiteListed(_Token))){
+        if(!(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))){
             PayFee(Fee * _Owner.length * _FinishTime.length);
         }
         for(uint i=0 ; i < _FinishTime.length ; i++){
@@ -131,5 +132,4 @@ contract LockedControl is LockedPoolz{
         }
         return sum;
     }
-
 }

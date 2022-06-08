@@ -55,11 +55,6 @@ contract LockedPoolz is Manageable {
         _;
     }
 
-    modifier notZeroAddress(address _address){
-        require(_address != address(0x0), "Zero Address is not allowed");
-        _;
-    }
-
     modifier isGreaterThanZero(uint256 _num){
         require(_num > 0, "Array length should be greater than zero");
         _;
@@ -93,10 +88,10 @@ contract LockedPoolz is Manageable {
         uint256 _FinishTime, // Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) internal returns(uint256){
+    ) internal isTokenValid(_Token) returns(uint256){
         require(_StartTime <= _FinishTime, "StartTime is greater than FinishTime");
         //register the pool
-        AllPoolz[Index].StartTime = _StartTime; //Since v 0.7.0 you cannot assign structs containing nested mappings
+        AllPoolz[Index].StartTime = _StartTime; //Since v 0.7.0 we cannot assign structs containing nested mappings
         AllPoolz[Index].FinishTime = _FinishTime;
         AllPoolz[Index].StartAmount = _StartAmount;
         AllPoolz[Index].Owner = _Owner;
