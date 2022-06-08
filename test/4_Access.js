@@ -96,7 +96,6 @@ contract('Access to Locked Deal', accounts => {
 
         it('spliting pool from approved address', async () => {
             const newOwner = accounts[2]
-            const amount = await instance.GetPoolAllowance(poolId, spender)
             const tx = await instance.SplitPoolAmountFrom(poolId, approvalAmount, newOwner, { from: spender })
             const newPoolId = tx.logs[0].args.PoolId
             const data = await instance.GetPoolData(newPoolId, { from: newOwner })
