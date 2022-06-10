@@ -6,7 +6,7 @@ const timeMachine = require('ganache-time-traveler')
 
 contract('Withdraw', (accounts) => {
     let instance, Token, fromAddress, poolId
-    const investor = accounts[1], allow = 10000
+    const investor = accounts[1], allow = 10000, halfAmount = '5000'
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -73,7 +73,7 @@ contract('Withdraw', (accounts) => {
         assert.equal('0', result.toString(), 'check debited amount')
     })
 
-    it('Withdraw tokens', async () => {
+    it('Withdraw half amount tokens', async () => {
         await Token.approve(instance.address, allow, { from: fromAddress })
         const date = new Date()
         date.setDate(date.getDate() - 1)
@@ -88,9 +88,44 @@ contract('Withdraw', (accounts) => {
         const logs = data.logs[1].args
         assert.equal(poolId, logs.PoolId.toString(), 'check pool ID')
         assert.equal(investor, logs.Recipient.toString(), 'check owner address')
-        assert.equal('5000', logs.Amount.toString(), 'check token amount')
+        assert.equal(halfAmount, logs.Amount.toString(), 'check token amount')
         const result = await instance.WithdrawToken.call(parseInt(poolId) + 1)
         assert.equal(result, false, 'wrong poolID')
+    })
+
+    it('Get all my pools id', async () => {
+        const mypoolz = await instance.GetAllMyPoolsId({ from: investor })
+        const poolsId = ['0', poolId - 1, poolId]
+        assert.equal(mypoolz.toString(), poolsId.toString(), 'check my pool ids')
+    })
+
+    it('should get half amount', async () => {
+        const date = new Date()
+        date.setDate(date.getDate() + 1)
+        await timeMachine.advanceBlockAndSetTime(Math.floor(date.getTime() / 1000))
+        const result = await instance.getWithdrawableAmount(poolId)
+        assert.equal(halfAmount, result.toString(), 'check Withdrawable Amount')
+    })
+
+    it('withdraw left over', async () => {
+        const data = await instance.WithdrawToken(poolId)
+        const logs = data.logs[1].args
+        assert.equal(poolId, logs.PoolId.toString(), 'check pool ID')
+        assert.equal(investor, logs.Recipient.toString(), 'check owner address')
+        assert.equal(halfAmount, logs.Amount.toString(), 'check token amount')
+        const result = await instance.WithdrawToken.call(parseInt(poolId) + 1)
+        assert.equal(result, false, 'wrong poolID')
+    })
+
+    it('should get 0 amount', async () => {
+        const result = await instance.getWithdrawableAmount(poolId)
+        assert.equal('0', result.toString(), 'check Withdrawable Amount')
+    })
+
+    it('Get all my pools id after withdrawing all tokens', async () => {
+        const mypoolz = await instance.GetAllMyPoolsId({ from: investor })
+        const poolsId = ['0', poolId - 1, '0']
+        assert.equal(mypoolz.toString(), poolsId.toString(), 'check my pool ids')
     })
 
     after(async () => {

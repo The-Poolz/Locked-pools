@@ -35,6 +35,9 @@ contract LockedDealV2 is LockedPoolzData {
                 pool.Owner,
                 tokenAmount
             );
+            if(pool.DebitedAmount == pool.StartAmount){
+                delete MyPoolz[pool.Owner][_PoolId];
+            }
             emit TokenWithdrawn(_PoolId, pool.Owner, tokenAmount);
             return true;
         }
