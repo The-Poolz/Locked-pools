@@ -1,6 +1,5 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
-const WhiteList = artifacts.require("WhiteList")
 const { assert } = require('chai')
 
 contract('LockedDealV2', (accounts) => {
@@ -11,8 +10,6 @@ contract('LockedDealV2', (accounts) => {
     before(async () => {
         instance = await LockedDealV2.deployed()
         Token = await TestToken.new('TestToken', 'TEST')
-        whiteList = await WhiteList.new()
-        await instance.setWhiteListAddress(whiteList.address)
     })
 
     it('Lock 1 test token for account2 from acount 0', async () => {

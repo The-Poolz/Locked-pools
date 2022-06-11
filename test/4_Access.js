@@ -1,6 +1,5 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
-const WhiteList = artifacts.require("WhiteList")
 const { assert } = require('chai')
 const truffleAssert = require('truffle-assertions')
 const constants = require('@openzeppelin/test-helpers/src/constants.js');
@@ -12,8 +11,6 @@ contract('Access to Locked Deal', accounts => {
     before(async () => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
-        whiteList = await WhiteList.new()
-        await instance.setWhiteListAddress(whiteList.address)
         await Token.approve(instance.address, allow, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
