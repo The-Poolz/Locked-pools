@@ -1,6 +1,5 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
-const WhiteList = artifacts.require("WhiteList")
 const { assert } = require('chai')
 const timeMachine = require('ganache-time-traveler')
 
@@ -11,9 +10,7 @@ contract('Withdraw', (accounts) => {
     before(async () => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
-        whiteList = await WhiteList.new()
         fromAddress = await instance.owner()
-        await instance.setWhiteListAddress(whiteList.address)
     })
 
     it('should create a single new pool', async () => {

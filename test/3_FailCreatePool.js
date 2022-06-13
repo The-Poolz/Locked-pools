@@ -1,6 +1,5 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
-const WhiteList = artifacts.require("WhiteList")
 const truffleAssert = require('truffle-assertions')
 
 contract('Fail Create Pool', accounts => {
@@ -12,8 +11,6 @@ contract('Fail Create Pool', accounts => {
     before(async () => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
-        whiteList = await WhiteList.new()
-        await instance.setWhiteListAddress(whiteList.address)
         date = new Date()
         date.setDate(date.getDate() + 1)
         future = Math.floor(date.getTime() / 1000)
@@ -64,16 +61,5 @@ contract('Fail Create Pool', accounts => {
             finishTime.push(future + i * 3600 + 60 * 60)
         }
         await truffleAssert.reverts(instance.CreatePoolsWrtTime(Token.address, startTime, finishTime, amountArray, ownerArray, { from: fromAddress }), "Max array length limit exceeded")
-    })
-
-    it('Fail to Create Pool when whitelist filter activated', async () => {
-        await instance.swapTokenFilter()
-        const owner = accounts[1]
-        const now = Date.now()
-        const timestamp = Number(now.toFixed()) + 3600
-        const id = await whiteList.CreateManualWhiteList.call(timestamp, instance.address)
-        await instance.setTokenFilterWhiteListId(id)
-        await Token.approve(instance.address, allow)
-        await truffleAssert.reverts(instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner), "Need Valid ERC20 Token")
     })
 })
