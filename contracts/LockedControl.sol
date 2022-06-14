@@ -65,7 +65,7 @@ contract LockedControl is LockedPoolz{
         uint256 _FinishTime, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) external notZeroAddress(_Owner) returns(uint256) {
+    ) external payable notZeroAddress(_Owner) returns(uint256) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         if(WhiteList_Address != address(0) && !(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))){
             PayFee(Fee);
