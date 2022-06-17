@@ -8,14 +8,17 @@ contract LockedPoolzData is LockedControl {
         return MyPoolz[msg.sender];
     }
 
-    // function GetMyPoolzwithBalance 
+    // function GetMyPoolzwithBalance
     // reconsider msg.sender
-    function GetMyPoolsId() public view returns (uint256[] memory){
+    function GetMyPoolsId() public view returns (uint256[] memory) {
         uint256[] storage allIds = MyPoolz[msg.sender];
         uint256[] memory ids;
         uint256 index;
-        for(uint i=0 ; i<allIds.length ; i++){
-            if(AllPoolz[allIds[i]].StartAmount > AllPoolz[allIds[i]].DebitedAmount ){
+        for (uint256 i = 0; i < allIds.length; i++) {
+            if (
+                AllPoolz[allIds[i]].StartAmount >
+                AllPoolz[allIds[i]].DebitedAmount
+            ) {
                 ids[index] = allIds[i];
                 index++;
             }
@@ -37,7 +40,10 @@ contract LockedPoolzData is LockedControl {
         )
     {
         Pool storage pool = AllPoolz[_id];
-        require(pool.Owner == msg.sender || pool.Allowance[msg.sender] > 0, "Private Information");
+        require(
+            pool.Owner == msg.sender || pool.Allowance[msg.sender] > 0,
+            "Private Information"
+        );
         return (
             pool.StartTime,
             pool.FinishTime,
@@ -46,5 +52,23 @@ contract LockedPoolzData is LockedControl {
             pool.Owner,
             pool.Token
         );
+    }
+
+    function GetMyPoolsIdByToken(address[] memory _tokens)
+        public
+        view
+        returns (uint256[] memory ids)
+    {
+        uint256[] storage allIds = MyPoolz[msg.sender];
+        uint256 index;
+        for (uint256 i = 0; i < allIds.length; i++) {
+            for (uint256 j = 0; j < _tokens.length; j++) {
+                if (AllPoolz[allIds[i]].Token == _tokens[j]) {
+                    ids[index] = allIds[i];
+                    index++;
+                }
+            }
+        }
+        return ids;
     }
 }
