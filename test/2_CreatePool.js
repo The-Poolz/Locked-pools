@@ -96,4 +96,14 @@ contract('Create Pool', accounts => {
         assert.equal(pids.length, numberOfOwners * numberOfTimestamps)
         assert.equal(pids.length, lastPoolId - firstPoolId + 1)
     })
+
+    it('get my active pools Id', async () => {
+        const owner = accounts[1]
+        const invalidAddr = accounts[4]
+        const ids = await instance.GetMyPoolsId({from: owner})
+        const result = await instance.GetMyPoolsId({from: invalidAddr})
+        const expected = [0]
+        assert.equal(ids.toString(), expected.toString(), "invalid pools id")
+        assert.equal([].toString(), result.toString(), 'invalid pools id')
+    })
 })
