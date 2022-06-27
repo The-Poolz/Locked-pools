@@ -62,13 +62,22 @@ contract LockedPoolzData is LockedControl {
         uint256[] storage allIds = MyPoolz[msg.sender];
         uint256 index;
         for (uint256 i = 0; i < allIds.length; i++) {
-            for (uint256 j = 0; j < _tokens.length; j++) {
-                if (AllPoolz[allIds[i]].Token == _tokens[j]) {
-                    ids[index] = allIds[i];
-                    index++;
-                }
+            if (isInArray(_tokens, AllPoolz[allIds[i]].Token)) {
+                ids[index] = allIds[i];
+                index++;
             }
         }
         return ids;
+    }
+
+    function isInArray(address[] memory _arr, address _elem)
+        internal
+        pure
+        returns (bool)
+    {
+        for (uint256 i = 0; i < _arr.length; i++) {
+            if (_arr[i] == _elem) return true;
+        }
+        return false;
     }
 }

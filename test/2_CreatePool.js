@@ -4,7 +4,6 @@ const { assert } = require('chai')
 
 contract('Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
-    let whiteList
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -95,5 +94,9 @@ contract('Create Pool', accounts => {
         assert.equal(lastPoolId, (numberOfOwners * numberOfTimestamps + parseInt(firstPoolId) - 1).toString())
         assert.equal(pids.length, numberOfOwners * numberOfTimestamps)
         assert.equal(pids.length, lastPoolId - firstPoolId + 1)
+    })
+
+    it('get my pools by tokens', async () => {
+
     })
 })
