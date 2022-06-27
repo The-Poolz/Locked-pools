@@ -12,7 +12,7 @@ contract LockedPoolzData is LockedControl {
     // reconsider msg.sender
     function GetMyPoolsId() public view returns (uint256[] memory){
         uint256[] storage allIds = MyPoolz[msg.sender];
-        uint256[] memory ids = new uint256[](5);
+        uint256[] memory ids = new uint256[](allIds.length);
         uint256 index;
         for(uint i=0 ; i<allIds.length ; i++){
             if(AllPoolz[allIds[i]].StartAmount > AllPoolz[allIds[i]].DebitedAmount ){
