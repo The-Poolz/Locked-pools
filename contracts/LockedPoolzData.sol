@@ -23,7 +23,6 @@ contract LockedPoolzData is LockedControl {
                 index++;
             }
         }
-        if (ids.length == index) return ids;
         return KeepNElementsInArray(ids, index);
     }
 
@@ -32,7 +31,8 @@ contract LockedPoolzData is LockedControl {
         pure
         returns (uint256[] memory)
     {
-        require(_arr.length >= _n,"can't cut more then got");
+        if (_arr.length == _n) return _arr;
+        require(_arr.length > _n,"can't cut more then got");
         uint256[] memory activeIds = new uint256[](_n);
         for (uint256 i = 0; i < _n; i++) {
             activeIds[i] = _arr[i];
@@ -81,7 +81,6 @@ contract LockedPoolzData is LockedControl {
                 index++;
             }
         }
-        if (ids.length == index) return ids;
         return KeepNElementsInArray(ids, index);
     }
 
