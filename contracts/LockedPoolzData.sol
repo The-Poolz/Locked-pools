@@ -71,9 +71,10 @@ contract LockedPoolzData is LockedControl {
     function GetMyPoolsIdByToken(address[] memory _tokens)
         public
         view
-        returns (uint256[] memory ids)
+        returns (uint256[] memory)
     {
         uint256[] storage allIds = MyPoolz[msg.sender];
+        uint256[] memory ids = new uint256[](allIds.length);
         uint256 index;
         for (uint256 i = 0; i < allIds.length; i++) {
             if (isInArray(_tokens, AllPoolz[allIds[i]].Token)) {
