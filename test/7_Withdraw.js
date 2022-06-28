@@ -5,7 +5,7 @@ const timeMachine = require('ganache-time-traveler')
 
 contract('Withdraw', (accounts) => {
     let instance, Token, fromAddress, poolId
-    const investor = accounts[1], allow = 10000
+    const investor = accounts[1], allow = 10000, MyPoolz = []
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -21,6 +21,7 @@ contract('Withdraw', (accounts) => {
         const finishTime = Math.floor(date.getTime() / 1000)
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, investor, { from: fromAddress })
         poolId = tx.logs[1].args.PoolId.toString()
+        MyPoolz.push(poolId)
     })
 
     it('get withdrawable amount', async () => {
@@ -51,6 +52,7 @@ contract('Withdraw', (accounts) => {
         const finishTime = Math.floor(date.getTime() / 1000)
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, investor, { from: fromAddress })
         poolId = tx.logs[1].args.PoolId.toString()
+        MyPoolz.push(poolId)
         const data = await instance.GetPoolData(poolId, { from: investor })
         const startAmount = data[2].toString()
         const debitedAmount = data[3].toString()
@@ -79,15 +81,23 @@ contract('Withdraw', (accounts) => {
         const finishTime = Math.floor(date.getTime() / 1000)
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, investor, { from: fromAddress })
         poolId = tx.logs[1].args.PoolId.toString()
+        MyPoolz.push(poolId)
         date.setDate(date.getDate() - 1)
         await timeMachine.advanceBlockAndSetTime(Math.floor(date.getTime() / 1000))
+        const ids = await instance.GetMyPoolsId({from: investor})
         const data = await instance.WithdrawToken(poolId)
         const logs = data.logs[1].args
         assert.equal(poolId, logs.PoolId.toString(), 'check pool ID')
         assert.equal(investor, logs.Recipient.toString(), 'check owner address')
         assert.equal('5000', logs.Amount.toString(), 'check token amount')
+        assert.equal(ids.toString(), MyPoolz.toString(), 'check active pool id')
         const result = await instance.WithdrawToken.call(parseInt(poolId) + 1)
         assert.equal(result, false, 'wrong poolID')
+        await timeMachine.advanceBlockAndSetTime(finishTime)
+        await instance.WithdrawToken(MyPoolz[1])
+        MyPoolz.splice(1, 1)
+        const activeIds = await instance.GetMyPoolsId({from: investor})
+        assert.equal(activeIds.toString(), MyPoolz.toString(), 'check active pool id')
     })
 
     after(async () => {

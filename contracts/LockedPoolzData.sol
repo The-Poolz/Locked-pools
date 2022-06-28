@@ -23,6 +23,7 @@ contract LockedPoolzData is LockedControl {
                 index++;
             }
         }
+        if (ids.length == index) return ids;
         return Slice(ids, index);
     }
 
@@ -31,7 +32,7 @@ contract LockedPoolzData is LockedControl {
         pure
         returns (uint256[] memory)
     {
-        if (_length == _arr.length) return _arr;
+        require(_arr.length >= _length,"can't cut more then got");
         uint256[] memory activeIds = new uint256[](_length);
         for (uint256 i = 0; i < _length; i++) {
             activeIds[i] = _arr[i];
