@@ -23,7 +23,21 @@ contract LockedPoolzData is LockedControl {
                 index++;
             }
         }
-        return ids;
+        if (ids.length == index) return ids;
+        return KeepNElementsInArray(ids, index);
+    }
+
+    function KeepNElementsInArray(uint256[] memory _arr, uint256 _n)
+        internal
+        pure
+        returns (uint256[] memory)
+    {
+        require(_arr.length >= _n,"can't cut more then got");
+        uint256[] memory activeIds = new uint256[](_n);
+        for (uint256 i = 0; i < _n; i++) {
+            activeIds[i] = _arr[i];
+        }
+        return activeIds;
     }
 
     function KeepNElementsInArray(uint256[] memory _arr, uint256 _n)
