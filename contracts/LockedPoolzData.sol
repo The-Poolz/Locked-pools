@@ -24,10 +24,10 @@ contract LockedPoolzData is LockedControl {
             }
         }
         if (ids.length == index) return ids;
-        return Slice(ids, index);
+        return KeepNElementsInArray(ids, index);
     }
 
-    function Slice(uint256[] memory _arr, uint256 _length)
+    function KeepNElementsInArray(uint256[] memory _arr, uint256 _length)
         internal
         pure
         returns (uint256[] memory)
