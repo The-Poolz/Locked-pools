@@ -8,19 +8,36 @@ contract LockedPoolzData is LockedControl {
         return MyPoolz[msg.sender];
     }
 
-    // function GetMyPoolzwithBalance 
+    // function GetMyPoolzwithBalance
     // reconsider msg.sender
-    function GetMyPoolsId() public view returns (uint256[] memory){
+    function GetMyPoolsId() public view returns (uint256[] memory) {
         uint256[] storage allIds = MyPoolz[msg.sender];
         uint256[] memory ids = new uint256[](allIds.length);
         uint256 index;
-        for(uint i=0 ; i<allIds.length ; i++){
-            if(AllPoolz[allIds[i]].StartAmount > AllPoolz[allIds[i]].DebitedAmount ){
+        for (uint256 i = 0; i < allIds.length; i++) {
+            if (
+                AllPoolz[allIds[i]].StartAmount >
+                AllPoolz[allIds[i]].DebitedAmount
+            ) {
                 ids[index] = allIds[i];
                 index++;
             }
         }
-        return ids;
+        if (ids.length == index) return ids;
+        return KeepNElementsInArray(ids, index);
+    }
+
+    function KeepNElementsInArray(uint256[] memory _arr, uint256 _n)
+        internal
+        pure
+        returns (uint256[] memory)
+    {
+        require(_arr.length >= _n,"can't cut more then got");
+        uint256[] memory activeIds = new uint256[](_n);
+        for (uint256 i = 0; i < _n; i++) {
+            activeIds[i] = _arr[i];
+        }
+        return activeIds;
     }
 
     function GetPoolData(uint256 _id)
@@ -37,7 +54,10 @@ contract LockedPoolzData is LockedControl {
         )
     {
         Pool storage pool = AllPoolz[_id];
-        require(pool.Owner == msg.sender || pool.Allowance[msg.sender] > 0, "Private Information");
+        require(
+            pool.Owner == msg.sender || pool.Allowance[msg.sender] > 0,
+            "Private Information"
+        );
         return (
             pool.StartTime,
             pool.FinishTime,
