@@ -95,8 +95,4 @@ contract('Create Pool', accounts => {
         assert.equal(pids.length, numberOfOwners * numberOfTimestamps)
         assert.equal(pids.length, lastPoolId - firstPoolId + 1)
     })
-
-    it('get my pools by tokens', async () => {
-
-    })
 })
