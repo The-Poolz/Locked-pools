@@ -21,6 +21,7 @@ contract('Create Pool', accounts => {
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
         const poolId = tx.logs[1].args.PoolId
         const result = await instance.GetPoolData(poolId, { from: owner })
+        console.log(poolId.toString())
         assert.equal(result[4], owner)
     })
 
@@ -94,5 +95,25 @@ contract('Create Pool', accounts => {
         assert.equal(lastPoolId, (numberOfOwners * numberOfTimestamps + parseInt(firstPoolId) - 1).toString())
         assert.equal(pids.length, numberOfOwners * numberOfTimestamps)
         assert.equal(pids.length, lastPoolId - firstPoolId + 1)
+    })
+
+    it('should get all my pools ids by token', async () => {
+        const res = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[1] });
+        assert.equal(res.toString(), [0])
+
+        const res2 = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[7] });
+        assert.equal(res2.toString(), [3,8,11,14,17,20,23])
+
+        const res3 = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[8] });
+        assert.equal(res3.toString(), [2,7,10,13,16,19,22])
+
+        const res4 = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[9] });
+        assert.equal(res4.toString(), [1,6,9,12,15,18,21])
+
+        const res5 = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[6] });
+        assert.equal(res5.toString(), [4])
+
+        const res6 = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[5] });
+        assert.equal(res6.toString(), [5])
     })
 })
