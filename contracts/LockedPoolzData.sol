@@ -19,8 +19,7 @@ contract LockedPoolzData is LockedControl {
                 AllPoolz[allIds[i]].StartAmount >
                 AllPoolz[allIds[i]].DebitedAmount
             ) {
-                ids[index] = allIds[i];
-                index++;
+                ids[index++] = allIds[i];
             }
         }
         return KeepNElementsInArray(ids, index);
@@ -78,8 +77,7 @@ contract LockedPoolzData is LockedControl {
         uint256 index;
         for (uint256 i = 0; i < allIds.length; i++) {
             if (isInArray(_tokens, AllPoolz[allIds[i]].Token)) {
-                ids[index] = allIds[i];
-                index++;
+                ids[index++] = allIds[i];
             }
         }
         return KeepNElementsInArray(ids, index);
