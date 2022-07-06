@@ -104,13 +104,13 @@ contract('Create Pool', accounts => {
         assert.equal(result.toString(), [0])
 
         result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[7] });
-        assert.equal(result.toString(), [3,8,11,14,17,20,23])
+        assert.equal(result.toString(), [3, 8, 11, 14, 17, 20, 23])
 
         result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[8] });
-        assert.equal(result.toString(), [2,7,10,13,16,19,22])
+        assert.equal(result.toString(), [2, 7, 10, 13, 16, 19, 22])
 
         result = await instance.GetMyPoolsIdByToken([Token.address, invalidToken.address], { from: accounts[9] });
-        assert.equal(result.toString(), [1,6,9,12,15,18,21])
+        assert.equal(result.toString(), [1, 6, 9, 12, 15, 18, 21])
 
         result = await instance.GetMyPoolsIdByToken([Token.address, invalidToken.address], { from: accounts[6] });
         assert.equal(result.toString(), [4])
@@ -120,5 +120,10 @@ contract('Create Pool', accounts => {
 
         result = await instance.GetMyPoolsIdByToken([invalidToken.address], { from: accounts[5] });
         assert.equal(result.toString(), [])
+    })
+
+    it('should get pools data by ids', async () => {
+        const result = await instance.GetPoolsData([1, 6, 9, 12, 15, 18, 21], { from: accounts[9] });
+        assert.equal(7, result.StartTimes.length)
     })
 })
