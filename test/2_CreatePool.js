@@ -124,6 +124,6 @@ contract('Create Pool', accounts => {
 
     it('should get pools data by ids', async () => {
         const result = await instance.GetPoolsData([1, 6, 9, 12, 15, 18, 21], { from: accounts[9] });
-        assert.equal(7, result.StartTimes.length)
+        assert.equal(7, result.length)
     })
 })

@@ -4,15 +4,6 @@ pragma solidity ^0.8.0;
 import "./LockedControl.sol";
 
 contract LockedPoolzData is LockedControl {
-    struct PoolsData {
-        uint256[] StartTimes;
-        uint256[] FinishTimes;
-        uint256[] StartAmounts;
-        uint256[] DebitedAmounts;
-        address[] Owners;
-        address[] Tokens;
-    }
-
     function GetAllMyPoolsId() public view returns (uint256[] memory) {
         return MyPoolz[msg.sender];
     }
@@ -80,23 +71,18 @@ contract LockedPoolzData is LockedControl {
         public
         view
         isPoolArrayIdsValid(_ids)
-        returns (PoolsData memory)
+        returns (Pool[] memory)
     {
-        PoolsData memory data = PoolsData(
-            new uint256[](_ids.length),
-            new uint256[](_ids.length),
-            new uint256[](_ids.length),
-            new uint256[](_ids.length),
-            new address[](_ids.length),
-            new address[](_ids.length)
-        );
+        Pool[] memory data = new Pool[](_ids.length);
         for (uint256 i = 0; i < _ids.length; i++) {
-            data.StartTimes[i] = AllPoolz[_ids[i]].StartTime;
-            data.FinishTimes[i] = AllPoolz[_ids[i]].FinishTime;
-            data.StartAmounts[i] = AllPoolz[_ids[i]].StartAmount;
-            data.DebitedAmounts[i] = AllPoolz[_ids[i]].DebitedAmount;
-            data.Owners[i] = AllPoolz[_ids[i]].Owner;
-            data.Tokens[i] = AllPoolz[_ids[i]].Token;
+            data[i] = Pool(
+                AllPoolz[_ids[i]].StartTime,
+                AllPoolz[_ids[i]].FinishTime,
+                AllPoolz[_ids[i]].StartAmount,
+                AllPoolz[_ids[i]].DebitedAmount,
+                AllPoolz[_ids[i]].Owner,
+                AllPoolz[_ids[i]].Token
+            );
         }
         return data;
     }
