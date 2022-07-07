@@ -32,7 +32,7 @@ contract('Access to Locked Deal', accounts => {
         const newOwner = accounts[8]
         poolId = 1
         await instance.TransferPoolOwnership(poolId, newOwner, { from: owner })
-        const pool = await instance.GetPoolData(poolId, { from: newOwner })
+        const pool = await instance.AllPoolz(poolId, { from: newOwner })
         const newPools = await instance.GetAllMyPoolsId({ from: newOwner })
         assert.equal(newPools[0].toString(), poolId)
         assert.equal(pool[4], newOwner)
@@ -48,9 +48,9 @@ contract('Access to Locked Deal', accounts => {
         const pid = tx.logs[0].args.PoolId
         const pAmount = tx.logs[0].args.StartAmount
         assert.equal(amount, pAmount)
-        const pool = await instance.GetPoolData(poolId, { from: owner })
+        const pool = await instance.AllPoolz(poolId, { from: owner })
         assert.equal(pool[2], allow)
-        const newPool = await instance.GetPoolData(pid, { from: owner })
+        const newPool = await instance.AllPoolz(pid, { from: owner })
         assert.equal(newPool[2], amount)
     })
 
@@ -60,9 +60,9 @@ contract('Access to Locked Deal', accounts => {
         const approvedAddress = accounts[7]
         const tx = await instance.SplitPoolAmount(poolId, amount, approvedAddress, { from: owner })
         const pid = tx.logs[0].args.PoolId
-        const pool = await instance.GetPoolData(poolId, { from: owner })
+        const pool = await instance.AllPoolz(poolId, { from: owner })
         assert.equal(pool[2], allow)
-        const newPool = await instance.GetPoolData(pid, { from: approvedAddress })
+        const newPool = await instance.AllPoolz(pid, { from: approvedAddress })
         assert.equal(newPool[2], amount)
     })
 
@@ -85,8 +85,8 @@ contract('Access to Locked Deal', accounts => {
         it('giving approval', async () => {
             await instance.ApproveAllowance(poolId, approvalAmount, spender, { from: owner })
             const amount = await instance.GetPoolAllowance(poolId, spender)
-            const dataOwner = await instance.GetPoolData(poolId, { from: owner })
-            const dataSpender = await instance.GetPoolData(poolId, { from: spender })
+            const dataOwner = await instance.AllPoolz(poolId, { from: owner })
+            const dataSpender = await instance.AllPoolz(poolId, { from: spender })
             assert.equal(approvalAmount, amount)
             assert.deepEqual(dataOwner, dataSpender)
         })
@@ -95,7 +95,7 @@ contract('Access to Locked Deal', accounts => {
             const newOwner = accounts[2]
             const tx = await instance.SplitPoolAmountFrom(poolId, approvalAmount, newOwner, { from: spender })
             const newPoolId = tx.logs[0].args.PoolId
-            const data = await instance.GetPoolData(newPoolId, { from: newOwner })
+            const data = await instance.AllPoolz(newPoolId, { from: newOwner })
             assert.equal(approvalAmount, data[2])
 
         })
@@ -120,7 +120,7 @@ contract('Access to Locked Deal', accounts => {
         })
 
         it('Fail to split pool when balance is not enough', async () => {
-            const data = await instance.GetPoolData(poolId, { from: owner })
+            const data = await instance.AllPoolz(poolId, { from: owner })
             const amount = data[1] + 1
             await truffleAssert.reverts(instance.SplitPoolAmount(poolId, amount, owner, { from: owner }), "Not Enough Amount Balance")
         })

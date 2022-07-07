@@ -26,9 +26,9 @@ contract LockedPoolz is Manageable {
     }
 
     mapping(uint256 => mapping(address=> uint256)) public Allowance;
-    mapping(uint256 => Pool) AllPoolz;
-    mapping(address => uint256[]) MyPoolz;
-    uint256 internal Index;
+    mapping(uint256 => Pool) public AllPoolz;
+    mapping(address => uint256[]) public MyPoolz;
+    uint256 public Index;
 
     modifier isTokenValid(address _Token){
         require(isTokenWhiteListed(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20

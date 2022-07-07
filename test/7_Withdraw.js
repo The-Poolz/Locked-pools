@@ -25,7 +25,7 @@ contract('Withdraw', (accounts) => {
     })
 
     it('get withdrawable amount', async () => {
-        const data = await instance.GetPoolData(poolId, { from: investor })
+        const data = await instance.AllPoolz(poolId, { from: investor })
         const startAmount = data[2].toString()
         const debitedAmount = data[3].toString()
         const totalPoolDuration = data[1] - data[0]
@@ -53,7 +53,7 @@ contract('Withdraw', (accounts) => {
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, investor, { from: fromAddress })
         poolId = tx.logs[1].args.PoolId.toString()
         MyPoolz.push(poolId)
-        const data = await instance.GetPoolData(poolId, { from: investor })
+        const data = await instance.AllPoolz(poolId, { from: investor })
         const startAmount = data[2].toString()
         const debitedAmount = data[3].toString()
         date.setDate(date.getDate() + 2)
