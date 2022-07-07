@@ -70,11 +70,11 @@ contract LockedPoolzData is LockedControl {
     function GetPoolsData(uint256[] memory _ids)
         public
         view
-        isPoolArrayIdsValid(_ids)
         returns (Pool[] memory)
     {
         Pool[] memory data = new Pool[](_ids.length);
         for (uint256 i = 0; i < _ids.length; i++) {
+            require(_ids[i] < Index, "Pool does not exist");
             data[i] = Pool(
                 AllPoolz[_ids[i]].StartTime,
                 AllPoolz[_ids[i]].FinishTime,

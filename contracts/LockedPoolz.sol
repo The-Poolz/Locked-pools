@@ -56,13 +56,6 @@ contract LockedPoolz is Manageable {
         _;
     }
 
-    modifier isPoolArrayIdsValid(uint256[] memory _PoolIds) {
-        for (uint256 i = 0; i < _PoolIds.length; i++) {
-            require(_PoolIds[i] < Index, "Pool does not exist");
-        }
-        _;
-    }
-
     modifier isPoolOwner(uint256 _PoolId){
         require(AllPoolz[_PoolId].Owner == msg.sender, "You are not Pool Owner");
         _;
