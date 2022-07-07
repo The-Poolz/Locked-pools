@@ -38,12 +38,12 @@ contract LockedControl is LockedPoolz{
         uint256 _Amount,
         address _Spender
     ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) isLocked(_PoolId) notZeroAddress(_Spender) {
-        Allowance[_Spender][_PoolId] = _Amount;
+        Allowance[_PoolId][_Spender] = _Amount;
         emit PoolApproval(_PoolId, _Spender, _Amount);
     }
 
     function GetPoolAllowance(uint256 _PoolId, address _Address) public view isPoolValid(_PoolId) returns(uint256){
-        return Allowance[_Address][_PoolId];
+        return Allowance[_PoolId][_Address];
     }
 
     function SplitPoolAmountFrom(
@@ -52,8 +52,8 @@ contract LockedControl is LockedPoolz{
         address _Address
     ) external isPoolValid(_PoolId) isAllowed(_PoolId, _Amount) isLocked(_PoolId) returns(uint256) {
         uint256 poolId = SplitPool(_PoolId, _Amount, _Address);
-        uint256 _NewAmount = Allowance[msg.sender][_PoolId] - _Amount;
-        Allowance[msg.sender][_PoolId]  = _NewAmount;
+        uint256 _NewAmount = Allowance[_PoolId][msg.sender] - _Amount;
+        Allowance[_PoolId][msg.sender]  = _NewAmount;
         return poolId;
     }
 

@@ -54,7 +54,7 @@ contract LockedPoolzData is LockedControl {
     {
         Pool storage pool = AllPoolz[_id];
         require(
-            pool.Owner == msg.sender || Allowance[msg.sender][_id] > 0,
+            pool.Owner == msg.sender || Allowance[_id][msg.sender] > 0,
             "Private Information"
         );
         return (
