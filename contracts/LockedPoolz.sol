@@ -23,9 +23,9 @@ contract LockedPoolz is Manageable {
         uint256 DebitedAmount;
         address Owner;
         address Token;
-        mapping(address => uint) Allowance;
     }
 
+    mapping(address => mapping(uint256 => uint256)) public Allowance;
     mapping(uint256 => Pool) AllPoolz;
     mapping(address => uint256[]) MyPoolz;
     uint256 internal Index;
@@ -46,7 +46,7 @@ contract LockedPoolz is Manageable {
     }
 
     modifier isAllowed(uint256 _PoolId, uint256 _amount){
-        require(_amount <= AllPoolz[_PoolId].Allowance[msg.sender], "Not enough Allowance");
+        require(_amount <= Allowance[msg.sender][_PoolId], "Not enough Allowance");
         _;
     }
 
