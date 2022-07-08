@@ -1,92 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./Manageable.sol";
+import "./PoolzManageable.sol";
 
-contract LockedPoolz is Manageable {
+contract LockedPoolz is PoolzManageable {
     constructor() {
         Index = 0;
     }
 
-    // add contract name
-    string public name;
-
-    event NewPoolCreated(
-        uint256 PoolId,
-        address Token,
-        uint256 StartTime,
-        uint256 FinishTime,
-        uint256 StartAmount,
-        address Owner
-    );
-    event PoolOwnershipTransfered(
-        uint256 PoolId,
-        address NewOwner,
-        address OldOwner
-    );
-    event PoolApproval(uint256 PoolId, address Spender, uint256 Amount);
-    event PoolSplit(
-        uint256 OldPoolId,
-        uint256 NewPoolId,
-        uint256 NewAmount,
-        address NewOwner
-    );
-
-    struct Pool {
-        uint256 StartTime;
-        uint256 FinishTime;
-        uint256 StartAmount;
-        uint256 DebitedAmount;
-        address Owner;
-        address Token;
-    }
-
-    mapping(uint256 => mapping(address=> uint256)) public Allowance;
-    mapping(uint256 => Pool) AllPoolz;
-    mapping(address => uint256[]) MyPoolz;
-    uint256 internal Index;
-
     modifier isTokenValid(address _Token) {
         require(isTokenWhiteListed(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
-        _;
-    }
-
-    modifier isPoolValid(uint256 _PoolId) {
-        require(_PoolId < Index, "Pool does not exist");
-        _;
-    }
-
-    modifier isPoolOwner(uint256 _PoolId){
-        require(AllPoolz[_PoolId].Owner == msg.sender, "You are not Pool Owner");
-        _;
-    }
-
-    modifier isAllowed(uint256 _PoolId, uint256 _amount){
-        require(_amount <= Allowance[_PoolId][msg.sender], "Not enough Allowance");
-        _;
-    }
-
-    modifier isLocked(uint256 _PoolId) {
-        require(
-            AllPoolz[_PoolId].StartTime > block.timestamp,
-            "Pool is Unlocked"
-        );
-        _;
-    }
-
-    modifier isGreaterThanZero(uint256 _num) {
-        require(_num > 0, "Array length should be greater than zero");
-        _;
-    }
-
-    // modifier isTimeLengthValid(uint256 _startLength, uint256 _finishLength){
-    //     require(_startLength > 0, "Time Array length should be greater than zero");
-    //     require(_startLength == _finishLength, "Start and Finish Arrays should have same length");
-    //     _;
-    // }
-
-    modifier isBelowLimit(uint256 _num) {
-        require(_num <= maxTransactionLimit, "Max array length limit exceeded");
         _;
     }
 

@@ -3,25 +3,13 @@ pragma solidity ^0.8.0;
 
 import "poolz-helper-v2/contracts/interfaces/IWhiteList.sol";
 import "poolz-helper-v2/contracts/FeeBaseHelper.sol";
+import "./LockedDealEvents.sol";
+import "./LockedDealModifiers.sol";
 
-contract Manageable is FeeBaseHelper {
+contract PoolzManageable is FeeBaseHelper, LockedDealEvents, LockedDealModifiers {
     constructor() {
         maxTransactionLimit = 400;
         isTokenFilterOn = false; // disable token filter whitelist
-    }
-
-    uint256 public MinDuration; //the minimum duration of a pool, in seconds
-
-    address public WhiteList_Address;
-    bool public isTokenFilterOn; // use to enable/disable token filter
-    uint256 public TokenFeeWhiteListId;
-    uint256 public TokenFilterWhiteListId;
-    uint256 public UserWhiteListId;
-    uint256 public maxTransactionLimit;
-
-    modifier notZeroAddress(address _address) {
-        require(_address != address(0x0), "Zero Address is not allowed");
-        _;
     }
 
     function setWhiteListAddress(address _address) external onlyOwner {

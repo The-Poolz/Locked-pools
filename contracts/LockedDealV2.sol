@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import "./LockedPoolzData.sol";
 
 contract LockedDealV2 is LockedPoolzData {
-    event TokenWithdrawn(uint256 PoolId, address Recipient, uint256 Amount);
-
     function getWithdrawableAmount(uint256 _PoolId) public view isPoolValid(_PoolId) returns(uint256){
         Pool storage pool = AllPoolz[_PoolId];
         if(block.timestamp < pool.StartTime) return 0;
