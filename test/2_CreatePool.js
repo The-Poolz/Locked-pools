@@ -6,6 +6,7 @@ const constants = require('@openzeppelin/test-helpers/src/constants.js');
 contract('Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
     let invalidToken
+    let startTime, finishTime
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -18,8 +19,8 @@ contract('Create Pool', accounts => {
         await Token.approve(instance.address, allow, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
-        const startTime = Math.floor(date.getTime() / 1000)
-        const finishTime = startTime + 60 * 60 * 24 * 30
+        startTime = Math.floor(date.getTime() / 1000)
+        finishTime = startTime + 60 * 60 * 24 * 30
         const owner = accounts[1]
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
         const poolId = tx.logs[1].args.PoolId
@@ -104,13 +105,13 @@ contract('Create Pool', accounts => {
         assert.equal(result.toString(), [0])
 
         result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[7] });
-        assert.equal(result.toString(), [3,8,11,14,17,20,23])
+        assert.equal(result.toString(), [3, 8, 11, 14, 17, 20, 23])
 
         result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[8] });
-        assert.equal(result.toString(), [2,7,10,13,16,19,22])
+        assert.equal(result.toString(), [2, 7, 10, 13, 16, 19, 22])
 
         result = await instance.GetMyPoolsIdByToken([Token.address, invalidToken.address], { from: accounts[9] });
-        assert.equal(result.toString(), [1,6,9,12,15,18,21])
+        assert.equal(result.toString(), [1, 6, 9, 12, 15, 18, 21])
 
         result = await instance.GetMyPoolsIdByToken([Token.address, invalidToken.address], { from: accounts[6] });
         assert.equal(result.toString(), [4])
@@ -120,5 +121,16 @@ contract('Create Pool', accounts => {
 
         result = await instance.GetMyPoolsIdByToken([invalidToken.address], { from: accounts[5] });
         assert.equal(result.toString(), [])
+    })
+
+    it('should get pools data by ids', async () => {
+        const result = await instance.GetPoolsData([0], { from: accounts[1] });
+        assert.equal(1, result.length)
+        assert.equal(startTime, result[0].StartTime)
+        assert.equal(finishTime, result[0].FinishTime)
+        assert.equal(100, result[0].StartAmount)
+        assert.equal(0, result[0].DebitedAmount)
+        assert.equal(accounts[1], result[0].Owner)
+        assert.equal(Token.address, result[0]. Token)
     })
 })

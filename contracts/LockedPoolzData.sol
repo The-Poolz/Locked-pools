@@ -31,12 +31,32 @@ contract LockedPoolzData is LockedControl {
         returns (uint256[] memory)
     {
         if (_arr.length == _n) return _arr;
-        require(_arr.length > _n,"can't cut more then got");
+        require(_arr.length > _n, "can't cut more then got");
         uint256[] memory activeIds = new uint256[](_n);
         for (uint256 i = 0; i < _n; i++) {
             activeIds[i] = _arr[i];
         }
         return activeIds;
+    }
+
+    function GetPoolsData(uint256[] memory _ids)
+        public
+        view
+        returns (Pool[] memory)
+    {
+        Pool[] memory data = new Pool[](_ids.length);
+        for (uint256 i = 0; i < _ids.length; i++) {
+            require(_ids[i] < Index, "Pool does not exist");
+            data[i] = Pool(
+                AllPoolz[_ids[i]].StartTime,
+                AllPoolz[_ids[i]].FinishTime,
+                AllPoolz[_ids[i]].StartAmount,
+                AllPoolz[_ids[i]].DebitedAmount,
+                AllPoolz[_ids[i]].Owner,
+                AllPoolz[_ids[i]].Token
+            );
+        }
+        return data;
     }
 
     function GetMyPoolsIdByToken(address[] memory _tokens)
