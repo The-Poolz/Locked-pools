@@ -3,10 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./LockedPoolz.sol";
 
-contract LockedControl is LockedPoolz{
-
-    event MassPoolsCreated(uint256 FirstPoolId, uint256 LastPoolId);
-
+contract LockedControl is LockedPoolz {
     function TransferPoolOwnership(
         uint256 _PoolId,
         address _NewOwner
