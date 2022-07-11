@@ -39,34 +39,6 @@ contract LockedPoolzData is LockedControl {
         return activeIds;
     }
 
-    function GetPoolData(uint256 _id)
-        public
-        view
-        isPoolValid(_id)
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256,
-            address,
-            address
-        )
-    {
-        Pool storage pool = AllPoolz[_id];
-        require(
-            pool.Owner == msg.sender || Allowance[_id][msg.sender] > 0,
-            "Private Information"
-        );
-        return (
-            pool.StartTime,
-            pool.FinishTime,
-            pool.StartAmount,
-            pool.DebitedAmount,
-            pool.Owner,
-            pool.Token
-        );
-    }
-
     function GetPoolsData(uint256[] memory _ids)
         public
         view

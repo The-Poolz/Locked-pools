@@ -5,9 +5,9 @@ pragma solidity ^0.8.0;
 contract LockedDealModifiers {
     string public name; // add contract name
     mapping(uint256 => mapping(address => uint256)) public Allowance;
-    mapping(uint256 => Pool) AllPoolz;
-    mapping(address => uint256[]) MyPoolz;
-    uint256 internal Index;
+    mapping(uint256 => Pool) public AllPoolz;
+    mapping(address => uint256[]) public MyPoolz;
+    uint256 public Index;
 
     uint256 public MinDuration; //the minimum duration of a pool, in seconds
     address public WhiteList_Address;

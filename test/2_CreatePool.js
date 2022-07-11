@@ -24,7 +24,7 @@ contract('Create Pool', accounts => {
         const owner = accounts[1]
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
         const poolId = tx.logs[1].args.PoolId
-        const result = await instance.GetPoolData(poolId, { from: owner })
+        const result = await instance.AllPoolz(poolId, { from: owner })
         assert.equal(result[4], owner)
     })
 
