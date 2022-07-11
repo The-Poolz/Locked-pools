@@ -119,16 +119,25 @@ You should use ApproveAllowance() function.
 ## List of functions for user
 ### Creating a new pool
 
+**CreateNewPool()** function allows you to create a new pool of locking tokens.
+There are such parameters:
+ address _Token,       // Token address to lock
+ uint256 _StartTime,   // Until what time a pool will start
+ uint256 _FinishTime,  // Until what time a pool will end
+ uint256 _StartAmount, // Total amount of the tokens to sell in a pool
+ address _Owner        // Token owner
+ If it is needed you have to pay some fee for creation.
+
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
 After that, you should use CreateNewPool() function.
 
 ```solidity
     function CreateNewPool(
-        address _Token, // token to lock address
-        uint256 _StartTime, // until what time the pool will start
-        uint256 _FinishTime, // until what time the pool will end
-        uint256 _StartAmount, // total amount of the tokens to sell in the pool
-        address _Owner // who the tokens belong to
+        address _Token,
+        uint256 _StartTime,
+        uint256 _FinishTime,
+        uint256 _StartAmount,
+        address _Owner
     ) external payable;
 ```
 
