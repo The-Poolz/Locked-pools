@@ -32,7 +32,7 @@ You should use setWhiteListAddress() function.
     function setWhiteListAddress(address _address) external;
 ```
 
-### How to set a new token fee whitelist id?
+### Setting token fee for whitelist id
 
 You should use setTokenFeeWhiteListId() function.
 
@@ -40,7 +40,7 @@ You should use setTokenFeeWhiteListId() function.
     function setTokenFeeWhiteListId(uint256 _id) external;
 ```
 
-### How to set a new token filter whitelist id?
+### Setting token filter for whitelist id
 
 You should use setTokenFilterWhiteListId() function.
 
@@ -48,7 +48,7 @@ You should use setTokenFilterWhiteListId() function.
     function setTokenFilterWhiteListId(uint256 _id) external;
 ```
 
-### How to set a new user whitelist id?
+### Setting user whitelist id
 
 You should use setUserWhiteListId() function.
 
@@ -56,7 +56,7 @@ You should use setUserWhiteListId() function.
     function setUserWhiteListId(uint256 _id) external;
 ```
 
-### How to set a new max transaction limit?
+### Setting max transaction limit
 
 You should use setMaxTransactionLimit() function.
 
@@ -64,7 +64,7 @@ You should use setMaxTransactionLimit() function.
     function setMaxTransactionLimit(uint256 _newLimit) external;
 ```
 
-### How to set a new minimum duration?
+### Setting minimum duration
 
 You should use SetMinDuration() function.
 
@@ -72,7 +72,7 @@ You should use SetMinDuration() function.
     function SetMinDuration(uint16 _minDuration) public;
 ```
 
-### How to swap a token filter?
+### Swapping token filter
 
 You should use swapTokenFilter() function.
 
@@ -81,7 +81,7 @@ You should use swapTokenFilter() function.
 ```
 
 ## List of functions for pool owner
-### How to transfer pool ownership?
+### Transfering pool ownership
 
 You should use TransferPoolOwnership() function.
 
@@ -92,7 +92,7 @@ function TransferPoolOwnership(
     ) external;
 ```
 
-### How to split pool amount?
+### Splitting pool amount
 
 You should use SplitPoolAmount() function.
 
@@ -104,7 +104,7 @@ You should use SplitPoolAmount() function.
     ) external returns(uint256)
 ```
 
-### How to approve allowance in pool for user?
+### Approving allowance
 
 You should use ApproveAllowance() function.
 
@@ -117,7 +117,7 @@ You should use ApproveAllowance() function.
 ```
 
 ## List of functions for user
-### How to create a single new pool?
+### Creating new pool
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
 After that, you should use CreateNewPool() function.
@@ -132,7 +132,7 @@ After that, you should use CreateNewPool() function.
     ) external payable;
 ```
 
-### How to create a pool array?
+### Creating array of pools
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
 After that, you should use CreateMassPools() function.
@@ -147,7 +147,7 @@ After that, you should use CreateMassPools() function.
     )   external payable;
 ```
 
-### How to create an array of pools with respect to finish time?
+### Creating array of pools with respect to finish time
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
 After that, you should use CreatePoolsWrtTime() function.
@@ -162,7 +162,7 @@ After that, you should use CreatePoolsWrtTime() function.
     )   external payable
 ```
 
-### How to get all your pool ids by token addresses?
+### Getting my pools' ids by token
 
 You should use the GetMyPoolsIdByToken() function.
 
@@ -173,7 +173,7 @@ You should use the GetMyPoolsIdByToken() function.
         returns (uint256[] memory);
 ```
 
-### How to get pools data by pools' ids?
+### Getting pools' data
 
 You should use the GetPoolsData() function.
 
@@ -185,7 +185,7 @@ You should use the GetPoolsData() function.
     {
 ```
 
-### How to check whether a token is without fee?
+### Check whether a token is without fee
 
 You should use isTokenWithoutFee() function.
 
@@ -193,7 +193,7 @@ You should use isTokenWithoutFee() function.
     function isTokenWithoutFee(address _tokenAddress) public view returns(bool);
 ```
 
-### How to check whether a token is whitelisted?
+### Check whether a token is whitelisted
 
 You should use isTokenWhiteListed() function.
 
@@ -201,7 +201,7 @@ You should use isTokenWhiteListed() function.
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
 ```
 
-### How to check whether a user is without fee?
+### Check whether a user is without fee
 
 You should use isUserWithoutFee() function.
 
@@ -209,7 +209,7 @@ You should use isUserWithoutFee() function.
     function isUserWithoutFee(address _UserAddress) public view returns(bool);
 ```
 
-### How to get a pool data by id?
+### Gettting pool data
 
 You should use GetPoolData() function.
 
@@ -227,7 +227,7 @@ You should use GetPoolData() function.
         );
 ```
 
-### How to get all my pools' ids?
+### Getting all my pools' ids
 
 You should use GetAllMyPoolsId() function.
 
@@ -235,7 +235,7 @@ You should use GetAllMyPoolsId() function.
     function GetAllMyPoolsId() public view returns (uint256[] memory);
 ```
 
-### How to get my pools' ids?
+### Getting my pools' ids
 
 You should use GetMyPoolsId() function.
 
@@ -243,7 +243,7 @@ You should use GetMyPoolsId() function.
     function GetMyPoolsId() public view returns (uint256[] memory);
 ```
 
-### How to withdraw token by pool id?
+### Withdrawing token
 
 You should use WithdrawToken() function.
 
@@ -251,7 +251,7 @@ You should use WithdrawToken() function.
     function WithdrawToken(uint256 _PoolId) external returns (bool);
 ```
 
-### How to get withdrawable amount of tokens by pool id?
+### Getting withdrawable amount
 
 You should use getWithdrawableAmount() function.
 
@@ -259,7 +259,7 @@ You should use getWithdrawableAmount() function.
     function getWithdrawableAmount(uint256 _PoolId) public view returns(uint256)
 ```
 
-### How to split pool amount from alredy existing?
+### Splitting pool amount from already existing
 
 You should use SplitPoolAmountFrom() function.
 
@@ -271,7 +271,7 @@ You should use SplitPoolAmountFrom() function.
     ) external returns(uint256);
 ```
 
-### How to get pool allowance?
+### Getting pool's allowance
 
 You should use GetPoolAllowance() function.
 
@@ -279,7 +279,7 @@ You should use GetPoolAllowance() function.
     function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
 ```
 
-### How to approve allowance?
+### Approving allowance
 
 You should use ApproveAllowance() function.
 
