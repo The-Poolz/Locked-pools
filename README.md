@@ -24,7 +24,7 @@ truffle migrate --f 1 --to 1 --network dashboard
 ```
 
 ## List of functions for admin
-### How to set a new whitelist address?
+### Setting a new whitelist address
 
 You should use setWhiteListAddress() function.
 
