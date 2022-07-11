@@ -23,10 +23,76 @@ truffle dashboard
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
+## List of functions for admin
+## How to set a new whitelist address?
+
+You should use setWhiteListAddress() function.
+
+```solidity
+    function setWhiteListAddress(address _address) external;
+```
+
+## How to set a new token fee whitelist id?
+
+You should use setTokenFeeWhiteListId() function.
+
+```solidity
+    function setTokenFeeWhiteListId(uint256 _id) external;
+```
+
+## How to set a new token filter whitelist id?
+
+You should use setTokenFilterWhiteListId() function.
+
+```solidity
+    function setTokenFilterWhiteListId(uint256 _id) external;
+```
+
+## How to set a new user whitelist id?
+
+You should use setUserWhiteListId() function.
+
+```solidity
+    function setUserWhiteListId(uint256 _id) external;
+```
+
+## How to swap a token filter?
+
+You should use swapTokenFilter() function.
+
+```solidity
+    function swapTokenFilter() external;
+```
+
+## How to check whether a token is without fee?
+
+You should use isTokenWithoutFee() function.
+
+```solidity
+    function isTokenWithoutFee(address _tokenAddress) public view returns(bool);
+```
+
+## How to check whether a token is whitelisted?
+
+You should use isTokenWhiteListed() function.
+
+```solidity
+    function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
+```
+
+## How to check whether a user is without fee?
+
+You should use isUserWithoutFee() function.
+
+```solidity
+    function isUserWithoutFee(address _UserAddress) public view returns(bool);
+```
+
+## List of functions for pool owner
 ## How to create a single new pool?
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should you CreateNewPool() function.
+After that, you should use CreateNewPool() function.
 
 ```solidity
     function CreateNewPool(
@@ -41,7 +107,7 @@ After that, you should you CreateNewPool() function.
 ## How to create a pool array?
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should you CreateMassPools() function.
+After that, you should use CreateMassPools() function.
 
 ```solidity
     function CreateMassPools(
@@ -56,7 +122,7 @@ After that, you should you CreateMassPools() function.
 ## How to create an array of pools with respect to finish time?
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should you CreatePoolsWrtTime() function.
+After that, you should use CreatePoolsWrtTime() function.
 
 ```solidity
     function CreatePoolsWrtTime(
