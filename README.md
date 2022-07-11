@@ -22,3 +22,71 @@ truffle run coverage
 truffle dashboard
 truffle migrate --f 1 --to 1 --network dashboard
 ```
+
+## How to create a single new pool?
+
+First of all, you have to approve amount of tokens to the Locked-Pools contract.
+After that, you should you CreateNewPool() function.
+
+```solidity
+    function CreateNewPool(
+        address _Token, // token to lock address
+        uint256 _StartTime, // until what time the pool will start
+        uint256 _FinishTime, // until what time the pool will end
+        uint256 _StartAmount, // total amount of the tokens to sell in the pool
+        address _Owner // who the tokens belong to
+    ) external payable;
+```
+
+## How to create a pool array?
+
+First of all, you have to approve amount of tokens to the Locked-Pools contract.
+After that, you should you CreateMassPools() function.
+
+```solidity
+    function CreateMassPools(
+        address _Token,
+        uint256[] calldata _StartTime,
+        uint256[] calldata _FinishTime,
+        uint256[] calldata _StartAmount,
+        address[] calldata _Owner
+    )   external payable;
+```
+
+## How to create an array of pools with respect to finish time?
+
+First of all, you have to approve amount of tokens to the Locked-Pools contract.
+After that, you should you CreatePoolsWrtTime() function.
+
+```solidity
+    function CreatePoolsWrtTime(
+        address _Token,
+        uint256[] calldata _StartTime,
+        uint256[] calldata _FinishTime,
+        uint256[] calldata _StartAmount,
+        address[] calldata _Owner
+    )   external payable
+```
+
+## How to get all your pool ids by token addresses?
+
+You should use the GetMyPoolsIdByToken() function.
+
+```solidity
+    function GetMyPoolsIdByToken(address[] memory _tokens)
+        public
+        view
+        returns (uint256[] memory);
+```
+
+## How to get pools data by pools' ids?
+
+You should use the GetPoolsData() function.
+
+```solidity
+    function GetPoolsData(uint256[] memory _ids)
+        public
+        view
+        returns (Pool[] memory)
+    {
+```
