@@ -23,7 +23,7 @@ truffle dashboard
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
-## List of functions for admin
+# List of functions for admin
 ## How to set a new whitelist address?
 
 You should use setWhiteListAddress() function.
@@ -80,7 +80,7 @@ You should use swapTokenFilter() function.
     function swapTokenFilter() external;
 ```
 
-## List of functions for pool owner
+# List of functions for pool owner
 ## How to transfer pool ownership?
 
 You should use TransferPoolOwnership() function.
@@ -116,7 +116,7 @@ You should use ApproveAllowance() function.
     ) external;
 ```
 
-## List of functions for user
+# List of functions for user
 ## How to create a single new pool?
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
