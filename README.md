@@ -226,3 +226,19 @@ You should use GetPoolData() function.
             address
         );
 ```
+
+## How to get all my pools' ids?
+
+You should use GetAllMyPoolsId() function.
+
+```solidity
+    function GetAllMyPoolsId() public view returns (uint256[] memory);
+```
+
+## How to get my pools' ids?
+
+You should use GetMyPoolsId() function.
+
+```solidity
+    function GetMyPoolsId() public view returns (uint256[] memory);
+```
