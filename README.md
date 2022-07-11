@@ -242,3 +242,11 @@ You should use GetMyPoolsId() function.
 ```solidity
     function GetMyPoolsId() public view returns (uint256[] memory);
 ```
+
+## How to withdraw token by poolId?
+
+You should use WithdrawToken() function.
+
+```solidity
+    function WithdrawToken(uint256 _PoolId) external returns (bool);
+```
