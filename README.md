@@ -5,21 +5,29 @@
 
 Smart contract for secure storage of ERC20 tokens.
 
-### Installation
+### Navigation
+- [Installation](#installation)
+- [Admin](#list-of-functions-for-admin)
+- [Owner of locked tokens](#list-of-functions-for-pool-owner)
+- [User](#list-of-functions-for-user)
+
+#### Installation
 
 ```console
 npm install
 ```
 
-### Testing
+#### Testing
 
 ```console
 truffle run coverage
 ```
-### Deploy
+#### Deploy
 
 ```console
 truffle dashboard
+```
+```console
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
