@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 /// @title contains modifiers and stores variables.
 contract LockedDealModifiers {
-    string public name; // add contract name
     mapping(uint256 => mapping(address => uint256)) public Allowance;
     mapping(uint256 => Pool) public AllPoolz;
     mapping(address => uint256[]) public MyPoolz;
