@@ -56,6 +56,22 @@ You should use setUserWhiteListId() function.
     function setUserWhiteListId(uint256 _id) external;
 ```
 
+## How to set a new max transaction limit?
+
+You should use setMaxTransactionLimit() function.
+
+```solidity
+    function setMaxTransactionLimit(uint256 _newLimit) external;
+```
+
+## How to set a new minimum duration?
+
+You should use SetMinDuration() function.
+
+```solidity
+    function SetMinDuration(uint16 _minDuration) public;
+```
+
 ## How to swap a token filter?
 
 You should use swapTokenFilter() function.
