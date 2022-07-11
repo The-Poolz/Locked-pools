@@ -144,7 +144,7 @@ After that, you should use CreateNewPool() function.
 ```
 
 ### Creating an array of pools
-**CreateNewPool()** function allows you to create an array of pools for locking tokens.
+**CreateMassPool()** function allows you to create an array of pools for locking tokens.
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
 After that, you should use CreateMassPools() function.
@@ -273,7 +273,9 @@ You should use getWithdrawableAmount() function.
     function getWithdrawableAmount(uint256 _PoolId) public view returns(uint256)
 ```
 
-### Splitting a pool amount from already existing
+### Splitting a pool amount from already an existing pool's allowance for a user.
+When you splitting a pool using this function, existing allowance for a user in the pool
+will be decreased by the amount.
 
 You should use SplitPoolAmountFrom() function.
 
