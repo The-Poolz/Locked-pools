@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./PoolzManageable.sol";
+import "./LockedManageable.sol";
 
-contract LockedPoolz is PoolzManageable {
+contract LockedPoolz is LockedManageable {
     constructor() {
         Index = 0;
     }

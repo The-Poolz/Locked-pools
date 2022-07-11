@@ -6,7 +6,7 @@ import "poolz-helper-v2/contracts/FeeBaseHelper.sol";
 import "./LockedDealEvents.sol";
 import "./LockedDealModifiers.sol";
 
-contract PoolzManageable is FeeBaseHelper, LockedDealEvents, LockedDealModifiers {
+contract LockedManageable is FeeBaseHelper, LockedDealEvents, LockedDealModifiers {
     constructor() {
         maxTransactionLimit = 400;
         isTokenFilterOn = false; // disable token filter whitelist
