@@ -80,30 +80,6 @@ You should use swapTokenFilter() function.
     function swapTokenFilter() external;
 ```
 
-## How to check whether a token is without fee?
-
-You should use isTokenWithoutFee() function.
-
-```solidity
-    function isTokenWithoutFee(address _tokenAddress) public view returns(bool);
-```
-
-## How to check whether a token is whitelisted?
-
-You should use isTokenWhiteListed() function.
-
-```solidity
-    function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
-```
-
-## How to check whether a user is without fee?
-
-You should use isUserWithoutFee() function.
-
-```solidity
-    function isUserWithoutFee(address _UserAddress) public view returns(bool);
-```
-
 ## List of functions for pool owner
 ## How to transfer pool ownership?
 
@@ -113,6 +89,30 @@ You should use TransferPoolOwnership() function.
 function TransferPoolOwnership(
         uint256 _PoolId,
         address _NewOwner
+    ) external;
+```
+
+## How to split pool amount?
+
+You should use SplitPoolAmount() function.
+
+```solidity
+    function SplitPoolAmount(
+        uint256 _PoolId,
+        uint256 _NewAmount,
+        address _NewOwner
+    ) external returns(uint256)
+```
+
+## How to approve allowance in pool for user?
+
+You should use ApproveAllowance() function.
+
+```solidity
+    function ApproveAllowance(
+        uint256 _PoolId,
+        uint256 _Amount,
+        address _Spender
     ) external;
 ```
 
@@ -183,4 +183,28 @@ You should use the GetPoolsData() function.
         view
         returns (Pool[] memory)
     {
+```
+
+## How to check whether a token is without fee?
+
+You should use isTokenWithoutFee() function.
+
+```solidity
+    function isTokenWithoutFee(address _tokenAddress) public view returns(bool);
+```
+
+## How to check whether a token is whitelisted?
+
+You should use isTokenWhiteListed() function.
+
+```solidity
+    function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
+```
+
+## How to check whether a user is without fee?
+
+You should use isUserWithoutFee() function.
+
+```solidity
+    function isUserWithoutFee(address _UserAddress) public view returns(bool);
 ```
