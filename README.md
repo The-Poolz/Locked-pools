@@ -258,3 +258,35 @@ You should use getWithdrawableAmount() function.
 ```solidity
     function getWithdrawableAmount(uint256 _PoolId) public view returns(uint256)
 ```
+
+## How to split pool amount from alredy existing?
+
+You should use SplitPoolAmountFrom() function.
+
+```solidity
+        function SplitPoolAmountFrom(
+        uint256 _PoolId,
+        uint256 _Amount,
+        address _Address
+    ) external returns(uint256);
+```
+
+## How to get pool allowance?
+
+You should use GetPoolAllowance() function.
+
+```solidity
+    function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
+```
+
+## How to approve allowance?
+
+You should use ApproveAllowance() function.
+
+```solidity
+    function ApproveAllowance(
+        uint256 _PoolId,
+        uint256 _Amount,
+        address _Spender
+    ) external;
+```
