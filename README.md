@@ -93,6 +93,8 @@ function TransferPoolOwnership(
 ```
 
 ### Splitting a pool amount
+When you splitting a pool, it creates a new pool with splitted amount,
+but in first pool amount is decreased by amount of new pool.
 
 You should use SplitPoolAmount() function.
 
@@ -119,7 +121,7 @@ You should use ApproveAllowance() function.
 ## List of functions for user
 ### Creating a new pool
 
-**CreateNewPool()** function allows you to create a new pool of locking tokens.
+**CreateNewPool()** function allows you to create a new pool for locking tokens.
 There are such parameters:
  address _Token,       // Token address to lock
  uint256 _StartTime,   // Until what time a pool will start
@@ -142,6 +144,7 @@ After that, you should use CreateNewPool() function.
 ```
 
 ### Creating an array of pools
+**CreateNewPool()** function allows you to create an array of pools for locking tokens.
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
 After that, you should use CreateMassPools() function.
@@ -253,6 +256,8 @@ You should use GetMyPoolsId() function.
 ```
 
 ### Withdrawing a token
+**WithdrawToken()**  function allows you to withdraw tokens if pool is finished,
+there are left overs and it nobody have took.
 
 You should use WithdrawToken() function.
 
