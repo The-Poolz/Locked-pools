@@ -208,3 +208,21 @@ You should use isUserWithoutFee() function.
 ```solidity
     function isUserWithoutFee(address _UserAddress) public view returns(bool);
 ```
+
+## How to get a pool data by id?
+
+You should use GetPoolData() function.
+
+```solidity
+        function GetPoolData(uint256 _id)
+        public
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            address,
+            address
+        );
+```
