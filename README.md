@@ -40,6 +40,8 @@ You should use setWhiteListAddress() function.
     function setWhiteListAddress(address _address) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x346c84ff830fccadba03cdf43b1b11e40a46094a23060dcbaa89666673fde4b9)
+
 ### Setting a token fee for a whitelist id
 
 You should use setTokenFeeWhiteListId() function.
