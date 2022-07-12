@@ -7,7 +7,7 @@ Smart contract for secure storage of ERC20 tokens.
 
 ### Navigation
 - [Installation](#installation)
-- [Admin](#admin's-privileges)
+- [Admin](#admin-privileges)
 - [Owner of locked tokens](#list-of-functions-for-pool-owner)
 - [User](#list-of-functions-for-user)
 
@@ -31,7 +31,7 @@ truffle dashboard
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
-## Admin's privileges
+## Admin privileges
 ### Setting a new whitelist address
 
 You should use setWhiteListAddress() function.
