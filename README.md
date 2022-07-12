@@ -206,7 +206,7 @@ After that, you should use CreatePoolsWrtTime() function.
     )   external payable
 ```
 
-Testnet tx: link
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x4be6d53d04253b9d8c158856e819dc9d07ae3221f875c2769f5dfc286c1137c9)
 
 ### Getting my pools' ids by a token
 
