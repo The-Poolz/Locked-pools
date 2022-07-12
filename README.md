@@ -8,8 +8,8 @@ Smart contract for secure storage of ERC20 tokens.
 ### Navigation
 - [Installation](#installation)
 - [Admin](#admin-privileges)
-- [Owner of locked tokens](#list-of-functions-for-pool-owner)
-- [User](#list-of-functions-for-user)
+- [Owner of locked tokens](#pool-owner-privileges)
+- [User](#user-privileges)
 
 #### Installation
 
@@ -88,7 +88,7 @@ You should use swapTokenFilter() function.
     function swapTokenFilter() external;
 ```
 
-## Pool owner's privileges
+## Pool owner privileges
 ### Transfering a pool ownership
 
 You should use TransferPoolOwnership() function.
@@ -132,7 +132,7 @@ You should use ApproveAllowance() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x0e1c940474c3dce49662c3252a3c40278ceb53724f7d2da4a76b1d2252c1cfa4)
 
-## User's privileges
+## User privileges
 ### Creating a new pool
 
 **CreateNewPool()** function allows you to create a new pool for locking tokens.
