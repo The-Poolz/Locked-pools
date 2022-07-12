@@ -47,8 +47,4 @@ contract LockedManageable is FeeBaseHelper, LockedDealEvents, LockedDealModifier
     function setMaxTransactionLimit(uint256 _newLimit) external onlyOwner{
         maxTransactionLimit = _newLimit;
     }
-
-    function SetMinDuration(uint16 _minDuration) public onlyOwner {
-        MinDuration = _minDuration;
-    }
 }

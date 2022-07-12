@@ -8,7 +8,6 @@ contract LockedDealModifiers {
     mapping(address => uint256[]) public MyPoolz;
     uint256 public Index;
 
-    uint256 public MinDuration; //the minimum duration of a pool, in seconds
     address public WhiteList_Address;
     bool public isTokenFilterOn; // use to enable/disable token filter
     uint256 public TokenFeeWhiteListId;
