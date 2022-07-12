@@ -50,6 +50,8 @@ You should use setTokenFeeWhiteListId() function.
     function setTokenFeeWhiteListId(uint256 _id) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x2e0ff4c5e3691d5d6363cd674417fe0dc023102b5f6b59d98b62045d5c0b9c32)
+
 ### Setting a token filter for a whitelist id
 
 You should use setTokenFilterWhiteListId() function.
