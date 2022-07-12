@@ -1,4 +1,5 @@
 # Locked Deal V2
+
 [![Build Status](https://travis-ci.com/The-Poolz/Locked-pools.svg?branch=master)](https://travis-ci.com/The-Poolz/Locked-pools)
 [![codecov](https://codecov.io/gh/The-Poolz/Locked-pools/branch/master/graph/badge.svg?token=szMZsBIF3L)](https://codecov.io/gh/The-Poolz/Locked-pools)
 [![CodeFactor](https://www.codefactor.io/repository/github/the-poolz/locked-pools/badge)](https://www.codefactor.io/repository/github/the-poolz/locked-pools)
@@ -6,10 +7,12 @@
 Smart contract for secure storage of ERC20 tokens.
 
 ### Navigation
+
 - [Installation](#installation)
-- [Admin](#admin-privileges)
-- [Owner of locked tokens](#pool-owner-privileges)
-- [User](#user-privileges)
+- [Admin](#admin-settings)
+- [Owner of locked tokens](#pool-owner-settings)
+- [User](#user-settings)
+- [License](#license)
 
 #### Installation
 
@@ -22,19 +25,29 @@ npm install
 ```console
 truffle run coverage
 ```
+
 #### Deploy
 
 ```console
 truffle dashboard
 ```
+
 ```console
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
-## Admin privileges
-### Setting a new whitelist address
+## Admin settings
 
-You should use setWhiteListAddress() function.
+### Whitelist address
+
+**Problem:**
+Admin has set the payment price for creating a pool, but it is necessary that certain addresses don't pay.
+
+**Solution:**
+Create a whitelist of addresses that don't pay and integrate it with Locked-pools.
+
+- The default whitelist address is zero
+- We can set only contract that implements [IWhiteList](https://github.com/The-Poolz/Poolz-Helper/blob/master/contracts/interfaces/IWhiteList.sol) interface.
 
 ```solidity
     function setWhiteListAddress(address _address) external;
@@ -42,9 +55,9 @@ You should use setWhiteListAddress() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x346c84ff830fccadba03cdf43b1b11e40a46094a23060dcbaa89666673fde4b9)
 
-### Setting a token fee for a whitelist id
+### Non-paid token
 
-You should use setTokenFeeWhiteListId() function.
+Locked-pools can uses three manual whitelists. One of them is a whitelist for tokens that are exempt from paying fees.
 
 ```solidity
     function setTokenFeeWhiteListId(uint256 _id) external;
@@ -52,9 +65,9 @@ You should use setTokenFeeWhiteListId() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x2e0ff4c5e3691d5d6363cd674417fe0dc023102b5f6b59d98b62045d5c0b9c32)
 
-### Setting a token filter for a whitelist id
+### Security token filter
 
-You should use setTokenFilterWhiteListId() function.
+If someone is trying to lock tokens that damage the contract, we can create a whitelist of tokens that can only be used to create a locked pool.
 
 ```solidity
     function setTokenFilterWhiteListId(uint256 _id) external;
@@ -62,9 +75,9 @@ You should use setTokenFilterWhiteListId() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x0a48a6fcbc0a3a2d6b2166ef1d2db59138ef825e1dcedb2a13b36e1fd5a639be)
 
-### Setting a user's whitelist id
+### User without fee
 
-You should use setUserWhiteListId() function.
+Setting a whitelist ID for users who are exempt from paying fees.
 
 ```solidity
     function setUserWhiteListId(uint256 _id) external;
@@ -72,30 +85,28 @@ You should use setUserWhiteListId() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xbd388e59f691ff901510185e6a81f56ba04562e57e8c40e04c93b7dc7fa90ccd)
 
-### Setting a max transaction limit
+### Max transaction limit
 
-You should use setMaxTransactionLimit() function.
+There is a restriction on the implementation of mass locked pools.
 
 ```solidity
+    // by default, the maximum transaction limit is 400
     function setMaxTransactionLimit(uint256 _newLimit) external;
 ```
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x67662cceb667670602d3d5ea35827083c9b2651e8f82db06317bfbfb649891b5)
 
-### Swapping a token filter
-
-You should use swapTokenFilter() function.
+### Enable/Disable token filter
 
 ```solidity
+    // by default the token filter is disabled
     function swapTokenFilter() external;
 ```
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xe985d976f303662e1710f9982d2ade3031073909370b21a8f5fca01ccc122286)
 
-## Pool owner privileges
-### Transfering a pool ownership
-
-You should use TransferPoolOwnership() function.
+## Pool owner settings
+### Transfer of ownership of locked tokens
 
 ```solidity
 function TransferPoolOwnership(
@@ -107,10 +118,7 @@ function TransferPoolOwnership(
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x54cbdf138be5ad711f648bc2d9e7086d29f064e8afc82e89f36f04b5c69d7e44)
 
 ### Splitting a pool amount
-When you splitting a pool, it creates a new pool with splitted amount,
-but in first pool amount is decreased by amount of new pool.
-
-You should use SplitPoolAmount() function.
+When you splitting a pool, it creates a new pool with splitted amount, in the original pool, the amount is reduced by the amount of the new pool.
 
 ```solidity
     function SplitPoolAmount(
@@ -124,8 +132,6 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0x3c448f482b866eb8c379a3599d05
 
 ### Approving an allowance
 
-You should use ApproveAllowance() function.
-
 ```solidity
     function ApproveAllowance(
         uint256 _PoolId,
@@ -136,38 +142,30 @@ You should use ApproveAllowance() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x0e1c940474c3dce49662c3252a3c40278ceb53724f7d2da4a76b1d2252c1cfa4)
 
-## User privileges
+## User settings
 ### Creating a new pool
+<pre><b>ATENTION!</b>
+The number of locked tokens must be approved by the contract of the token before use.</pre>
 
-**CreateNewPool()** function allows you to create a new pool for locking tokens.
-There are such parameters:
- address _Token,       // Token address to lock
- uint256 _StartTime,   // Until what time a pool will start
- uint256 _FinishTime,  // Until what time a pool will end
- uint256 _StartAmount, // Total amount of the tokens to sell in a pool
- address _Owner        // Token owner
- If it is needed you have to pay some fee for creation.
-
-First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should use CreateNewPool() function.
+**CreateNewPool()** function allows us to create a new pool for locking tokens. If it is needed you have to pay some fee for creation.
 
 ```solidity
     function CreateNewPool(
-        address _Token,
-        uint256 _StartTime,
-        uint256 _FinishTime,
-        uint256 _StartAmount,
-        address _Owner
+        address _Token, // Token address to lock
+        uint256 _StartTime, // Until what time a pool will start
+        uint256 _FinishTime, // Until what time a pool will end
+        uint256 _StartAmount, // Total amount of the tokens to sell in a pool
+        address _Owner // Token owner
     ) external payable;
 ```
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xcf6dabac264896a2ffafe75c090f6b25e400c05b9ed71dd7b4668437a3851470)
 
 ### Creating an array of pools
-**CreateMassPool()** function allows you to create an array of pools for locking tokens.
+<pre><b>ATENTION!</b>
+The number of locked tokens must be approved by the contract of the token before use.</pre>
 
-First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should use CreateMassPools() function.
+**CreateMassPool()** function allows us to create an array of pools for locking tokens.
 
 ```solidity
     function CreateMassPools(
@@ -182,9 +180,8 @@ After that, you should use CreateMassPools() function.
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xd0acd51a56bb7dcb4357a7c660ea82678cfa8542c2a7912c029aca1c6dea679e)
 
 ### Creating an array of pools with respect to finish time
-
-First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should use CreatePoolsWrtTime() function.
+<pre><b>ATENTION!</b>
+The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 ```solidity
     function CreatePoolsWrtTime(
@@ -200,7 +197,7 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0x4be6d53d04253b9d8c158856e819
 
 ### Getting my pools' ids by a token
 
-You should use the GetMyPoolsIdByToken() function.
+Find pool IDs by specifying token addresses.
 
 ```solidity
     function GetMyPoolsIdByToken(address[] memory _tokens)
@@ -211,35 +208,40 @@ You should use the GetMyPoolsIdByToken() function.
 
 ### Getting a pools' data
 
-You should use the GetPoolsData() function.
+Each element of the Pool array will return:
+<pre>uint256 <b>StartTime</b>,
+uint256 <b>FinishTime</b>,
+uint256 <b>StartAmount</b>,
+uint256 <b>DebitedAmount</b>,
+address <b>Owner</b>, 
+address <b>Token</b></pre>
 
 ```solidity
     function GetPoolsData(uint256[] memory _ids)
         public
         view
         returns (Pool[] memory)
-    {
 ```
 
-### Check whether a token is without a fee
+### Is Token without fee
 
-You should use isTokenWithoutFee() function.
+If `_tokenAddress` returns **true**, we don't need to pay to create the pool.
 
 ```solidity
     function isTokenWithoutFee(address _tokenAddress) public view returns(bool);
 ```
 
-### Check whether a token is whitelisted
+### Check token validation
 
-You should use isTokenWhiteListed() function.
+If **false** is returned, the token cannot be used in a locked pool.
 
 ```solidity
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
 ```
 
-### Check whether a user is without fee
+### Is User without fee
 
-You should use isUserWithoutFee() function.
+Returns **true** if `_UserAddress` have allocation in WhiteList.
 
 ```solidity
     function isUserWithoutFee(address _UserAddress) public view returns(bool);
@@ -247,43 +249,37 @@ You should use isUserWithoutFee() function.
 
 ### Gettting a pool data
 
-You should use AllPoolz() function.
-
 ```solidity
         function AllPoolz(uint256 _id)
         public
         view
         returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256,
-            address,
-            address
+            uint256, // StartTime
+            uint256, // FinishTime
+            uint256, // StartAmount
+            uint256, // DebitedAmount
+            address, // Owner
+            address  // Token
         );
 ```
 
 ### Getting all my pools' ids
 
-You should use GetAllMyPoolsId() function.
+The function returns an array of all your pools IDs.
 
 ```solidity
     function GetAllMyPoolsId() public view returns (uint256[] memory);
 ```
 
-### Getting my pools' ids
-
-You should use GetMyPoolsId() function.
+### Getting my pools ids
+Returns only your pools with a balance.
 
 ```solidity
     function GetMyPoolsId() public view returns (uint256[] memory);
 ```
 
 ### Withdrawing a token
-**WithdrawToken()**  function allows you to withdraw tokens if pool is finished,
-there are left overs and it nobody have took.
-
-You should use WithdrawToken() function.
+The **WithdrawToken()** function allows you to withdraw tokens if the pool is over, provided they are still in the pool.
 
 ```solidity
     function WithdrawToken(uint256 _PoolId) external returns (bool);
@@ -293,17 +289,14 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0xaf0f7a210f70da871a85652539a3
 
 ### Getting a withdrawable amount
 
-You should use getWithdrawableAmount() function.
+See how many tokens can be unlocked in a pool.
 
 ```solidity
     function getWithdrawableAmount(uint256 _PoolId) public view returns(uint256)
 ```
 
 ### Splitting a pool amount from already an existing pool's allowance for a user.
-When you splitting a pool using this function, existing allowance for a user in the pool
-will be decreased by the amount.
-
-You should use SplitPoolAmountFrom() function.
+When splitting a pool, the existing allowance for a user in the pool will be reduced by the specified amount.
 
 ```solidity
         function SplitPoolAmountFrom(
@@ -315,10 +308,11 @@ You should use SplitPoolAmountFrom() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xecf9e18a1013d9c8cd404f798b66152fd3499cff46f3f2938f060e064ee5ef0f)
 
-### Getting a pool's allowance
-
-You should use GetPoolAllowance() function.
+### Getting allowance
 
 ```solidity
     function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
 ```
+
+## License
+The-Poolz Contracts is released under the MIT License.

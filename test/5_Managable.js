@@ -41,13 +41,6 @@ contract('Managable', accounts => {
         assert.equal(newLimit, limit)
     })
 
-    it('shoule set min duration', async () => {
-        const newMinDuration = 100
-        await instance.SetMinDuration(newMinDuration, { from: ownerAddress })
-        const minDuration = await instance.MinDuration()
-        assert.equal(newMinDuration, minDuration)
-    })
-
     it('should set fee', async () => {
         const newFee = 30
         await instance.SetFeeAmount(newFee, { from: ownerAddress })
