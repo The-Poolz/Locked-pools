@@ -31,7 +31,7 @@ truffle dashboard
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
-## List of functions for admin
+## Admin's privileges
 ### Setting a new whitelist address
 
 You should use setWhiteListAddress() function.
@@ -88,7 +88,7 @@ You should use swapTokenFilter() function.
     function swapTokenFilter() external;
 ```
 
-## List of functions for pool owner
+## Pool owner's privileges
 ### Transfering a pool ownership
 
 You should use TransferPoolOwnership() function.
@@ -132,7 +132,7 @@ You should use ApproveAllowance() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x0e1c940474c3dce49662c3252a3c40278ceb53724f7d2da4a76b1d2252c1cfa4)
 
-## List of functions for user
+## User's privileges
 ### Creating a new pool
 
 **CreateNewPool()** function allows you to create a new pool for locking tokens.
