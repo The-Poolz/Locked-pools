@@ -82,14 +82,6 @@ You should use setMaxTransactionLimit() function.
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x67662cceb667670602d3d5ea35827083c9b2651e8f82db06317bfbfb649891b5)
 
-### Setting a minimum duration
-
-You should use SetMinDuration() function.
-
-```solidity
-    function SetMinDuration(uint16 _minDuration) public;
-```
-
 ### Swapping a token filter
 
 You should use swapTokenFilter() function.
@@ -97,6 +89,8 @@ You should use swapTokenFilter() function.
 ```solidity
     function swapTokenFilter() external;
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xe985d976f303662e1710f9982d2ade3031073909370b21a8f5fca01ccc122286)
 
 ## Pool owner privileges
 ### Transfering a pool ownership
