@@ -80,6 +80,8 @@ You should use setMaxTransactionLimit() function.
     function setMaxTransactionLimit(uint256 _newLimit) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x67662cceb667670602d3d5ea35827083c9b2651e8f82db06317bfbfb649891b5)
+
 ### Setting a minimum duration
 
 You should use SetMinDuration() function.
