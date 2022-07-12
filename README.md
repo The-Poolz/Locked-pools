@@ -93,9 +93,7 @@ There is a restriction on the implementation of mass locked pools.
 ```
 
 ## List of functions for pool owner
-### Transfering a pool ownership
-
-You should use TransferPoolOwnership() function.
+### Transfer of ownership of locked tokens
 
 ```solidity
 function TransferPoolOwnership(
@@ -105,10 +103,7 @@ function TransferPoolOwnership(
 ```
 
 ### Splitting a pool amount
-When you splitting a pool, it creates a new pool with splitted amount,
-but in first pool amount is decreased by amount of new pool.
-
-You should use SplitPoolAmount() function.
+When you splitting a pool, it creates a new pool with splitted amount, in the original pool, the amount is reduced by the amount of the new pool.
 
 ```solidity
     function SplitPoolAmount(
@@ -120,8 +115,6 @@ You should use SplitPoolAmount() function.
 
 ### Approving an allowance
 
-You should use ApproveAllowance() function.
-
 ```solidity
     function ApproveAllowance(
         uint256 _PoolId,
@@ -132,34 +125,26 @@ You should use ApproveAllowance() function.
 
 ## List of functions for user
 ### Creating a new pool
+<pre><b>ATENTION!</b>
+The number of locked tokens must be approved by the contract of the token before use.</pre>
 
-**CreateNewPool()** function allows you to create a new pool for locking tokens.
-There are such parameters:
- address _Token,       // Token address to lock
- uint256 _StartTime,   // Until what time a pool will start
- uint256 _FinishTime,  // Until what time a pool will end
- uint256 _StartAmount, // Total amount of the tokens to sell in a pool
- address _Owner        // Token owner
- If it is needed you have to pay some fee for creation.
-
-First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should use CreateNewPool() function.
+**CreateNewPool()** function allows us to create a new pool for locking tokens. If it is needed you have to pay some fee for creation.
 
 ```solidity
     function CreateNewPool(
-        address _Token,
-        uint256 _StartTime,
-        uint256 _FinishTime,
-        uint256 _StartAmount,
-        address _Owner
+        address _Token, // Token address to lock
+        uint256 _StartTime, // Until what time a pool will start
+        uint256 _FinishTime, // Until what time a pool will end
+        uint256 _StartAmount, // Total amount of the tokens to sell in a pool
+        address _Owner // Token owner
     ) external payable;
 ```
 
 ### Creating an array of pools
-**CreateMassPool()** function allows you to create an array of pools for locking tokens.
+<pre><b>ATENTION!</b>
+The number of locked tokens must be approved by the contract of the token before use.</pre>
 
-First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should use CreateMassPools() function.
+**CreateMassPool()** function allows us to create an array of pools for locking tokens.
 
 ```solidity
     function CreateMassPools(
@@ -172,9 +157,8 @@ After that, you should use CreateMassPools() function.
 ```
 
 ### Creating an array of pools with respect to finish time
-
-First of all, you have to approve amount of tokens to the Locked-Pools contract.
-After that, you should use CreatePoolsWrtTime() function.
+<pre><b>ATENTION!</b>
+The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 ```solidity
     function CreatePoolsWrtTime(
@@ -188,7 +172,7 @@ After that, you should use CreatePoolsWrtTime() function.
 
 ### Getting my pools' ids by a token
 
-You should use the GetMyPoolsIdByToken() function.
+Find pool IDs by specifying token addresses.
 
 ```solidity
     function GetMyPoolsIdByToken(address[] memory _tokens)
@@ -199,35 +183,40 @@ You should use the GetMyPoolsIdByToken() function.
 
 ### Getting a pools' data
 
-You should use the GetPoolsData() function.
+Each element of the Pool array will return:
+<pre>uint256 <b>StartTime</b>,
+uint256 <b>FinishTime</b>,
+uint256 <b>StartAmount</b>,
+uint256 <b>DebitedAmount</b>,
+address <b>Owner</b>, 
+address <b>Token</b></pre>
 
 ```solidity
     function GetPoolsData(uint256[] memory _ids)
         public
         view
         returns (Pool[] memory)
-    {
 ```
 
-### Check whether a token is without a fee
+### Is Token without fee
 
-You should use isTokenWithoutFee() function.
+If `_tokenAddress` returns **true**, we don't need to pay to create the pool.
 
 ```solidity
     function isTokenWithoutFee(address _tokenAddress) public view returns(bool);
 ```
 
-### Check whether a token is whitelisted
+### Check token validation
 
-You should use isTokenWhiteListed() function.
+If **false** is returned, the token cannot be used in a locked pool.
 
 ```solidity
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
 ```
 
-### Check whether a user is without fee
+### Is User without fee
 
-You should use isUserWithoutFee() function.
+Returns **true** if `_UserAddress` have allocation in WhiteList.
 
 ```solidity
     function isUserWithoutFee(address _UserAddress) public view returns(bool);
@@ -235,43 +224,37 @@ You should use isUserWithoutFee() function.
 
 ### Gettting a pool data
 
-You should use AllPoolz() function.
-
 ```solidity
         function AllPoolz(uint256 _id)
         public
         view
         returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256,
-            address,
-            address
+            uint256, // StartTime
+            uint256, // FinishTime
+            uint256, // StartAmount
+            uint256, // DebitedAmount
+            address, // Owner
+            address  // Token
         );
 ```
 
 ### Getting all my pools' ids
 
-You should use GetAllMyPoolsId() function.
+The function returns an array of all your pools IDs.
 
 ```solidity
     function GetAllMyPoolsId() public view returns (uint256[] memory);
 ```
 
-### Getting my pools' ids
-
-You should use GetMyPoolsId() function.
+### Getting my pools ids
+Returns only your pools with a balance.
 
 ```solidity
     function GetMyPoolsId() public view returns (uint256[] memory);
 ```
 
 ### Withdrawing a token
-**WithdrawToken()**  function allows you to withdraw tokens if pool is finished,
-there are left overs and it nobody have took.
-
-You should use WithdrawToken() function.
+The **WithdrawToken()** function allows you to withdraw tokens if the pool is over, provided they are still in the pool.
 
 ```solidity
     function WithdrawToken(uint256 _PoolId) external returns (bool);
@@ -279,17 +262,14 @@ You should use WithdrawToken() function.
 
 ### Getting a withdrawable amount
 
-You should use getWithdrawableAmount() function.
+See how many tokens can be unlocked in a pool.
 
 ```solidity
     function getWithdrawableAmount(uint256 _PoolId) public view returns(uint256)
 ```
 
 ### Splitting a pool amount from already an existing pool's allowance for a user.
-When you splitting a pool using this function, existing allowance for a user in the pool
-will be decreased by the amount.
-
-You should use SplitPoolAmountFrom() function.
+When splitting a pool, the existing allowance for a user in the pool will be reduced by the specified amount.
 
 ```solidity
         function SplitPoolAmountFrom(
@@ -299,9 +279,7 @@ You should use SplitPoolAmountFrom() function.
     ) external returns(uint256);
 ```
 
-### Getting a pool's allowance
-
-You should use GetPoolAllowance() function.
+### Getting allowance
 
 ```solidity
     function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
