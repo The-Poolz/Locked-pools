@@ -1,4 +1,5 @@
 # Locked Deal V2
+
 [![Build Status](https://travis-ci.com/The-Poolz/Locked-pools.svg?branch=master)](https://travis-ci.com/The-Poolz/Locked-pools)
 [![codecov](https://codecov.io/gh/The-Poolz/Locked-pools/branch/master/graph/badge.svg?token=szMZsBIF3L)](https://codecov.io/gh/The-Poolz/Locked-pools)
 [![CodeFactor](https://www.codefactor.io/repository/github/the-poolz/locked-pools/badge)](https://www.codefactor.io/repository/github/the-poolz/locked-pools)
@@ -6,6 +7,7 @@
 Smart contract for secure storage of ERC20 tokens.
 
 ### Navigation
+
 - [Installation](#installation)
 - [Admin](#list-of-functions-for-admin)
 - [Owner of locked tokens](#list-of-functions-for-pool-owner)
@@ -22,69 +24,71 @@ npm install
 ```console
 truffle run coverage
 ```
+
 #### Deploy
 
 ```console
 truffle dashboard
 ```
+
 ```console
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
 ## List of functions for admin
-### Setting a new whitelist address
 
-You should use setWhiteListAddress() function.
+### Whitelist address
+
+**Problem:**
+Admin has set the payment price for creating a pool, but it is necessary that certain addresses don't pay.
+
+**Solution:**
+Create a whitelist of addresses that don't pay and integrate it with Locked-pools.
+
+- The default whitelist address is zero
+- We can set only contract that implements [IWhiteList](https://github.com/The-Poolz/Poolz-Helper/blob/master/contracts/interfaces/IWhiteList.sol) interface.
 
 ```solidity
     function setWhiteListAddress(address _address) external;
 ```
 
-### Setting a token fee for a whitelist id
+### Non-paid token
 
-You should use setTokenFeeWhiteListId() function.
+Locked-pools can uses three manual whitelists. One of them is a whitelist for tokens that are exempt from paying fees.
 
 ```solidity
     function setTokenFeeWhiteListId(uint256 _id) external;
 ```
 
-### Setting a token filter for a whitelist id
+### Security token filter
 
-You should use setTokenFilterWhiteListId() function.
+If someone is trying to lock tokens that damage the contract, we can create a whitelist of tokens that can only be used to create a locked pool.
 
 ```solidity
     function setTokenFilterWhiteListId(uint256 _id) external;
 ```
 
-### Setting a user's whitelist id
+### User without fee
 
-You should use setUserWhiteListId() function.
+Setting a whitelist ID for users who are exempt from paying fees.
 
 ```solidity
     function setUserWhiteListId(uint256 _id) external;
 ```
 
-### Setting a max transaction limit
+### Max transaction limit
 
-You should use setMaxTransactionLimit() function.
+There is a restriction on the implementation of mass locked pools.
 
 ```solidity
+    // by default, the maximum transaction limit is 400
     function setMaxTransactionLimit(uint256 _newLimit) external;
 ```
 
-### Setting a minimum duration
-
-You should use SetMinDuration() function.
+### Enable/Disable token filter
 
 ```solidity
-    function SetMinDuration(uint16 _minDuration) public;
-```
-
-### Swapping a token filter
-
-You should use swapTokenFilter() function.
-
-```solidity
+    // by default the token filter is disabled
     function swapTokenFilter() external;
 ```
 
