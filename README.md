@@ -60,6 +60,8 @@ You should use setTokenFilterWhiteListId() function.
     function setTokenFilterWhiteListId(uint256 _id) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x0a48a6fcbc0a3a2d6b2166ef1d2db59138ef825e1dcedb2a13b36e1fd5a639be)
+
 ### Setting a user's whitelist id
 
 You should use setUserWhiteListId() function.
