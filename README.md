@@ -144,7 +144,7 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0x0e1c940474c3dce49662c3252a3c
 
 ## User settings
 ### Creating a new pool
-<pre><b>ATENTION!</b>
+<pre><b>ATTENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 **CreateNewPool()** function allows us to create a new pool for locking tokens. If it is needed you have to pay some fee for creation.
@@ -162,7 +162,7 @@ The number of locked tokens must be approved by the contract of the token before
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xcf6dabac264896a2ffafe75c090f6b25e400c05b9ed71dd7b4668437a3851470)
 
 ### Creating an array of pools
-<pre><b>ATENTION!</b>
+<pre><b>ATTENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 **CreateMassPool()** function allows us to create an array of pools for locking tokens.
@@ -180,7 +180,7 @@ The number of locked tokens must be approved by the contract of the token before
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xd0acd51a56bb7dcb4357a7c660ea82678cfa8542c2a7912c029aca1c6dea679e)
 
 ### Creating an array of pools with respect to finish time
-<pre><b>ATENTION!</b>
+<pre><b>ATTENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 ```solidity
