@@ -70,6 +70,8 @@ You should use setUserWhiteListId() function.
     function setUserWhiteListId(uint256 _id) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xbd388e59f691ff901510185e6a81f56ba04562e57e8c40e04c93b7dc7fa90ccd)
+
 ### Setting a max transaction limit
 
 You should use setMaxTransactionLimit() function.
