@@ -231,10 +231,10 @@ You should use isUserWithoutFee() function.
 
 ### Gettting a pool data
 
-You should use GetPoolData() function.
+You should use AllPoolz() function.
 
 ```solidity
-        function GetPoolData(uint256 _id)
+        function AllPoolz(uint256 _id)
         public
         view
         returns (
