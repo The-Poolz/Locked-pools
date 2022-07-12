@@ -341,7 +341,7 @@ You should use SplitPoolAmountFrom() function.
     ) external returns(uint256);
 ```
 
-Testnet tx: link
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xecf9e18a1013d9c8cd404f798b66152fd3499cff46f3f2938f060e064ee5ef0f)
 
 ### Getting a pool's allowance
 
