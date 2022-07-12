@@ -315,7 +315,7 @@ You should use WithdrawToken() function.
     function WithdrawToken(uint256 _PoolId) external returns (bool);
 ```
 
-Testnet tx: link
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xaf0f7a210f70da871a85652539a3fb944604fa87f2ad588612e736fce9a255c7)
 
 ### Getting a withdrawable amount
 
