@@ -12,6 +12,7 @@ Smart contract for secure storage of ERC20 tokens.
 - [Admin](#list-of-functions-for-admin)
 - [Owner of locked tokens](#list-of-functions-for-pool-owner)
 - [User](#list-of-functions-for-user)
+- [License](#license)
 
 #### Installation
 
@@ -284,3 +285,6 @@ When splitting a pool, the existing allowance for a user in the pool will be red
 ```solidity
     function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
 ```
+
+## License
+The-Poolz Contracts is released under the MIT License.
