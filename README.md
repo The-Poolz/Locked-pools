@@ -126,7 +126,7 @@ When you splitting a pool, it creates a new pool with splitted amount, in the or
 
 ## List of functions for user
 ### Creating a new pool
-<pre><b>ATENTION!</b>
+<pre><b>ATTENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 **CreateNewPool()** function allows us to create a new pool for locking tokens. If it is needed you have to pay some fee for creation.
@@ -142,7 +142,7 @@ The number of locked tokens must be approved by the contract of the token before
 ```
 
 ### Creating an array of pools
-<pre><b>ATENTION!</b>
+<pre><b>ATTENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 **CreateMassPool()** function allows us to create an array of pools for locking tokens.
@@ -158,7 +158,7 @@ The number of locked tokens must be approved by the contract of the token before
 ```
 
 ### Creating an array of pools with respect to finish time
-<pre><b>ATENTION!</b>
+<pre><b>ATTENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
 
 ```solidity
