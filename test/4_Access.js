@@ -78,7 +78,7 @@ contract('Access to Locked Deal', accounts => {
         const approvalAmount = 10, spender = accounts[1]
 
         // it('print all data', async () => {
-        //     const data = await instance.GetPoolData(poolId, {from: owner})
+        //     const data = await instance.AllPoolz(poolId, {from: owner})
         //     console.log(data[1].toString())
         // })
 
