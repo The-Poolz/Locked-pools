@@ -40,6 +40,8 @@ You should use setWhiteListAddress() function.
     function setWhiteListAddress(address _address) external;
 ```
 
+Testnet tx: link
+
 ### Setting a token fee for a whitelist id
 
 You should use setTokenFeeWhiteListId() function.
@@ -47,6 +49,8 @@ You should use setTokenFeeWhiteListId() function.
 ```solidity
     function setTokenFeeWhiteListId(uint256 _id) external;
 ```
+
+Testnet tx: link
 
 ### Setting a token filter for a whitelist id
 
@@ -56,6 +60,8 @@ You should use setTokenFilterWhiteListId() function.
     function setTokenFilterWhiteListId(uint256 _id) external;
 ```
 
+Testnet tx: link
+
 ### Setting a user's whitelist id
 
 You should use setUserWhiteListId() function.
@@ -63,6 +69,8 @@ You should use setUserWhiteListId() function.
 ```solidity
     function setUserWhiteListId(uint256 _id) external;
 ```
+
+Testnet tx: link
 
 ### Setting a max transaction limit
 
@@ -72,6 +80,8 @@ You should use setMaxTransactionLimit() function.
     function setMaxTransactionLimit(uint256 _newLimit) external;
 ```
 
+Testnet tx: link
+
 ### Setting a minimum duration
 
 You should use SetMinDuration() function.
@@ -80,6 +90,8 @@ You should use SetMinDuration() function.
     function SetMinDuration(uint16 _minDuration) public;
 ```
 
+Testnet tx: link
+
 ### Swapping a token filter
 
 You should use swapTokenFilter() function.
@@ -87,6 +99,8 @@ You should use swapTokenFilter() function.
 ```solidity
     function swapTokenFilter() external;
 ```
+
+Testnet tx: link
 
 ## List of functions for pool owner
 ### Transfering a pool ownership
@@ -99,6 +113,8 @@ function TransferPoolOwnership(
         address _NewOwner
     ) external;
 ```
+
+Testnet tx: link
 
 ### Splitting a pool amount
 When you splitting a pool, it creates a new pool with splitted amount,
@@ -114,6 +130,8 @@ You should use SplitPoolAmount() function.
     ) external returns(uint256)
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x3c448f482b866eb8c379a3599d0555013a2396dde327a992d38267c28abdea19)
+
 ### Approving an allowance
 
 You should use ApproveAllowance() function.
@@ -125,6 +143,8 @@ You should use ApproveAllowance() function.
         address _Spender
     ) external;
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x0e1c940474c3dce49662c3252a3c40278ceb53724f7d2da4a76b1d2252c1cfa4)
 
 ## List of functions for user
 ### Creating a new pool
@@ -151,6 +171,8 @@ After that, you should use CreateNewPool() function.
     ) external payable;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xcf6dabac264896a2ffafe75c090f6b25e400c05b9ed71dd7b4668437a3851470)
+
 ### Creating an array of pools
 **CreateMassPool()** function allows you to create an array of pools for locking tokens.
 
@@ -167,6 +189,8 @@ After that, you should use CreateMassPools() function.
     )   external payable;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xd0acd51a56bb7dcb4357a7c660ea82678cfa8542c2a7912c029aca1c6dea679e)
+
 ### Creating an array of pools with respect to finish time
 
 First of all, you have to approve amount of tokens to the Locked-Pools contract.
@@ -182,6 +206,8 @@ After that, you should use CreatePoolsWrtTime() function.
     )   external payable
 ```
 
+Testnet tx: link
+
 ### Getting my pools' ids by a token
 
 You should use the GetMyPoolsIdByToken() function.
@@ -192,6 +218,8 @@ You should use the GetMyPoolsIdByToken() function.
         view
         returns (uint256[] memory);
 ```
+
+Testnet tx: link
 
 ### Getting a pools' data
 
@@ -205,6 +233,8 @@ You should use the GetPoolsData() function.
     {
 ```
 
+Testnet tx: link
+
 ### Check whether a token is without a fee
 
 You should use isTokenWithoutFee() function.
@@ -212,6 +242,8 @@ You should use isTokenWithoutFee() function.
 ```solidity
     function isTokenWithoutFee(address _tokenAddress) public view returns(bool);
 ```
+
+Testnet tx: link
 
 ### Check whether a token is whitelisted
 
@@ -221,6 +253,8 @@ You should use isTokenWhiteListed() function.
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
 ```
 
+Testnet tx: link
+
 ### Check whether a user is without fee
 
 You should use isUserWithoutFee() function.
@@ -228,6 +262,8 @@ You should use isUserWithoutFee() function.
 ```solidity
     function isUserWithoutFee(address _UserAddress) public view returns(bool);
 ```
+
+Testnet tx: link
 
 ### Gettting a pool data
 
@@ -247,6 +283,8 @@ You should use GetPoolData() function.
         );
 ```
 
+Testnet tx: link
+
 ### Getting all my pools' ids
 
 You should use GetAllMyPoolsId() function.
@@ -255,6 +293,8 @@ You should use GetAllMyPoolsId() function.
     function GetAllMyPoolsId() public view returns (uint256[] memory);
 ```
 
+Testnet tx: link
+
 ### Getting my pools' ids
 
 You should use GetMyPoolsId() function.
@@ -262,6 +302,8 @@ You should use GetMyPoolsId() function.
 ```solidity
     function GetMyPoolsId() public view returns (uint256[] memory);
 ```
+
+Testnet tx: link
 
 ### Withdrawing a token
 **WithdrawToken()**  function allows you to withdraw tokens if pool is finished,
@@ -273,6 +315,8 @@ You should use WithdrawToken() function.
     function WithdrawToken(uint256 _PoolId) external returns (bool);
 ```
 
+Testnet tx: link
+
 ### Getting a withdrawable amount
 
 You should use getWithdrawableAmount() function.
@@ -280,6 +324,8 @@ You should use getWithdrawableAmount() function.
 ```solidity
     function getWithdrawableAmount(uint256 _PoolId) public view returns(uint256)
 ```
+
+Testnet tx: link
 
 ### Splitting a pool amount from already an existing pool's allowance for a user.
 When you splitting a pool using this function, existing allowance for a user in the pool
@@ -295,6 +341,8 @@ You should use SplitPoolAmountFrom() function.
     ) external returns(uint256);
 ```
 
+Testnet tx: link
+
 ### Getting a pool's allowance
 
 You should use GetPoolAllowance() function.
@@ -302,3 +350,5 @@ You should use GetPoolAllowance() function.
 ```solidity
     function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
 ```
+
+Testnet tx: link
