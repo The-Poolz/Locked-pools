@@ -9,9 +9,9 @@ Smart contract for secure storage of ERC20 tokens.
 ### Navigation
 
 - [Installation](#installation)
-- [Admin](#list-of-functions-for-admin)
-- [Owner of locked tokens](#list-of-functions-for-pool-owner)
-- [User](#list-of-functions-for-user)
+- [Admin](#admin-settings)
+- [Owner of locked tokens](#pool-owner-settings)
+- [User](#user-settings)
 - [License](#license)
 
 #### Installation
@@ -36,7 +36,7 @@ truffle dashboard
 truffle migrate --f 1 --to 1 --network dashboard
 ```
 
-## List of functions for admin
+## Admin settings
 
 ### Whitelist address
 
@@ -53,6 +53,8 @@ Create a whitelist of addresses that don't pay and integrate it with Locked-pool
     function setWhiteListAddress(address _address) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x346c84ff830fccadba03cdf43b1b11e40a46094a23060dcbaa89666673fde4b9)
+
 ### Non-paid token
 
 Locked-pools can uses three manual whitelists. One of them is a whitelist for tokens that are exempt from paying fees.
@@ -60,6 +62,8 @@ Locked-pools can uses three manual whitelists. One of them is a whitelist for to
 ```solidity
     function setTokenFeeWhiteListId(uint256 _id) external;
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x2e0ff4c5e3691d5d6363cd674417fe0dc023102b5f6b59d98b62045d5c0b9c32)
 
 ### Security token filter
 
@@ -69,6 +73,8 @@ If someone is trying to lock tokens that damage the contract, we can create a wh
     function setTokenFilterWhiteListId(uint256 _id) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x0a48a6fcbc0a3a2d6b2166ef1d2db59138ef825e1dcedb2a13b36e1fd5a639be)
+
 ### User without fee
 
 Setting a whitelist ID for users who are exempt from paying fees.
@@ -76,6 +82,8 @@ Setting a whitelist ID for users who are exempt from paying fees.
 ```solidity
     function setUserWhiteListId(uint256 _id) external;
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xbd388e59f691ff901510185e6a81f56ba04562e57e8c40e04c93b7dc7fa90ccd)
 
 ### Max transaction limit
 
@@ -86,6 +94,8 @@ There is a restriction on the implementation of mass locked pools.
     function setMaxTransactionLimit(uint256 _newLimit) external;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x67662cceb667670602d3d5ea35827083c9b2651e8f82db06317bfbfb649891b5)
+
 ### Enable/Disable token filter
 
 ```solidity
@@ -93,7 +103,9 @@ There is a restriction on the implementation of mass locked pools.
     function swapTokenFilter() external;
 ```
 
-## List of functions for pool owner
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xe985d976f303662e1710f9982d2ade3031073909370b21a8f5fca01ccc122286)
+
+## Pool owner settings
 ### Transfer of ownership of locked tokens
 
 ```solidity
@@ -102,6 +114,8 @@ function TransferPoolOwnership(
         address _NewOwner
     ) external;
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x54cbdf138be5ad711f648bc2d9e7086d29f064e8afc82e89f36f04b5c69d7e44)
 
 ### Splitting a pool amount
 When you splitting a pool, it creates a new pool with splitted amount, in the original pool, the amount is reduced by the amount of the new pool.
@@ -114,6 +128,8 @@ When you splitting a pool, it creates a new pool with splitted amount, in the or
     ) external returns(uint256)
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x3c448f482b866eb8c379a3599d0555013a2396dde327a992d38267c28abdea19)
+
 ### Approving an allowance
 
 ```solidity
@@ -124,7 +140,9 @@ When you splitting a pool, it creates a new pool with splitted amount, in the or
     ) external;
 ```
 
-## List of functions for user
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x0e1c940474c3dce49662c3252a3c40278ceb53724f7d2da4a76b1d2252c1cfa4)
+
+## User settings
 ### Creating a new pool
 <pre><b>ATENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
@@ -140,6 +158,8 @@ The number of locked tokens must be approved by the contract of the token before
         address _Owner // Token owner
     ) external payable;
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xcf6dabac264896a2ffafe75c090f6b25e400c05b9ed71dd7b4668437a3851470)
 
 ### Creating an array of pools
 <pre><b>ATENTION!</b>
@@ -157,6 +177,8 @@ The number of locked tokens must be approved by the contract of the token before
     )   external payable;
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xd0acd51a56bb7dcb4357a7c660ea82678cfa8542c2a7912c029aca1c6dea679e)
+
 ### Creating an array of pools with respect to finish time
 <pre><b>ATENTION!</b>
 The number of locked tokens must be approved by the contract of the token before use.</pre>
@@ -170,6 +192,8 @@ The number of locked tokens must be approved by the contract of the token before
         address[] calldata _Owner
     )   external payable
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x4be6d53d04253b9d8c158856e819dc9d07ae3221f875c2769f5dfc286c1137c9)
 
 ### Getting my pools' ids by a token
 
@@ -261,6 +285,8 @@ The **WithdrawToken()** function allows you to withdraw tokens if the pool is ov
     function WithdrawToken(uint256 _PoolId) external returns (bool);
 ```
 
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xaf0f7a210f70da871a85652539a3fb944604fa87f2ad588612e736fce9a255c7)
+
 ### Getting a withdrawable amount
 
 See how many tokens can be unlocked in a pool.
@@ -279,6 +305,8 @@ When splitting a pool, the existing allowance for a user in the pool will be red
         address _Address
     ) external returns(uint256);
 ```
+
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xecf9e18a1013d9c8cd404f798b66152fd3499cff46f3f2938f060e064ee5ef0f)
 
 ### Getting allowance
 
