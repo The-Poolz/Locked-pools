@@ -114,7 +114,7 @@ function TransferPoolOwnership(
     ) external;
 ```
 
-Testnet tx: link
+Testnet tx: [link](https://testnet.bscscan.com/tx/0x54cbdf138be5ad711f648bc2d9e7086d29f064e8afc82e89f36f04b5c69d7e44)
 
 ### Splitting a pool amount
 When you splitting a pool, it creates a new pool with splitted amount,
