@@ -22,21 +22,7 @@ contract LockedPoolzData is LockedControl {
                 ids[index++] = allIds[i];
             }
         }
-        return KeepNElementsInArray(ids, index);
-    }
-
-    function KeepNElementsInArray(uint256[] memory _arr, uint256 _n)
-        internal
-        pure
-        returns (uint256[] memory)
-    {
-        if (_arr.length == _n) return _arr;
-        require(_arr.length > _n, "can't cut more then got");
-        uint256[] memory activeIds = new uint256[](_n);
-        for (uint256 i = 0; i < _n; i++) {
-            activeIds[i] = _arr[i];
-        }
-        return activeIds;
+        return Array.KeepNElementsInArray(ids, index);
     }
 
     function GetPoolsData(uint256[] memory _ids)
@@ -68,21 +54,10 @@ contract LockedPoolzData is LockedControl {
         uint256[] memory ids = new uint256[](allIds.length);
         uint256 index;
         for (uint256 i = 0; i < allIds.length; i++) {
-            if (isInArray(_tokens, AllPoolz[allIds[i]].Token)) {
+            if (Array.isInArray(_tokens, AllPoolz[allIds[i]].Token)) {
                 ids[index++] = allIds[i];
             }
         }
-        return KeepNElementsInArray(ids, index);
-    }
-
-    function isInArray(address[] memory _arr, address _elem)
-        internal
-        pure
-        returns (bool)
-    {
-        for (uint256 i = 0; i < _arr.length; i++) {
-            if (_arr[i] == _elem) return true;
-        }
-        return false;
+        return Array.KeepNElementsInArray(ids, index);
     }
 }

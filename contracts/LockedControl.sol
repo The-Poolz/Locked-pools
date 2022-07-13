@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./LockedPoolz.sol";
+import "poolz-helper-v2/contracts/Array.sol";
 
 contract LockedControl is LockedPoolz {
     function TransferPoolOwnership(
@@ -81,7 +82,7 @@ contract LockedControl is LockedPoolz {
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
-        TransferInToken(_Token, msg.sender, getArraySum(_StartAmount));
+        TransferInToken(_Token, msg.sender, Array.getArraySum(_StartAmount));
         if(WhiteList_Address != address(0) && !(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))){
             PayFee(Fee * _Owner.length);
         }
@@ -106,7 +107,7 @@ contract LockedControl is LockedPoolz {
     {
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         require(_FinishTime.length == _StartTime.length, "Date Array Invalid");
-        TransferInToken(_Token, msg.sender, getArraySum(_StartAmount) * _FinishTime.length);
+        TransferInToken(_Token, msg.sender, Array.getArraySum(_StartAmount) * _FinishTime.length);
         uint256 firstPoolId = Index;
         if(WhiteList_Address != address(0) && !(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))){
             PayFee(Fee * _Owner.length * _FinishTime.length);
@@ -118,13 +119,5 @@ contract LockedControl is LockedPoolz {
         }
         uint256 lastPoolId = Index - 1;
         emit MassPoolsCreated(firstPoolId, lastPoolId);
-    }
-
-    function getArraySum(uint256[] calldata _array) internal pure returns(uint256) {
-        uint256 sum = 0;
-        for(uint i=0 ; i<_array.length ; i++){
-            sum = sum + _array[i];
-        }
-        return sum;
     }
 }
