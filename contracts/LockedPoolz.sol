@@ -46,11 +46,7 @@ contract LockedPoolz is LockedManageable {
             "StartTime is greater than FinishTime"
         );
         //register the pool
-        AllPoolz[Index].StartTime = _StartTime; //Since v 0.7.0 we cannot assign structs containing nested mappings
-        AllPoolz[Index].FinishTime = _FinishTime;
-        AllPoolz[Index].StartAmount = _StartAmount;
-        AllPoolz[Index].Owner = _Owner;
-        AllPoolz[Index].Token = _Token;
+        AllPoolz[Index] = Pool(_StartTime, _FinishTime, _StartAmount, 0, _Owner, _Token);
         MyPoolz[_Owner].push(Index);
         emit NewPoolCreated(
             Index,
