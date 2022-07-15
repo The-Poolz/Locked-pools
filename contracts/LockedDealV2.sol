@@ -23,7 +23,7 @@ contract LockedDealV2 is LockedPoolzData {
         if (
             _PoolId < Index &&
             pool.StartTime <= block.timestamp &&
-            pool.StartTime - pool.DebitedAmount > 0
+            pool.StartAmount - pool.DebitedAmount > 0
         ) {
             uint256 tokenAmount = getWithdrawableAmount(_PoolId);
             uint256 tempDebitAmount = tokenAmount + pool.DebitedAmount;
