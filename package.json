@@ -14,7 +14,6 @@
     "@openzeppelin/contracts": "^4.5.0",
     "@openzeppelin/test-helpers": "^0.5.15",
     "@truffle/hdwallet-provider": "^1.1.0",
-    "abbrev": "^1.1.1",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-register": "^6.23.0",
