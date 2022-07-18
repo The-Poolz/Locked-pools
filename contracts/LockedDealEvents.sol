@@ -12,8 +12,9 @@ contract LockedDealEvents {
         uint256 StartAmount,
         address Owner
     );
-    event PoolOwnershipTransfered(
+    event PoolTransferred(
         uint256 PoolId,
+        uint256 oldPoolId,
         address NewOwner,
         address OldOwner
     );
