@@ -3,7 +3,7 @@ const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
 
 contract('LockedDealV2', (accounts) => {
-    let instance, Token, whiteList
+    let instance, Token
     const allow = 1, owner = accounts[2]
     const date = new Date()
 

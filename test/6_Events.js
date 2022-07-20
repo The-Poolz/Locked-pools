@@ -3,7 +3,7 @@ const TestToken = artifacts.require("ERC20Token");
 const truffleAssert = require('truffle-assertions');
 
 contract('Pools - events', (accounts) => {
-  let lockedDeal, whiteList;
+  let lockedDeal;
   let testToken;
 
   let fromAddress = accounts[0];
