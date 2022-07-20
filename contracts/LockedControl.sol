@@ -12,6 +12,11 @@ contract LockedControl is LockedPoolz {
         notZeroAddress(_NewOwner)
     {
         Pool storage pool = AllPoolz[_PoolId];
+        require(_NewOwner != pool.Owner, "Can't be the same owner");
+        require(
+            pool.FinishTime > block.timestamp,
+            "Can't create with past finish time"
+        );
         uint256 newPoolId = CreatePool(
             pool.Token,
             pool.StartTime,
@@ -20,6 +25,7 @@ contract LockedControl is LockedPoolz {
             _NewOwner
         );
         pool.StartAmount = 0;
+        AllPoolz[newPoolId].DebitedAmount = pool.DebitedAmount;
         emit PoolTransferred(newPoolId, _PoolId, _NewOwner, msg.sender);
     }
 
