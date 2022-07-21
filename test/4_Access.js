@@ -6,7 +6,6 @@ const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('Access to Locked Deal', accounts => {
     let instance, Token, fromAddress = accounts[0], owner = accounts[9], poolId, allow = 100
-    let whiteList
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -28,10 +27,11 @@ contract('Access to Locked Deal', accounts => {
         poolId = tx.logs[1].args.PoolId
     })
 
-    it('Transfers Ownership', async () => {
+    it('Pool Transfer', async () => {
         const newOwner = accounts[8]
         poolId = 1
-        await instance.TransferPoolOwnership(poolId, newOwner, { from: owner })
+        await instance.PoolTransfer(poolId, newOwner, { from: owner })
+        poolId++
         const pool = await instance.AllPoolz(poolId, { from: newOwner })
         const newPools = await instance.GetAllMyPoolsId({ from: newOwner })
         assert.equal(newPools[0].toString(), poolId)
@@ -103,7 +103,7 @@ contract('Access to Locked Deal', accounts => {
 
     describe('Fail Tests', () => {
         it('Fail to transfer ownership when called from wrong address', async () => {
-            await truffleAssert.reverts(instance.TransferPoolOwnership(poolId, accounts[5], { from: fromAddress }), "You are not Pool Owner")
+            await truffleAssert.reverts(instance.PoolTransfer(poolId, accounts[5], { from: fromAddress }), "You are not Pool Owner")
         })
 
         it('Fail to Create Pool with 0 address owner', async () => {
@@ -116,7 +116,7 @@ contract('Access to Locked Deal', accounts => {
         })
 
         it('Fail to transfer ownership to 0 address', async () => {
-            await truffleAssert.reverts(instance.TransferPoolOwnership(poolId, constants.ZERO_ADDRESS, { from: owner }), "Zero Address is not allowed")
+            await truffleAssert.reverts(instance.PoolTransfer(poolId, constants.ZERO_ADDRESS, { from: owner }), "Zero Address is not allowed")
         })
 
         it('Fail to split pool when balance is not enough', async () => {
@@ -126,7 +126,7 @@ contract('Access to Locked Deal', accounts => {
         })
 
         it('Fail to execute when Pool ID is invalid', async () => {
-            await truffleAssert.reverts(instance.TransferPoolOwnership(99, accounts[5], { from: owner }), "Pool does not exist")
+            await truffleAssert.reverts(instance.PoolTransfer(99, accounts[5], { from: owner }), "Pool does not exist")
         })
     })
 

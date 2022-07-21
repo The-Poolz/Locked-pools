@@ -3,7 +3,7 @@ const TestToken = artifacts.require("ERC20Token");
 const truffleAssert = require('truffle-assertions');
 
 contract('Pools - events', (accounts) => {
-  let lockedDeal, whiteList;
+  let lockedDeal;
   let testToken;
 
   let fromAddress = accounts[0];
@@ -64,7 +64,7 @@ contract('Pools - events', (accounts) => {
 
   });
 
-  describe('PoolOwnershipTransfered event is emitted', async () => {
+  describe('Pool transfer event is emitted', async () => {
 
     before(async () => {
       await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
@@ -86,12 +86,12 @@ contract('Pools - events', (accounts) => {
       poolId = tx.logs[1].args.PoolId;
     });
 
-    it('PoolOwnershipTransfered event is emitted', async () => {
+    it('Pool transfer event is emitted', async () => {
       const newOwner = accounts[8];
 
-      result = await lockedDeal.TransferPoolOwnership(poolId, newOwner, { from: owner });
+      result = await lockedDeal.PoolTransfer(poolId, newOwner, { from: owner });
       // Check event
-      truffleAssert.eventEmitted(result, 'PoolOwnershipTransfered');
+      truffleAssert.eventEmitted(result, 'PoolTransferred');
     });
 
   });

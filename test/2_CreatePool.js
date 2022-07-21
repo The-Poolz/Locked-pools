@@ -1,12 +1,12 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
-const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
-    let invalidToken
+    let invalidToken, poolId
     let startTime, finishTime
+    let owner = accounts[1]
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -21,9 +21,8 @@ contract('Create Pool', accounts => {
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
         finishTime = startTime + 60 * 60 * 24 * 30
-        const owner = accounts[1]
         const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
-        const poolId = tx.logs[1].args.PoolId
+        poolId = tx.logs[1].args.PoolId
         const result = await instance.AllPoolz(poolId, { from: owner })
         assert.equal(result[4], owner)
     })
@@ -98,6 +97,7 @@ contract('Create Pool', accounts => {
         assert.equal(lastPoolId, (numberOfOwners * numberOfTimestamps + parseInt(firstPoolId) - 1).toString())
         assert.equal(pids.length, numberOfOwners * numberOfTimestamps)
         assert.equal(pids.length, lastPoolId - firstPoolId + 1)
+        poolId = lastPoolId
     })
 
     it('should get all my pools ids by token', async () => {
@@ -131,6 +131,16 @@ contract('Create Pool', accounts => {
         assert.equal(100, result[0].StartAmount)
         assert.equal(0, result[0].DebitedAmount)
         assert.equal(accounts[1], result[0].Owner)
-        assert.equal(Token.address, result[0]. Token)
+        assert.equal(Token.address, result[0].Token)
+    })
+    
+    it('should transfer locked pool', async () => {
+        owner = accounts[7]
+        const newOwner = accounts[2]
+        const result = await instance.PoolTransfer(poolId, newOwner, { from: owner })
+        assert.equal(result.logs[result.logs.length - 1].args.PoolId.toString(), parseInt(poolId) + 1)
+        assert.equal(result.logs[result.logs.length - 1].args.oldPoolId.toString(), poolId.toString())
+        assert.equal(result.logs[result.logs.length - 1].args.OldOwner.toString(), owner)
+        assert.equal(result.logs[result.logs.length - 1].args.NewOwner.toString(), newOwner.toString())
     })
 })

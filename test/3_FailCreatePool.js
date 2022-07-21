@@ -5,7 +5,6 @@ const truffleAssert = require('truffle-assertions')
 contract('Fail Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
     let date, future, startTime, finishTime
-    let whiteList
     const allow = 100
 
     before(async () => {

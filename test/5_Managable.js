@@ -4,7 +4,7 @@ const { assert } = require('chai')
 
 contract('Managable', accounts => {
     let instance, ownerAddress
-    let testToken, whiteList
+    let testToken
 
     before(async () => {
         instance = await LockedDealV2.new()
