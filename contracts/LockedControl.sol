@@ -26,6 +26,7 @@ contract LockedControl is LockedPoolz {
         );
         pool.StartAmount = 0;
         AllPoolz[newPoolId].DebitedAmount = pool.DebitedAmount;
+        pool.DebitedAmount = 0;
         emit PoolTransferred(newPoolId, _PoolId, _NewOwner, msg.sender);
     }
 
