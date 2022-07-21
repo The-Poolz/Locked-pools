@@ -2,6 +2,7 @@ const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
 const timeMachine = require('ganache-time-traveler')
+const BigNumber = require('bignumber.js')
 
 contract('Withdraw', (accounts) => {
     let instance, Token, fromAddress, poolId
@@ -101,22 +102,47 @@ contract('Withdraw', (accounts) => {
     })
 
     describe('withdraw after pool transfer', () => {
+        let startTime, finishTime
+        const ownerAddr = accounts[3]
         before(async () => {
             await Token.approve(instance.address, allow, { from: fromAddress })
             const date = new Date()
-            const startTime = Math.floor(date.getTime() / 1000)
-            date.setDate(date.getDate() + 2)
-            const finishTime = Math.floor(date.getTime() / 1000)
-            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
+            startTime = Math.floor(date.getTime() / 1000)
+            date.setDate(date.getDate() + 4)
+            finishTime = Math.floor(date.getTime() / 1000)
+            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, ownerAddr, { from: fromAddress })
             poolId = tx.logs[1].args.PoolId.toString()
         })
 
         it('withdraw after 25% time', async () => {
-
+            const date = new Date()
+            date.setDate(date.getDate() + 1)
+            const fourthPart = Math.floor(date.getTime() / 1000)
+            await timeMachine.advanceBlockAndSetTime(fourthPart)
+            const oldBal = await Token.balanceOf(ownerAddr)
+            const result = await instance.WithdrawToken(poolId)
+            const currentBal = await Token.balanceOf(ownerAddr)
+            const expectedResult = '2500'
+            assert.equal(oldBal, '0')
+            assert.equal(result.logs[result.logs.length - 1].args.Amount.toString(), expectedResult, 'check amount value')
+            assert.equal((currentBal).toString(), expectedResult)
         })
 
         it('transfer pool and withdraw after 50% time', async () => {
-
+            const newOwner = accounts[5]
+            const result = await instance.PoolTransfer(poolId, newOwner, {from: ownerAddr})
+            poolId = result.logs[result.logs.length - 1].args.PoolId
+            const date = new Date()
+            date.setDate(date.getDate() + 2)
+            const halfTime = Math.floor(date.getTime() / 1000)
+            await timeMachine.advanceBlockAndSetTime(halfTime)
+            const oldBal = await Token.balanceOf(newOwner)
+            const tx = await instance.WithdrawToken(poolId)
+            const currentBal = await Token.balanceOf(newOwner)
+            const expectedResult = '2500'
+            assert.equal(oldBal, '0')
+            assert.equal(tx.logs[tx.logs.length - 1].args.Amount.toString(), expectedResult, 'check amount value')
+            assert.equal((currentBal).toString(), expectedResult)
         })
     })
 
