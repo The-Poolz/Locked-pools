@@ -115,7 +115,7 @@ There is a way how to transfer a pool ownership.
         external;
 ```
 
-Testnet tx: [link](https://testnet.bscscan.com/tx/0x54cbdf138be5ad711f648bc2d9e7086d29f064e8afc82e89f36f04b5c69d7e44)
+Testnet tx: [link](https://testnet.bscscan.com/tx/0xf0617971a2bf135a0f3c739ff07c19162a2312b78844e0021707a203905c60f2)
 
 ### Splitting a pool amount
 When you splitting a pool, it creates a new pool with splitted amount, in the original pool, the amount is reduced by the amount of the new pool.
