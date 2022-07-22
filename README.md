@@ -54,6 +54,7 @@ Create a whitelist of addresses that don't pay and integrate it with Locked-pool
 ```
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x346c84ff830fccadba03cdf43b1b11e40a46094a23060dcbaa89666673fde4b9)
+Topics hash: <b>123</b>
 
 ### Non-paid token
 
