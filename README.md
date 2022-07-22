@@ -108,11 +108,11 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0xe985d976f303662e1710f9982d2a
 ## Pool owner settings
 ### Transfer of ownership of locked tokens
 
+There is a way how to transfer a pool ownership.
+
 ```solidity
-function TransferPoolOwnership(
-        uint256 _PoolId,
-        address _NewOwner
-    ) external;
+    function PoolTransfer(uint256 _PoolId, address _NewOwner)
+        external;
 ```
 
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x54cbdf138be5ad711f648bc2d9e7086d29f064e8afc82e89f36f04b5c69d7e44)
@@ -131,6 +131,8 @@ When you splitting a pool, it creates a new pool with splitted amount, in the or
 Testnet tx: [link](https://testnet.bscscan.com/tx/0x3c448f482b866eb8c379a3599d0555013a2396dde327a992d38267c28abdea19)
 
 ### Approving an allowance
+
+There is a way how to approve some allowance to the spender in the pool.
 
 ```solidity
     function ApproveAllowance(
@@ -239,7 +241,7 @@ If **false** is returned, the token cannot be used in a locked pool.
     function isTokenWhiteListed(address _tokenAddress) public view returns(bool);
 ```
 
-### Is User without fee
+### Does the user have to pay a commission?
 
 Returns **true** if `_UserAddress` have allocation in WhiteList.
 
@@ -248,6 +250,8 @@ Returns **true** if `_UserAddress` have allocation in WhiteList.
 ```
 
 ### Gettting a pool data
+
+There is a way how to get a pool data.
 
 ```solidity
         function AllPoolz(uint256 _id)
@@ -309,6 +313,8 @@ When splitting a pool, the existing allowance for a user in the pool will be red
 Testnet tx: [link](https://testnet.bscscan.com/tx/0xecf9e18a1013d9c8cd404f798b66152fd3499cff46f3f2938f060e064ee5ef0f)
 
 ### Getting allowance
+
+There is a way how to get a pool allowance.
 
 ```solidity
     function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
