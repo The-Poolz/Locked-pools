@@ -108,7 +108,7 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0xe985d976f303662e1710f9982d2a
 ## Pool owner settings
 ### Transfer of ownership of locked tokens
 
-There is a way how to transfer a pool ownership.
+After using PoolTransfer, a new locked-pool of tokens is created based on the previous one, but with a new owner.
 
 ```solidity
     function PoolTransfer(uint256 _PoolId, address _NewOwner)
@@ -132,7 +132,7 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0x3c448f482b866eb8c379a3599d05
 
 ### Approving an allowance
 
-There is a way how to approve some allowance to the spender in the pool.
+Using the ApproveAllowance function, we can allocate an amount for non-owner addresses to split the pool.
 
 ```solidity
     function ApproveAllowance(
