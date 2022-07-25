@@ -317,7 +317,7 @@ Testnet tx: [link](https://testnet.bscscan.com/tx/0xecf9e18a1013d9c8cd404f798b66
 There is a way how to get a pool allowance.
 
 ```solidity
-    function GetPoolAllowance(uint256 _PoolId, address _Address) public view returns(uint256);
+    function Allowance(uint256 _PoolId, address _Address) public view returns(uint256);
 ```
 
 ## License

@@ -48,10 +48,6 @@ contract LockedControl is LockedPoolz {
         emit PoolApproval(_PoolId, _Spender, _Amount);
     }
 
-    function GetPoolAllowance(uint256 _PoolId, address _Address) public view isPoolValid(_PoolId) returns(uint256){
-        return Allowance[_PoolId][_Address];
-    }
-
     function SplitPoolAmountFrom(
         uint256 _PoolId,
         uint256 _Amount,

@@ -84,7 +84,7 @@ contract('Access to Locked Deal', accounts => {
 
         it('giving approval', async () => {
             await instance.ApproveAllowance(poolId, approvalAmount, spender, { from: owner })
-            const amount = await instance.GetPoolAllowance(poolId, spender)
+            const amount = await instance.Allowance(poolId, spender)
             const dataOwner = await instance.AllPoolz(poolId, { from: owner })
             const dataSpender = await instance.AllPoolz(poolId, { from: spender })
             assert.equal(approvalAmount, amount)
