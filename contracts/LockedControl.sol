@@ -34,7 +34,7 @@ contract LockedControl is LockedPoolz {
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
-    ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) isLocked(_PoolId) returns(uint256) {
+    ) external isPoolValid(_PoolId) isPoolOwner(_PoolId) returns(uint256) {
         uint256 poolId = SplitPool(_PoolId, _NewAmount, _NewOwner);
         return poolId;
     }
@@ -52,7 +52,7 @@ contract LockedControl is LockedPoolz {
         uint256 _PoolId,
         uint256 _Amount,
         address _Address
-    ) external isPoolValid(_PoolId) isAllowed(_PoolId, _Amount) isLocked(_PoolId) returns(uint256) {
+    ) external isPoolValid(_PoolId) isAllowed(_PoolId, _Amount) returns(uint256) {
         uint256 poolId = SplitPool(_PoolId, _Amount, _Address);
         uint256 _NewAmount = Allowance[_PoolId][msg.sender] - _Amount;
         Allowance[_PoolId][msg.sender]  = _NewAmount;
