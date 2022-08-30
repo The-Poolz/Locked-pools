@@ -60,4 +60,12 @@ contract LockedPoolzData is LockedControl {
         }
         return Array.KeepNElementsInArray(ids, index);
     }
+
+    function GetMyPoolDataByToken(address[] memory _tokens)
+        public
+        view
+        returns (Pool[] memory)
+    {
+        return GetPoolsData(GetMyPoolsIdByToken(_tokens));
+    }
 }
