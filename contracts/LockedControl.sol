@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "./LockedCreation.sol";
-import "poolz-helper-v2/contracts/Array.sol";
 
 contract LockedControl is LockedCreation {
     function PoolTransfer(uint256 _PoolId, address _NewOwner)
