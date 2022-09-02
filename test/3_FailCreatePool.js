@@ -22,6 +22,10 @@ contract('Fail Create Pool', accounts => {
         await truffleAssert.reverts(instance.CreateNewPool(Token.address, startTime, finishTime, allow, fromAddress, { from: fromAddress }), "no allowance")
     })
 
+    it('Failed to get data when pool does not exist', async () => {
+        await truffleAssert.reverts(instance.GetPoolsData([55], { from: accounts[1] }), "Pool does not exist")
+    })
+
     it('Fail to Create Pool when StartTime is greater than FinishTime', async () => {
         date = new Date()
         date.setDate(date.getDate() + 1)

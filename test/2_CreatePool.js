@@ -1,7 +1,6 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
-const truffleAssert = require('truffle-assertions')
 
 contract('Create Pool', accounts => {
     let instance, Token
@@ -125,7 +124,6 @@ contract('Create Pool', accounts => {
     })
 
     it('should get pools data by ids', async () => {
-        await truffleAssert.reverts(instance.GetPoolsData([55], { from: accounts[1] }), "Pool does not exist")
         const result = await instance.GetPoolsData([0], { from: accounts[1] })
         assert.equal(1, result.length)
         assert.equal(startTime, result[0].StartTime)
