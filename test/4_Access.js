@@ -1,6 +1,7 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
+const timeMachine = require('ganache-time-traveler')
 const truffleAssert = require('truffle-assertions')
 const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
@@ -97,14 +98,27 @@ contract('Access to Locked Deal', accounts => {
             const newPoolId = tx.logs[0].args.PoolId
             const data = await instance.AllPoolz(newPoolId, { from: newOwner })
             assert.equal(approvalAmount, data[2])
-
         })
     })
 
     describe('Fail Tests', () => {
         it('Fail to transfer ownership when called from wrong address', async () => {
             await truffleAssert.reverts(instance.PoolTransfer(poolId, accounts[5], { from: fromAddress }), "You are not Pool Owner")
+            await truffleAssert.reverts(instance.PoolTransfer(poolId, accounts[8], { from: accounts[8] }), "Can't be the same owner")
         })
+
+        it('Fail to transfer ownership when past finish time', async () =>{ 
+            let date = new Date()
+            date.setDate(date.getDate() + 1)
+            let startTime = Math.floor(date.getTime() / 1000)
+            let finishTime = startTime + 60 * 60 * 24 * 30
+            await Token.approve(instance.address, allow, { from: fromAddress })
+            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
+            poolId = tx.logs[1].args.PoolId
+            await timeMachine.advanceBlockAndSetTime(finishTime + 1)
+            await truffleAssert.reverts(instance.PoolTransfer(poolId, accounts[0], { from: owner }), "Can't create with past finish time")
+            await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
+            })
 
         it('Fail to Create Pool with 0 address owner', async () => {
             const allow = 100
@@ -125,9 +139,25 @@ contract('Access to Locked Deal', accounts => {
             await truffleAssert.reverts(instance.SplitPoolAmount(poolId, amount, owner, { from: owner }), "Not Enough Amount Balance")
         })
 
+        it('Fail to split pool when Pool is unlocked', async () => {
+            const date = new Date()
+            date.setDate(date.getDate() + 1)
+            const startTime = Math.floor(date.getTime() / 1000)
+            const finishTime = startTime + 60 * 60 * 24 * 30
+            await timeMachine.advanceBlockAndSetTime(finishTime + 1)
+            const data = await instance.AllPoolz(poolId, { from: owner })
+            const amount = data[1] + 1
+            await truffleAssert.reverts(instance.SplitPoolAmount(poolId, amount, owner, { from: owner }), "Pool is Unlocked")
+            await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
+        })
+
+        it('Not enough Allowance when split pool amount', async () => {
+            const approvalAmount = 100
+            await truffleAssert.reverts(instance.SplitPoolAmountFrom(poolId, approvalAmount, accounts[2], { from: owner }), "Not enough Allowance")
+        })
+
         it('Fail to execute when Pool ID is invalid', async () => {
             await truffleAssert.reverts(instance.PoolTransfer(99, accounts[5], { from: owner }), "Pool does not exist")
         })
     })
-
 })
