@@ -34,7 +34,7 @@ contract('Access to Locked Deal', accounts => {
         await instance.PoolTransfer(poolId, newOwner, { from: owner })
         poolId++
         const pool = await instance.AllPoolz(poolId, { from: newOwner })
-        const newPools = await instance.GetAllMyPoolsId({ from: newOwner })
+        const newPools = await instance.GetAllMyPoolsId(newOwner, { from: newOwner })
         assert.equal(newPools[0].toString(), poolId)
         assert.equal(pool[4], newOwner)
         owner = newOwner

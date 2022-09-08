@@ -101,25 +101,25 @@ contract('Create Pool', accounts => {
     })
 
     it('should get all my pools ids by token', async () => {
-        let result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[1] })
+        let result = await instance.GetMyPoolsIdByToken(accounts[1], [Token.address], { from: accounts[1] })
         assert.equal(result.toString(), [0])
 
-        result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[7] })
+        result = await instance.GetMyPoolsIdByToken(accounts[7], [Token.address], { from: accounts[7] })
         assert.equal(result.toString(), [3, 8, 11, 14, 17, 20, 23])
 
-        result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[8] })
+        result = await instance.GetMyPoolsIdByToken(accounts[8], [Token.address], { from: accounts[8] })
         assert.equal(result.toString(), [2, 7, 10, 13, 16, 19, 22])
 
-        result = await instance.GetMyPoolsIdByToken([Token.address, invalidToken.address], { from: accounts[9] })
+        result = await instance.GetMyPoolsIdByToken(accounts[9], [Token.address, invalidToken.address], { from: accounts[9] })
         assert.equal(result.toString(), [1, 6, 9, 12, 15, 18, 21])
 
-        result = await instance.GetMyPoolsIdByToken([Token.address, invalidToken.address], { from: accounts[6] })
+        result = await instance.GetMyPoolsIdByToken(accounts[6], [Token.address, invalidToken.address], { from: accounts[6] })
         assert.equal(result.toString(), [4])
 
-        result = await instance.GetMyPoolsIdByToken([Token.address], { from: accounts[5] })
+        result = await instance.GetMyPoolsIdByToken(accounts[5], [Token.address], { from: accounts[5] })
         assert.equal(result.toString(), [5])
 
-        result = await instance.GetMyPoolsIdByToken([invalidToken.address], { from: accounts[5] })
+        result = await instance.GetMyPoolsIdByToken(accounts[5], [invalidToken.address], { from: accounts[5] })
         assert.equal(result.toString(), [])
     })
 
@@ -146,7 +146,7 @@ contract('Create Pool', accounts => {
     
     it('should get my pools data by token', async () => {
         const owner = accounts[4]
-        const result = await instance.GetMyPoolDataByToken([Token.address], {from: owner})
+        const result = await instance.GetMyPoolDataByToken(owner, [Token.address], {from: owner})
         assert.equal(result.length, 0)
         let date = new Date()
         date.setDate(date.getDate() + 1)
@@ -154,7 +154,7 @@ contract('Create Pool', accounts => {
         finishTime = startTime + 60 * 60 * 24 * 30
         await Token.approve(instance.address, allow, { from: fromAddress })
         await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner)
-        const data = await instance.GetMyPoolDataByToken([Token.address], {from: owner})
+        const data = await instance.GetMyPoolDataByToken(owner, [Token.address], {from: owner})
         assert.equal(1, data.length)
         assert.equal(startTime, data[0].StartTime)
         assert.equal(finishTime, data[0].FinishTime)
