@@ -85,7 +85,7 @@ contract('Withdraw', (accounts) => {
         MyPoolz.push(poolId)
         date.setDate(date.getDate() - 1)
         await timeMachine.advanceBlockAndSetTime(Math.floor(date.getTime() / 1000))
-        const ids = await instance.GetMyPoolsId({ from: owner })
+        const ids = await instance.GetMyPoolsId(owner, { from: owner })
         const data = await instance.WithdrawToken(poolId)
         const logs = data.logs[1].args
         assert.equal(poolId, logs.PoolId.toString(), 'check pool ID')
@@ -97,7 +97,7 @@ contract('Withdraw', (accounts) => {
         await timeMachine.advanceBlockAndSetTime(finishTime)
         await instance.WithdrawToken(MyPoolz[1])
         MyPoolz.splice(1, 1)
-        const activeIds = await instance.GetMyPoolsId({ from: owner })
+        const activeIds = await instance.GetMyPoolsId(owner, { from: owner })
         assert.equal(activeIds.toString(), MyPoolz.toString(), 'check active pool id')
     })
 
