@@ -17,7 +17,7 @@ contract LockedPoolz is LockedManageable {
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
-    ) internal isLocked(_PoolId) returns (uint256) {
+    ) internal returns (uint256) {
         Pool storage pool = AllPoolz[_PoolId];
         require(pool.StartAmount >= _NewAmount, "Not Enough Amount Balance");
         uint256 poolAmount = pool.StartAmount - _NewAmount;
