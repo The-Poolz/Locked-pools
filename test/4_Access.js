@@ -139,25 +139,28 @@ contract('Access to Locked Deal', accounts => {
             await truffleAssert.reverts(instance.SplitPoolAmount(poolId, amount, owner, { from: owner }), "Not Enough Amount Balance")
         })
 
-        it('Fail to split pool when Pool is unlocked', async () => {
-            const date = new Date()
-            date.setDate(date.getDate() + 1)
-            const startTime = Math.floor(date.getTime() / 1000)
-            const finishTime = startTime + 60 * 60 * 24 * 30
-            await timeMachine.advanceBlockAndSetTime(finishTime + 1)
-            const data = await instance.AllPoolz(poolId, { from: owner })
-            const amount = data[1] + 1
-            await truffleAssert.reverts(instance.SplitPoolAmount(poolId, amount, owner, { from: owner }), "Pool is Unlocked")
-            await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
-        })
-
+        
         it('Not enough Allowance when split pool amount', async () => {
             const approvalAmount = 100
             await truffleAssert.reverts(instance.SplitPoolAmountFrom(poolId, approvalAmount, accounts[2], { from: owner }), "Not enough Allowance")
         })
 
         it('Fail to execute when Pool ID is invalid', async () => {
-            await truffleAssert.reverts(instance.PoolTransfer(99, accounts[5], { from: owner }), "Pool does not exist")
+            const invalidId = 99
+            await truffleAssert.reverts(instance.PoolTransfer(invalidId, accounts[5], { from: owner }), "Pool does not exist")
+        })
+
+        it('Failed to split pool after withdrawing', async () => {
+            const date = new Date()
+            date.setDate(date.getDate() + 1)
+            const startTime = Math.floor(date.getTime() / 1000)
+            const finishTime = startTime + 60 * 60 * 24 * 30
+            await timeMachine.advanceBlockAndSetTime(finishTime)
+            await instance.WithdrawToken(poolId)
+            const data = await instance.AllPoolz(poolId, { from: owner })
+            const amount = data[3]
+            await truffleAssert.reverts(instance.SplitPoolAmount(poolId, amount, owner, { from: owner }), "Pool is Unlocked")
+            await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
         })
     })
 })
