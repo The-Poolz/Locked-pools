@@ -50,10 +50,7 @@ contract LockedDealModifiers {
     }
 
     modifier isLocked(uint256 _PoolId) {
-        require(
-            AllPoolz[_PoolId].StartTime > block.timestamp,
-            "Pool is Unlocked"
-        );
+        require(AllPoolz[_PoolId].DebitedAmount == 0, "Pool is Unlocked");
         _;
     }
 
