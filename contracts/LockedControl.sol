@@ -16,14 +16,7 @@ contract LockedControl is LockedCreation {
             pool.FinishTime > block.timestamp,
             "Can't create with past finish time"
         );
-        uint256 newPoolId = CreatePool(
-            pool.Token,
-            pool.StartTime,
-            pool.FinishTime,
-            pool.StartAmount,
-            _NewOwner
-        );
-        pool.StartAmount = 0;
+        uint256 newPoolId = SplitPool(_PoolId, pool.StartAmount, _NewOwner);
         AllPoolz[newPoolId].DebitedAmount = pool.DebitedAmount;
         pool.DebitedAmount = 0;
         emit PoolTransferred(newPoolId, _PoolId, _NewOwner, msg.sender);
@@ -69,6 +62,7 @@ contract LockedControl is LockedCreation {
         isPoolValid(_PoolId)
         isLocked(_PoolId)
         isAllowed(_PoolId, _Amount)
+        isLocked(_PoolId)
         notZeroAddress(_Address)
         returns (uint256)
     {
