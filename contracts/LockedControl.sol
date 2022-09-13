@@ -60,7 +60,6 @@ contract LockedControl is LockedCreation {
     )
         external
         isPoolValid(_PoolId)
-        isLocked(_PoolId)
         isAllowed(_PoolId, _Amount)
         isLocked(_PoolId)
         notZeroAddress(_Address)
