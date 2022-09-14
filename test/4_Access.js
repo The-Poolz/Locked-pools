@@ -104,19 +104,7 @@ contract('Access to Locked Deal', accounts => {
             await truffleAssert.reverts(instance.PoolTransfer(poolId, accounts[5], { from: fromAddress }), "You are not Pool Owner")
             await truffleAssert.reverts(instance.PoolTransfer(poolId, accounts[8], { from: accounts[8] }), "Can't be the same owner")
         })
-
-        it('Fail to transfer ownership when past finish time', async () =>{ 
-            let date = new Date()
-            date.setDate(date.getDate() + 1)
-            let startTime = Math.floor(date.getTime() / 1000)
-            let finishTime = startTime + 60 * 60 * 24 * 30
-            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
-            poolId = tx.logs[1].args.PoolId
-            await timeMachine.advanceBlockAndSetTime(finishTime + 1)
-            await truffleAssert.reverts(instance.PoolTransfer(poolId, accounts[0], { from: owner }), "Can't create with past finish time")
-            await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
-            })
-
+        
         it('Fail to Create Pool with 0 address owner', async () => {
             const allow = 100
             let date = new Date()
