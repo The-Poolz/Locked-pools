@@ -11,15 +11,13 @@ contract('Access to Locked Deal', accounts => {
     before(async () => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
-        await Token.approve(instance.address, allow, { from: fromAddress })
+        await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
         let startTime = Math.floor(date.getTime() / 1000)
         let finishTime = startTime + 60 * 60 * 24 * 30
         await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
         // poolId = tx.logs[1].args.PoolId
-
-        await Token.approve(instance.address, allow, { from: fromAddress })
         // let date = new Date()
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
@@ -112,7 +110,6 @@ contract('Access to Locked Deal', accounts => {
             date.setDate(date.getDate() + 1)
             let startTime = Math.floor(date.getTime() / 1000)
             let finishTime = startTime + 60 * 60 * 24 * 30
-            await Token.approve(instance.address, allow, { from: fromAddress })
             const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
             poolId = tx.logs[1].args.PoolId
             await timeMachine.advanceBlockAndSetTime(finishTime + 1)

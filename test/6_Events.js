@@ -1,6 +1,7 @@
 const LockedDealV2 = artifacts.require("LockedDealV2");
 const TestToken = artifacts.require("ERC20Token");
 const truffleAssert = require('truffle-assertions');
+const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('Pools - events', (accounts) => {
   let lockedDeal;
@@ -16,13 +17,12 @@ contract('Pools - events', (accounts) => {
   before(async () => {
     lockedDeal = await LockedDealV2.new();
     testToken = await TestToken.new("test", 'tst');
+    await testToken.approve(lockedDeal.address, constants.MAX_UINT256, { from: fromAddress });
   });
 
   describe('TokenWithdrawn event is emitted', async () => {
 
     before(async () => {
-      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
-
       let date = new Date();
       date.setDate(date.getDate() - 1);
       const startTime = Math.floor(date.getTime() / 1000);
@@ -43,8 +43,6 @@ contract('Pools - events', (accounts) => {
   describe('NewPoolCreated event is emitted', async () => {
 
     before(async () => {
-      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
-
       let date = new Date();
       date.setDate(date.getDate() + 1);
 
@@ -52,7 +50,6 @@ contract('Pools - events', (accounts) => {
       const finishTime = startTime + 60 * 60 * 24
       const owner = accounts[1];
       const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
-      const poolId = tx.logs[1].args.PoolId;
 
       result = tx;
     });
@@ -67,18 +64,12 @@ contract('Pools - events', (accounts) => {
   describe('Pool transfer event is emitted', async () => {
 
     before(async () => {
-      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
-
       let date = new Date();
       date.setDate(date.getDate() + 1);
 
       let startTime = Math.floor(date.getTime() / 1000);
       let finishTime = startTime + 60 * 60 * 24
       await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, { from: fromAddress });
-      // poolId = tx.logs[1].args.PoolId
-
-      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
-      // let date = new Date()
       date.setDate(date.getDate() + 1);
       startTime = Math.floor(date.getTime() / 1000);
       finishTime = startTime + 60 * 60 * 24
@@ -102,8 +93,6 @@ contract('Pools - events', (accounts) => {
     const spender = accounts[1];
 
     before(async () => {
-      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
-
       let date = new Date();
       date.setDate(date.getDate() + 1);
 
@@ -126,8 +115,6 @@ contract('Pools - events', (accounts) => {
 
     before(async () => {
       allow -= amount;
-
-      await testToken.approve(lockedDeal.address, allow, { from: fromAddress });
 
       let date = new Date();
       date.setDate(date.getDate() + 1);

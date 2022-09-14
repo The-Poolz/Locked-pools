@@ -2,7 +2,7 @@ const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
 const timeMachine = require('ganache-time-traveler')
-const BigNumber = require('bignumber.js')
+const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('Withdraw', (accounts) => {
     let instance, Token, fromAddress, poolId
@@ -12,10 +12,10 @@ contract('Withdraw', (accounts) => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new('TestToken', 'TEST')
         fromAddress = await instance.owner()
+        await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
     })
 
     it('should create a single new pool', async () => {
-        await Token.approve(instance.address, allow, { from: fromAddress })
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
@@ -46,7 +46,6 @@ contract('Withdraw', (accounts) => {
     })
 
     it('finish time < now', async () => {
-        await Token.approve(instance.address, allow, { from: fromAddress })
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 1)
@@ -74,7 +73,6 @@ contract('Withdraw', (accounts) => {
     })
 
     it('Withdraw tokens', async () => {
-        await Token.approve(instance.address, allow, { from: fromAddress })
         const date = new Date()
         date.setDate(date.getDate() - 1)
         const startTime = Math.floor(date.getTime() / 1000)
@@ -105,7 +103,6 @@ contract('Withdraw', (accounts) => {
         let startTime, finishTime
         const ownerAddr = accounts[3]
         before(async () => {
-            await Token.approve(instance.address, allow, { from: fromAddress })
             const date = new Date()
             startTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() + 4)

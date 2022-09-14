@@ -1,6 +1,7 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const truffleAssert = require('truffle-assertions')
+const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('Fail Create Pool', accounts => {
     let instance, Token, fromAddress = accounts[0]
@@ -31,12 +32,11 @@ contract('Fail Create Pool', accounts => {
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
         finishTime = startTime - 1
-        await Token.approve(instance.address, allow, { from: fromAddress })
+        await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
         await truffleAssert.reverts(instance.CreateNewPool(Token.address, startTime, finishTime, allow, fromAddress, { from: fromAddress }), "StartTime is greater than FinishTime")
     })
 
     it('Fail to Create Mass Pool when array length not equal', async () => {
-        await Token.approve(instance.address, allow * 2, { from: fromAddress })
         await truffleAssert.reverts(
                 instance.CreateMassPools(Token.address, [startTime,startTime], [finishTime,finishTime], [allow, allow], [accounts[0]], { from: fromAddress }), "Date Array Invalid")
         await truffleAssert.reverts(
@@ -46,7 +46,6 @@ contract('Fail Create Pool', accounts => {
     })
 
     it('Fail to Create Wrt Time Pool when array length not equal', async () => {
-        await Token.approve(instance.address, allow * 2, { from: fromAddress })
         await truffleAssert.reverts(
             instance.CreatePoolsWrtTime(Token.address, [startTime, startTime], [finishTime, finishTime], [allow], [accounts[0], accounts[1]], { from: fromAddress }), "Amount Array Invalid")
         await truffleAssert.reverts(
@@ -54,13 +53,11 @@ contract('Fail Create Pool', accounts => {
     })
 
     it('Fail to Create Pool when Time array length is Zero', async () => {
-        await Token.approve(instance.address, 100, { from: fromAddress })
         await truffleAssert.reverts(instance.CreatePoolsWrtTime(Token.address, [], [], [100], [accounts[6]], { from: fromAddress }), "Array length should be greater than zero")
     })
 
     it('Fail to Create Pool when maxTransactionLimit is exceeded', async () => {
         let ownerArray = [], startArray = [], finishArray = [], amountArray = []
-        await Token.approve(instance.address, allow * 401, { from: fromAddress })
         for (let i = 0; i < 401; i++) {
             ownerArray.push(owner)
             startArray.push(future)
@@ -72,7 +69,6 @@ contract('Fail Create Pool', accounts => {
 
     it('Fail to Create Pool wrt Time when max limit is exceeded', async () => {
         let ownerArray = [], startTime = [], finishTime = [], amountArray = []
-        await Token.approve(instance.address, allow * 410, { from: fromAddress })
         for (let i = 0; i < 41; i++) {
             ownerArray.push(owner)
             amountArray.push(allow)
