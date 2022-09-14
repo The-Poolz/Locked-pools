@@ -67,11 +67,4 @@ contract('Managable', accounts => {
         const id = await instance.UserWhiteListId()
         assert.equal(whiteListId, id)
     })
-
-    // it('should set Min POZ', async () => {
-    //     const newMinPoz = 100
-    //     await instance.SetMinPoz(newMinPoz, {from: ownerAddress})
-    //     const minPoz = await instance.GetMinPoz()
-    //     assert.equal(newMinPoz, minPoz)
-    // })
 })

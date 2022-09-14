@@ -1,7 +1,8 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
-const { assert } = require("chai")
-const timeMachine = require("ganache-time-traveler")
+const { assert } = require('chai')
+const timeMachine = require('ganache-time-traveler')
+const constants = require('@openzeppelin/test-helpers/src/constants.js');
 const BigNumber = require("bignumber.js")
 
 contract("Withdraw", (accounts) => {
@@ -14,10 +15,10 @@ contract("Withdraw", (accounts) => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new("TestToken", "TEST")
         fromAddress = await instance.owner()
+        await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
     })
 
-    it("should create a single new pool", async () => {
-        await Token.approve(instance.address, allow, { from: fromAddress })
+    it('should create a single new pool', async () => {
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
@@ -49,8 +50,7 @@ contract("Withdraw", (accounts) => {
         assert.equal(expectedResult, result.toString(), "check return value")
     })
 
-    it("finish time < now", async () => {
-        await Token.approve(instance.address, allow, { from: fromAddress })
+    it('finish time < now', async () => {
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 1)
@@ -79,8 +79,7 @@ contract("Withdraw", (accounts) => {
         assert.equal("0", result.toString(), "check debited amount")
     })
 
-    it("Withdraw tokens", async () => {
-        await Token.approve(instance.address, allow, { from: fromAddress })
+    it('Withdraw tokens', async () => {
         const date = new Date()
         date.setDate(date.getDate() - 1)
         const startTime = Math.floor(date.getTime() / 1000)
@@ -113,7 +112,6 @@ contract("Withdraw", (accounts) => {
         let startTime, finishTime
         const ownerAddr = accounts[3]
         before(async () => {
-            await Token.approve(instance.address, allow, { from: fromAddress })
             const date = new Date()
             startTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() + 4)
@@ -175,7 +173,6 @@ contract("Withdraw", (accounts) => {
 
     describe("Withdraw after Split Pool Amount", () => {
         it("should split pool to 50% and withdraw 50% amount", async () => {
-            await Token.approve(instance.address, allow, { from: fromAddress })
             const splitOwner = accounts[7]
             const year = 364
             const date = new Date()
@@ -214,7 +211,6 @@ contract("Withdraw", (accounts) => {
     describe("Withdraw after Split Pool Amount From", () => {
         it("should Split Pool Amount From to 50% and withdraw 50%", async () => {
             const spender = accounts[8]
-            await Token.approve(instance.address, allow, { from: fromAddress })
             const date = new Date()
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 60 // add one minute

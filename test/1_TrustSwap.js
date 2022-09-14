@@ -1,6 +1,7 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
+const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('LockedDealV2', (accounts) => {
     let instance, Token
@@ -13,7 +14,7 @@ contract('LockedDealV2', (accounts) => {
     })
 
     it('Lock 1 test token for account2 from acount 0', async () => {
-        await Token.approve(instance.address, allow)
+        await Token.approve(instance.address, constants.MAX_UINT256)
         date.setDate(date.getDate() + 1)   // add a day
         const startTime = Math.floor(date.getTime() / 1000)
         const finishTime = startTime + 60 * 60 * 24 * 30
@@ -28,7 +29,6 @@ contract('LockedDealV2', (accounts) => {
     })
 
     it('open new pool for account 1 ', async () => {
-        await Token.approve(instance.address, allow)
         const date = new Date()
         date.setDate(date.getDate() - 1)  // sub a day
         const startTime = Math.floor(date.getTime() / 1000)

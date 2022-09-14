@@ -1,6 +1,7 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require('chai')
+const constants = require('@openzeppelin/test-helpers/src/constants.js');
 
 contract('Create Pool', accounts => {
     let instance, Token
@@ -16,7 +17,7 @@ contract('Create Pool', accounts => {
     })
 
     it('should create a single new pool', async () => {
-        await Token.approve(instance.address, allow, { from: fromAddress })
+        await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
@@ -30,7 +31,6 @@ contract('Create Pool', accounts => {
     it('should create pools in mass', async () => {
         const allow = 100
         const numberOfPools = 5
-        await Token.approve(instance.address, allow * numberOfPools, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
         let future = Math.floor(date.getTime() / 1000)
@@ -68,7 +68,6 @@ contract('Create Pool', accounts => {
         const allow = 100
         const numberOfOwners = 3
         const numberOfTimestamps = 6
-        await Token.approve(instance.address, allow * numberOfOwners * numberOfTimestamps, { from: fromAddress })
         let date = new Date()
         date.setDate(date.getDate() + 1)
         let future = Math.floor(date.getTime() / 1000)
@@ -152,7 +151,6 @@ contract('Create Pool', accounts => {
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
         finishTime = startTime + 60 * 60 * 24 * 30
-        await Token.approve(instance.address, allow, { from: fromAddress })
         await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner)
         const data = await instance.GetMyPoolDataByToken(owner, [Token.address], {from: owner})
         assert.equal(1, data.length)
