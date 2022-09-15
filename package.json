@@ -17,6 +17,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
+    "bignumber.js": "^9.1.0",
     "ganache-time-traveler": "^1.0.16",
     "openzeppelin-solidity": "^3.4.2",
     "solidity-coverage": "^0.7.21",
