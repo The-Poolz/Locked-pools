@@ -122,24 +122,6 @@ contract("Withdraw", (accounts) => {
             poolId = tx.logs[1].args.PoolId.toString()
         })
 
-        it("withdraw after 25% time", async () => {
-            const date = new Date()
-            date.setDate(date.getDate() + 1)
-            const fourthPart = Math.floor(date.getTime() / 1000)
-            await timeMachine.advanceBlockAndSetTime(fourthPart)
-            const oldBal = await Token.balanceOf(ownerAddr)
-            const result = await instance.WithdrawToken(poolId)
-            const currentBal = await Token.balanceOf(ownerAddr)
-            const expectedResult = "2500"
-            assert.equal(oldBal, "0")
-            assert.equal(
-                result.logs[result.logs.length - 1].args.Amount.toString(),
-                expectedResult,
-                "check amount value"
-            )
-            assert.equal(currentBal.toString(), expectedResult)
-        })
-
         it("transfer pool and withdraw after 50% time", async () => {
             const newOwner = accounts[5]
             const result = await instance.PoolTransfer(poolId, newOwner, { from: ownerAddr })
@@ -151,7 +133,7 @@ contract("Withdraw", (accounts) => {
             const oldBal = await Token.balanceOf(newOwner)
             const tx = await instance.WithdrawToken(poolId)
             const currentBal = await Token.balanceOf(newOwner)
-            const expectedResult = "2500"
+            const expectedResult = allow / 2
             assert.equal(oldBal, "0")
             assert.equal(tx.logs[tx.logs.length - 1].args.Amount.toString(), expectedResult, "check amount value")
             assert.equal(currentBal.toString(), expectedResult)
@@ -213,8 +195,8 @@ contract("Withdraw", (accounts) => {
             const spender = accounts[8]
             const date = new Date()
             const startTime = Math.floor(date.getTime() / 1000)
-            const finishTime = startTime + 60 // add one minute
-            const halfTime = finishTime - 30  // 30 seconds after start time
+            const finishTime = startTime + 120 // add two minutes
+            const halfTime = finishTime - 60  // 1 min after start time
             let tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
