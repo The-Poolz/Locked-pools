@@ -8,17 +8,12 @@ contract LockedControl is LockedCreation {
         external
         isPoolValid(_PoolId)
         isPoolOwner(_PoolId)
+        isLocked(_PoolId)
         notZeroAddress(_NewOwner)
     {
         Pool storage pool = AllPoolz[_PoolId];
         require(_NewOwner != pool.Owner, "Can't be the same owner");
-        require(
-            pool.FinishTime > block.timestamp,
-            "Can't create with past finish time"
-        );
         uint256 newPoolId = SplitPool(_PoolId, pool.StartAmount, _NewOwner);
-        AllPoolz[newPoolId].DebitedAmount = pool.DebitedAmount;
-        pool.DebitedAmount = 0;
         emit PoolTransferred(newPoolId, _PoolId, _NewOwner, msg.sender);
     }
 

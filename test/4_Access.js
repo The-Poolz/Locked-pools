@@ -45,15 +45,37 @@ contract("Access to Locked Deal", (accounts) => {
         owner = newOwner
     })
 
-    it("Split Pool Amount with owner address", async () => {
+    it('should get pool transfer status', async () => {
+        let date = new Date()
+        date.setDate(date.getDate() + 1)
+        let startTime = Math.floor(date.getTime() / 1000)
+        let finishTime = startTime + 60 * 60 * 24 * 30
+        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
+        poolId = tx.logs[1].args.PoolId
+        await timeMachine.advanceBlockAndSetTime(finishTime)
+        const status = await instance.isTransferPoolActive(poolId)
+        await instance.WithdrawToken(poolId)
+        const failStatus = await instance.isTransferPoolActive(poolId)
+        assert.equal(status, true)
+        assert.equal(failStatus, false)
+        await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
+    })
+
+    it('Split Pool Amount with owner address', async () => {
+        let date = new Date()
+        date.setDate(date.getDate() + 1)
+        let startTime = Math.floor(date.getTime() / 1000)
+        let finishTime = startTime + 60 * 60 * 24 * 30
+        let tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
         const amount = 25
-        allow = allow - amount
+        allow -= amount
         // const tx = await instance.SplitPoolAmount.call(poolId, amount, owner, {from: owner})
         // console.log(tx.toString())
-        const tx = await instance.SplitPoolAmount(poolId, amount, owner, { from: owner })
+        poolId = tx.logs[1].args.PoolId
+        tx = await instance.SplitPoolAmount(poolId, amount, owner, { from: owner })
         const pid = tx.logs[0].args.PoolId
         const pAmount = tx.logs[0].args.StartAmount
-        assert.equal(amount, pAmount)
+        assert.equal(amount, pAmount, "invalid start amount")
         const pool = await instance.AllPoolz(poolId, { from: owner })
         assert.equal(pool[2], allow)
         const newPool = await instance.AllPoolz(pid, { from: owner })
@@ -118,25 +140,8 @@ contract("Access to Locked Deal", (accounts) => {
                 "Can't be the same owner"
             )
         })
-
-        it("Fail to transfer ownership when past finish time", async () => {
-            let date = new Date()
-            date.setDate(date.getDate() + 1)
-            let startTime = Math.floor(date.getTime() / 1000)
-            let finishTime = startTime + 60 * 60 * 24 * 30
-            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
-            poolId = tx.logs[1].args.PoolId
-            await timeMachine.advanceBlockAndSetTime(finishTime + 1)
-            await truffleAssert.reverts(
-                instance.PoolTransfer(poolId, accounts[0], { from: owner }),
-                "Can't create with past finish time"
-            )
-            await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
-        })
-
-        it("Fail to Create Pool with 0 address owner", async () => {
+        
+        it('Fail to Create Pool with 0 address owner', async () => {
             const allow = 100
             let date = new Date()
             date.setDate(date.getDate() + 1)
@@ -197,5 +202,7 @@ contract("Access to Locked Deal", (accounts) => {
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
         })
+
+        
     })
 })
