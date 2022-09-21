@@ -6,7 +6,11 @@ import "poolz-helper-v2/contracts/FeeBaseHelper.sol";
 import "./LockedDealEvents.sol";
 import "./LockedDealModifiers.sol";
 
-contract LockedManageable is FeeBaseHelper, LockedDealEvents, LockedDealModifiers {
+contract LockedManageable is
+    FeeBaseHelper,
+    LockedDealEvents,
+    LockedDealModifiers
+{
     constructor() {
         maxTransactionLimit = 400;
         isTokenFilterOn = false; // disable token filter whitelist
@@ -32,19 +36,45 @@ contract LockedManageable is FeeBaseHelper, LockedDealEvents, LockedDealModifier
         isTokenFilterOn = !isTokenFilterOn;
     }
 
-    function isTokenWithoutFee(address _tokenAddress) notZeroAddress(WhiteList_Address) public view returns(bool) {
-        return IWhiteList(WhiteList_Address).Check(_tokenAddress, TokenFeeWhiteListId) > 0;
+    function isTokenWithoutFee(address _tokenAddress)
+        public
+        view
+        notZeroAddress(WhiteList_Address)
+        returns (bool)
+    {
+        return
+            IWhiteList(WhiteList_Address).Check(
+                _tokenAddress,
+                TokenFeeWhiteListId
+            ) > 0;
     }
 
-    function isTokenWhiteListed(address _tokenAddress) public view returns(bool) {
-        return !isTokenFilterOn || IWhiteList(WhiteList_Address).Check(_tokenAddress, TokenFilterWhiteListId) > 0;
+    function isTokenWhiteListed(address _tokenAddress)
+        public
+        view
+        returns (bool)
+    {
+        return
+            !isTokenFilterOn ||
+            IWhiteList(WhiteList_Address).Check(
+                _tokenAddress,
+                TokenFilterWhiteListId
+            ) >
+            0;
     }
 
-    function isUserWithoutFee(address _UserAddress) notZeroAddress(WhiteList_Address) public view returns(bool) {
-        return IWhiteList(WhiteList_Address).Check(_UserAddress, UserWhiteListId) > 0;
+    function isUserWithoutFee(address _UserAddress)
+        public
+        view
+        notZeroAddress(WhiteList_Address)
+        returns (bool)
+    {
+        return
+            IWhiteList(WhiteList_Address).Check(_UserAddress, UserWhiteListId) >
+            0;
     }
 
-    function setMaxTransactionLimit(uint256 _newLimit) external onlyOwner{
+    function setMaxTransactionLimit(uint256 _newLimit) external onlyOwner {
         maxTransactionLimit = _newLimit;
     }
 }

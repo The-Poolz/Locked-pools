@@ -46,7 +46,14 @@ contract LockedPoolz is LockedManageable {
             "StartTime is greater than FinishTime"
         );
         //register the pool
-        AllPoolz[Index] = Pool(_StartTime, _FinishTime, _StartAmount, 0, _Owner, _Token);
+        AllPoolz[Index] = Pool(
+            _StartTime,
+            _FinishTime,
+            _StartAmount,
+            0,
+            _Owner,
+            _Token
+        );
         MyPoolz[_Owner].push(Index);
         emit NewPoolCreated(
             Index,
