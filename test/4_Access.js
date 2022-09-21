@@ -45,12 +45,14 @@ contract("Access to Locked Deal", (accounts) => {
         owner = newOwner
     })
 
-    it('should get pool transfer status', async () => {
+    it("should get pool transfer status", async () => {
         let date = new Date()
         date.setDate(date.getDate() + 1)
         let startTime = Math.floor(date.getTime() / 1000)
         let finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
+        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+            from: fromAddress
+        })
         poolId = tx.logs[1].args.PoolId
         await timeMachine.advanceBlockAndSetTime(finishTime)
         const status = await instance.isTransferPoolActive(poolId)
@@ -61,7 +63,7 @@ contract("Access to Locked Deal", (accounts) => {
         await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
     })
 
-    it('Split Pool Amount with owner address', async () => {
+    it("Split Pool Amount with owner address", async () => {
         let date = new Date()
         date.setDate(date.getDate() + 1)
         let startTime = Math.floor(date.getTime() / 1000)
@@ -140,8 +142,8 @@ contract("Access to Locked Deal", (accounts) => {
                 "Can't be the same owner"
             )
         })
-        
-        it('Fail to Create Pool with 0 address owner', async () => {
+
+        it("Fail to Create Pool with 0 address owner", async () => {
             const allow = 100
             let date = new Date()
             date.setDate(date.getDate() + 1)
@@ -202,7 +204,5 @@ contract("Access to Locked Deal", (accounts) => {
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
         })
-
-        
     })
 })

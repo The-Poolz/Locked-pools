@@ -1,8 +1,8 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
-const { assert } = require('chai')
-const timeMachine = require('ganache-time-traveler')
-const constants = require('@openzeppelin/test-helpers/src/constants.js');
+const { assert } = require("chai")
+const timeMachine = require("ganache-time-traveler")
+const constants = require("@openzeppelin/test-helpers/src/constants.js")
 const BigNumber = require("bignumber.js")
 
 contract("Withdraw", (accounts) => {
@@ -18,7 +18,7 @@ contract("Withdraw", (accounts) => {
         await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
     })
 
-    it('should create a single new pool', async () => {
+    it("should create a single new pool", async () => {
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
@@ -50,7 +50,7 @@ contract("Withdraw", (accounts) => {
         assert.equal(expectedResult, result.toString(), "check return value")
     })
 
-    it('finish time < now', async () => {
+    it("finish time < now", async () => {
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 1)
@@ -79,7 +79,7 @@ contract("Withdraw", (accounts) => {
         assert.equal("0", result.toString(), "check debited amount")
     })
 
-    it('Withdraw tokens', async () => {
+    it("Withdraw tokens", async () => {
         const date = new Date()
         date.setDate(date.getDate() - 1)
         const startTime = Math.floor(date.getTime() / 1000)
@@ -196,7 +196,7 @@ contract("Withdraw", (accounts) => {
             const date = new Date()
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 120 // add two minutes
-            const halfTime = finishTime - 60  // 1 min after start time
+            const halfTime = finishTime - 60 // 1 min after start time
             let tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
