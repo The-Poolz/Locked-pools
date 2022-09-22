@@ -72,8 +72,9 @@ contract LockedPoolzData is LockedControl {
     function GetMyPoolDataByToken(
         address _UserAddress,
         address[] memory _Tokens
-    ) public view returns (Pool[] memory) {
-        return GetPoolsData(GetMyPoolsIdByToken(_UserAddress, _Tokens));
+    ) public view returns (Pool[] memory pools, uint256[] memory poolIds) {
+        poolIds = GetMyPoolsIdByToken(_UserAddress, _Tokens);
+        pools = GetPoolsData(poolIds);
     }
 
     function isTransferPoolActive(uint256 _PoolId) public view returns (bool) {
