@@ -26,6 +26,8 @@ contract LockedDealV2 is LockedPoolzData {
     function WithdrawToken(uint256 _PoolId) external returns (bool) {
         //pool is finished + got left overs + did not took them
         Pool storage pool = AllPoolz[_PoolId];
+        require(pool.StartAmount > 0 , "Pool has been refunded");
+        require(pool.StartAmount > pool.DebitedAmount, "Pool has been withdrawn");
         if (
             _PoolId < Index &&
             pool.StartTime <= block.timestamp &&
