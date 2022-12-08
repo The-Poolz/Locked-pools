@@ -210,7 +210,7 @@ contract("Access to Locked Deal", (accounts) => {
             await truffleAssert.reverts(instance.WithdrawToken(invalidPoolId), "Pool has been refunded")
         })
 
-        it("fali to withdraw tokens from inactive pool", async () => {
+        it("fail to withdraw tokens from inactive pool", async () => {
             const allow = 100
             const date = new Date()
             date.setDate(date.getDate() + 1)
