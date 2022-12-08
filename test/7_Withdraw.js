@@ -99,8 +99,6 @@ contract("Withdraw", (accounts) => {
         assert.equal(owner, logs.Recipient.toString(), "check owner address")
         assert.equal("5000", logs.Amount.toString(), "check token amount")
         assert.equal(ids.toString(), MyPoolz.toString(), "check active pool id")
-        const result = await instance.WithdrawToken.call(parseInt(poolId) + 1)
-        assert.equal(result, false, "wrong poolID")
         await timeMachine.advanceBlockAndSetTime(finishTime)
         await instance.WithdrawToken(MyPoolz[1])
         MyPoolz.splice(1, 1)
@@ -137,19 +135,6 @@ contract("Withdraw", (accounts) => {
             assert.equal(oldBal, "0")
             assert.equal(tx.logs[tx.logs.length - 1].args.Amount.toString(), expectedResult, "check amount value")
             assert.equal(currentBal.toString(), expectedResult)
-        })
-
-        it("withdraw tokens from inactive pool", async () => {
-            poolId = poolId - 1
-            const date = new Date()
-            date.setDate(date.getDate() + 2)
-            const halfTime = Math.floor(date.getTime() / 1000)
-            await timeMachine.advanceBlockAndSetTime(halfTime)
-            const result = await instance.WithdrawToken.call(poolId)
-            const amount = await instance.getWithdrawableAmount(poolId)
-            const expectedResult = "0"
-            assert.equal(result, false, "should return false")
-            assert.equal(amount, expectedResult, "check amount value")
         })
     })
 

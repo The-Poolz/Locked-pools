@@ -204,5 +204,37 @@ contract("Access to Locked Deal", (accounts) => {
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
         })
+
+        it("invalid pool id", async () => {
+            const invalidPoolId = constants.MAX_UINT256
+            await truffleAssert.reverts(instance.WithdrawToken(invalidPoolId), "Pool has been refunded")
+        })
+
+        it("fali to withdraw tokens from inactive pool", async () => {
+            const allow = 100
+            const date = new Date()
+            date.setDate(date.getDate() + 1)
+            const startTime = Math.floor(date.getTime() / 1000)
+            const finishTime = startTime + 60 * 60 * 24
+            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, accounts[0])
+            poolId = tx.logs[1].args.PoolId
+            const newOwner = accounts[5]
+            await instance.PoolTransfer(poolId, newOwner, { from: accounts[0] })
+            await truffleAssert.reverts(instance.WithdrawToken(poolId), "Pool has been refunded")
+        })
+
+        it("fail to withdraw tokens when Pool has been withdrawn", async () => {
+            const allow = 100
+            const date = new Date()
+            date.setDate(date.getDate() + 1)
+            const startTime = Math.floor(date.getTime() / 1000)
+            const finishTime = startTime + 60 * 60 * 24
+            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, accounts[0])
+            poolId = tx.logs[1].args.PoolId
+            await timeMachine.advanceBlockAndSetTime(finishTime)
+            await instance.WithdrawToken(poolId)
+            await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
+            await truffleAssert.reverts(instance.WithdrawToken(poolId), "Pool has been withdrawn")
+        })
     })
 })
