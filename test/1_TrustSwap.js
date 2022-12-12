@@ -5,7 +5,7 @@ const constants = require("@openzeppelin/test-helpers/src/constants.js")
 
 contract("LockedDealV2", (accounts) => {
     let instance, Token
-    const allow = 1,
+    const allow = 10000,
         owner = accounts[2]
     const date = new Date()
 
@@ -26,7 +26,7 @@ contract("LockedDealV2", (accounts) => {
 
     it("fail on withdraw from account 2", async () => {
         let took = await instance.WithdrawToken.call(0)
-        assert.isFalse(took)
+        assert.isFalse(took > 0)
     })
 
     it("open new pool for account 1 ", async () => {
@@ -41,6 +41,6 @@ contract("LockedDealV2", (accounts) => {
 
     it("withdraw from account 1", async () => {
         let took = await instance.WithdrawToken.call(1)
-        assert.isTrue(took)
+        assert.isTrue(took > 0)
     })
 })
