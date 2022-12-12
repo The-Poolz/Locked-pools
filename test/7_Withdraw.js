@@ -66,8 +66,10 @@ contract("Withdraw", (accounts) => {
         date.setDate(date.getDate() + 2)
         const futureTime = Math.floor(date.getTime() / 1000)
         await timeMachine.advanceBlockAndSetTime(futureTime)
+        const amount = await instance.WithdrawToken.call(poolId)
         const result = await instance.getWithdrawableAmount(poolId)
         assert.equal(result.toString(), startAmount - debitedAmount, "finish time < now")
+        assert.equal(amount.toString(), result.toString(), "WithdrawToken has the same refund amount as getWithdrawableAmount")
     })
 
     it("now < start time", async () => {
@@ -135,6 +137,19 @@ contract("Withdraw", (accounts) => {
             assert.equal(oldBal, "0")
             assert.equal(tx.logs[tx.logs.length - 1].args.Amount.toString(), expectedResult, "check amount value")
             assert.equal(currentBal.toString(), expectedResult)
+        })
+
+        it("withdraw tokens from inactive pool", async () => {
+            poolId = poolId - 1
+            const date = new Date()
+            date.setDate(date.getDate() + 2)
+            const halfTime = Math.floor(date.getTime() / 1000)
+            await timeMachine.advanceBlockAndSetTime(halfTime)
+            const result = await instance.WithdrawToken.call(poolId)
+            const amount = await instance.getWithdrawableAmount(poolId)
+            const expectedResult = "0"
+            assert.equal(result, 0, "should return zero")
+            assert.equal(amount, expectedResult, "check amount value")
         })
     })
 

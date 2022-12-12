@@ -23,23 +23,22 @@ contract LockedDealV2 is LockedPoolzData {
     }
 
     //@dev no use of revert to make sure the loop will work
-    function WithdrawToken(uint256 _PoolId) external returns (bool) {
+    function WithdrawToken(uint256 _PoolId)
+        external
+        returns (uint256 withdrawnAmount)
+    {
         //pool is finished + got left overs + did not took them
         Pool storage pool = AllPoolz[_PoolId];
-        require(pool.StartAmount > 0 , "Pool has been refunded");
-        require(pool.StartAmount > pool.DebitedAmount, "Pool has been withdrawn");
         if (
             _PoolId < Index &&
             pool.StartTime <= block.timestamp &&
             pool.StartAmount - pool.DebitedAmount > 0
         ) {
-            uint256 tokenAmount = getWithdrawableAmount(_PoolId);
-            uint256 tempDebitAmount = tokenAmount + pool.DebitedAmount;
+            withdrawnAmount = getWithdrawableAmount(_PoolId);
+            uint256 tempDebitAmount = withdrawnAmount + pool.DebitedAmount;
             pool.DebitedAmount = tempDebitAmount;
-            TransferToken(pool.Token, pool.Owner, tokenAmount);
-            emit TokenWithdrawn(_PoolId, pool.Owner, tokenAmount);
-            return true;
+            TransferToken(pool.Token, pool.Owner, withdrawnAmount);
+            emit TokenWithdrawn(_PoolId, pool.Owner, withdrawnAmount);
         }
-        return false;
     }
 }
