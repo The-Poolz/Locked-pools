@@ -25,7 +25,7 @@ contract LockedDealV2 is LockedPoolzData {
     //@dev no use of revert to make sure the loop will work
     function WithdrawToken(uint256 _PoolId)
         external
-        returns (uint256 tokenAmount)
+        returns (uint256 withdrawnAmount)
     {
         //pool is finished + got left overs + did not took them
         Pool storage pool = AllPoolz[_PoolId];
@@ -34,12 +34,11 @@ contract LockedDealV2 is LockedPoolzData {
             pool.StartTime <= block.timestamp &&
             pool.StartAmount - pool.DebitedAmount > 0
         ) {
-            tokenAmount = getWithdrawableAmount(_PoolId);
-            uint256 tempDebitAmount = tokenAmount + pool.DebitedAmount;
+            withdrawnAmount = getWithdrawableAmount(_PoolId);
+            uint256 tempDebitAmount = withdrawnAmount + pool.DebitedAmount;
             pool.DebitedAmount = tempDebitAmount;
-            TransferToken(pool.Token, pool.Owner, tokenAmount);
-            emit TokenWithdrawn(_PoolId, pool.Owner, tokenAmount);
+            TransferToken(pool.Token, pool.Owner, withdrawnAmount);
+            emit TokenWithdrawn(_PoolId, pool.Owner, withdrawnAmount);
         }
-        return tokenAmount;
     }
 }
