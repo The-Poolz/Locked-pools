@@ -69,7 +69,7 @@ contract("Withdraw", (accounts) => {
         const amount = await instance.WithdrawToken.call(poolId)
         const result = await instance.getWithdrawableAmount(poolId)
         assert.equal(result.toString(), startAmount - debitedAmount, "finish time < now")
-        assert.equal(amount.toString(), result.toString(), "1")
+        assert.equal(amount.toString(), result.toString(), "WithdrawToken has the same refund amount as getWithdrawableAmount")
     })
 
     it("now < start time", async () => {
