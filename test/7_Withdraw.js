@@ -66,8 +66,10 @@ contract("Withdraw", (accounts) => {
         date.setDate(date.getDate() + 2)
         const futureTime = Math.floor(date.getTime() / 1000)
         await timeMachine.advanceBlockAndSetTime(futureTime)
+        const amount = await instance.WithdrawToken.call(poolId)
         const result = await instance.getWithdrawableAmount(poolId)
         assert.equal(result.toString(), startAmount - debitedAmount, "finish time < now")
+        assert.equal(amount.toString(), result.toString(), "WithdrawToken has the same refund amount as getWithdrawableAmount")
     })
 
     it("now < start time", async () => {
@@ -99,8 +101,6 @@ contract("Withdraw", (accounts) => {
         assert.equal(owner, logs.Recipient.toString(), "check owner address")
         assert.equal("5000", logs.Amount.toString(), "check token amount")
         assert.equal(ids.toString(), MyPoolz.toString(), "check active pool id")
-        const result = await instance.WithdrawToken.call(parseInt(poolId) + 1)
-        assert.equal(result, false, "wrong poolID")
         await timeMachine.advanceBlockAndSetTime(finishTime)
         await instance.WithdrawToken(MyPoolz[1])
         MyPoolz.splice(1, 1)
@@ -148,7 +148,7 @@ contract("Withdraw", (accounts) => {
             const result = await instance.WithdrawToken.call(poolId)
             const amount = await instance.getWithdrawableAmount(poolId)
             const expectedResult = "0"
-            assert.equal(result, false, "should return false")
+            assert.equal(result, 0, "should return zero")
             assert.equal(amount, expectedResult, "check amount value")
         })
     })
