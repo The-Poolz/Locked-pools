@@ -88,7 +88,7 @@ contract LockedCreation is LockedPoolz {
     }
 
     function payFee(address _token, uint256 _amount) internal {
-        if (isUserWithFee(msg.sender) || isTokenWithFee(_token)) {
+        if (isUserPaysFee(msg.sender) || isTokenWithFee(_token)) {
             PayFee(_amount);
         }
     }

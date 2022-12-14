@@ -59,7 +59,7 @@ contract LockedManageable is
             0;
     }
 
-    function isUserWithFee(address _UserAddress) public view returns (bool) {
+    function isUserPaysFee(address _UserAddress) public view returns (bool) {
         return
             WhiteList_Address == address(0) ||
             !(IWhiteList(WhiteList_Address).Check(
