@@ -13,12 +13,7 @@ contract LockedCreation is LockedPoolz {
         address _Owner // Who the tokens belong to
     ) external payable notZeroAddress(_Owner) {
         TransferInToken(_Token, msg.sender, _StartAmount);
-        if (
-            WhiteList_Address != address(0) &&
-            !(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))
-        ) {
-            PayFee(Fee);
-        }
+        payFee(_Token, Fee);
         CreatePool(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
     }
 
@@ -38,12 +33,8 @@ contract LockedCreation is LockedPoolz {
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         TransferInToken(_Token, msg.sender, Array.getArraySum(_StartAmount));
-        if (
-            WhiteList_Address != address(0) &&
-            !(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))
-        ) {
-            PayFee(Fee * _Owner.length);
-        }
+        uint256 feeAmount = Fee * _Owner.length;
+        payFee(_Token, feeAmount);
         uint256 firstPoolId = Index;
         for (uint256 i = 0; i < _Owner.length; i++) {
             CreatePool(
@@ -79,12 +70,8 @@ contract LockedCreation is LockedPoolz {
             Array.getArraySum(_StartAmount) * _FinishTime.length
         );
         uint256 firstPoolId = Index;
-        if (
-            WhiteList_Address != address(0) &&
-            !(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_Token))
-        ) {
-            PayFee(Fee * _Owner.length * _FinishTime.length);
-        }
+        uint256 feeAmount = Fee * _Owner.length * _FinishTime.length;
+        payFee(_Token, feeAmount);
         for (uint256 i = 0; i < _FinishTime.length; i++) {
             for (uint256 j = 0; j < _Owner.length; j++) {
                 CreatePool(
@@ -98,5 +85,14 @@ contract LockedCreation is LockedPoolz {
         }
         uint256 lastPoolId = Index - 1;
         emit MassPoolsCreated(firstPoolId, lastPoolId);
+    }
+
+    function payFee(address _token, uint256 _amount) internal {
+        if (
+            WhiteList_Address != address(0) &&
+            !(isUserWithoutFee(msg.sender) || isTokenWithoutFee(_token))
+        ) {
+            PayFee(_amount);
+        }
     }
 }
