@@ -4,10 +4,6 @@ pragma solidity ^0.8.0;
 import "./LockedManageable.sol";
 
 contract LockedPoolz is LockedManageable {
-    constructor() {
-        Index = 0;
-    }
-
     modifier isTokenValid(address _Token) {
         require(isTokenWhiteListed(_Token), "Need Valid ERC20 Token"); //check if _Token is ERC20
         _;
@@ -17,12 +13,12 @@ contract LockedPoolz is LockedManageable {
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
-    ) internal returns (uint256) {
+    ) internal returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
         require(pool.StartAmount >= _NewAmount, "Not Enough Amount Balance");
         uint256 poolAmount = pool.StartAmount - _NewAmount;
         pool.StartAmount = poolAmount;
-        uint256 poolId = CreatePool(
+        poolId = CreatePool(
             pool.Token,
             pool.StartTime,
             pool.FinishTime,
@@ -30,7 +26,6 @@ contract LockedPoolz is LockedManageable {
             _NewOwner
         );
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
-        return poolId;
     }
 
     //create a new pool
@@ -40,7 +35,7 @@ contract LockedPoolz is LockedManageable {
         uint256 _FinishTime, // Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) internal isTokenValid(_Token) returns (uint256) {
+    ) internal isTokenValid(_Token) returns (uint256 poolId) {
         require(
             _StartTime <= _FinishTime,
             "StartTime is greater than FinishTime"
@@ -63,8 +58,7 @@ contract LockedPoolz is LockedManageable {
             _StartAmount,
             _Owner
         );
-        uint256 poolId = Index;
+        poolId = Index;
         Index++;
-        return poolId;
     }
 }

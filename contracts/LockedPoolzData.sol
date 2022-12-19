@@ -36,9 +36,9 @@ contract LockedPoolzData is LockedControl {
     function GetPoolsData(uint256[] memory _ids)
         public
         view
-        returns (Pool[] memory)
+        returns (Pool[] memory data)
     {
-        Pool[] memory data = new Pool[](_ids.length);
+        data = new Pool[](_ids.length);
         for (uint256 i = 0; i < _ids.length; i++) {
             require(_ids[i] < Index, "Pool does not exist");
             data[i] = Pool(
@@ -50,7 +50,6 @@ contract LockedPoolzData is LockedControl {
                 AllPoolz[_ids[i]].Token
             );
         }
-        return data;
     }
 
     function GetMyPoolsIdByToken(address _UserAddress, address[] memory _Tokens)
