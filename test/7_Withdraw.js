@@ -23,7 +23,7 @@ contract("Withdraw", (accounts) => {
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId.toString()
@@ -32,9 +32,9 @@ contract("Withdraw", (accounts) => {
 
     it("get withdrawable amount", async () => {
         const data = await instance.AllPoolz(poolId, { from: owner })
-        const startAmount = data[2].toString()
-        const debitedAmount = data[3].toString()
-        const totalPoolDuration = data[1] - data[0]
+        const startAmount = data[3].toString()
+        const debitedAmount = data[4].toString()
+        const totalPoolDuration = data[2] - data[0]
         const date = new Date()
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 1)
@@ -55,14 +55,14 @@ contract("Withdraw", (accounts) => {
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 1)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId.toString()
         MyPoolz.push(poolId)
         const data = await instance.AllPoolz(poolId, { from: owner })
-        const startAmount = data[2].toString()
-        const debitedAmount = data[3].toString()
+        const startAmount = data[3].toString()
+        const debitedAmount = data[4].toString()
         date.setDate(date.getDate() + 2)
         const futureTime = Math.floor(date.getTime() / 1000)
         await timeMachine.advanceBlockAndSetTime(futureTime)
@@ -87,7 +87,7 @@ contract("Withdraw", (accounts) => {
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId.toString()
@@ -116,7 +116,7 @@ contract("Withdraw", (accounts) => {
             startTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() + 4)
             finishTime = Math.floor(date.getTime() / 1000)
-            const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, ownerAddr, {
+            const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, ownerAddr, {
                 from: fromAddress
             })
             poolId = tx.logs[1].args.PoolId.toString()
@@ -161,7 +161,7 @@ contract("Withdraw", (accounts) => {
             const startTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() + year)
             const finishTime = Math.floor(date.getTime() / 1000)
-            let tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+            let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
             const oldPoolId = tx.logs[1].args.PoolId.toString()
@@ -197,7 +197,7 @@ contract("Withdraw", (accounts) => {
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 120 // add two minutes
             const halfTime = finishTime - 60 // 1 min after start time
-            let tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+            let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
             const oldPoolId = tx.logs[1].args.PoolId.toString()

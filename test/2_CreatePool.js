@@ -6,7 +6,7 @@ const constants = require("@openzeppelin/test-helpers/src/constants.js")
 contract("Create Pool", (accounts) => {
     let instance, Token
     let invalidToken, poolId
-    let startTime, finishTime
+    let startTime, finishTime, lockTime
     const owner = accounts[1],
         fromAddress = accounts[0]
     const allow = 100
@@ -22,13 +22,14 @@ contract("Create Pool", (accounts) => {
         let date = new Date()
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
+        lockTime = startTime
         finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+        const tx = await instance.CreateNewPool(Token.address, startTime, lockTime, finishTime, allow, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId
         const result = await instance.AllPoolz(poolId, { from: owner })
-        assert.equal(result[4], owner)
+        assert.equal(result[5], owner)
     })
 
     it("should create pools in mass", async () => {
@@ -50,11 +51,13 @@ contract("Create Pool", (accounts) => {
         finishTimeStamps.push(future + 3600)
         finishTimeStamps.push(future + 7200)
         finishTimeStamps.push(future - 7200)
+        const lockTimeStamps = startTimeStamps
         const startAmounts = [allow, allow, allow, allow, allow]
         const owners = [accounts[9], accounts[8], accounts[7], accounts[6], accounts[5]]
         const tx = await instance.CreateMassPools(
             Token.address,
             startTimeStamps,
+            lockTimeStamps,
             finishTimeStamps,
             startAmounts,
             owners,
@@ -92,12 +95,14 @@ contract("Create Pool", (accounts) => {
             // generating array of length 5
             finishTimeStamps.push(future + 3600 * i)
         }
+        const lockTimeStamps = startTimeStamps
         const startAmounts = [allow, allow, allow]
         const owners = [accounts[9], accounts[8], accounts[7]]
         // const result = await instance.CreatePoolsWrtTime.call(Token.address, startTimeStamps, startAmounts, owners, {from: fromAddress})
         const tx = await instance.CreatePoolsWrtTime(
             Token.address,
             startTimeStamps,
+            lockTimeStamps,
             finishTimeStamps,
             startAmounts,
             owners,
@@ -174,8 +179,9 @@ contract("Create Pool", (accounts) => {
         let date = new Date()
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
+        lockTime = startTime
         finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner)
+        const tx = await instance.CreateNewPool(Token.address, startTime, lockTime, finishTime, allow, owner)
         poolId = tx.logs[1].args.PoolId
         const data = await instance.GetMyPoolDataByToken(owner, [Token.address], { from: owner })
         assert.equal(1, data[0].length)

@@ -21,13 +21,15 @@ contract("Access to Locked Deal", (accounts) => {
         date.setDate(date.getDate() + 1)
         let startTime = Math.floor(date.getTime() / 1000)
         let finishTime = startTime + 60 * 60 * 24 * 30
-        await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
+        await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
+            from: fromAddress
+        })
         // poolId = tx.logs[1].args.PoolId
         // let date = new Date()
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
         finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId
@@ -41,7 +43,7 @@ contract("Access to Locked Deal", (accounts) => {
         const pool = await instance.AllPoolz(poolId, { from: newOwner })
         const newPools = await instance.GetAllMyPoolsId(newOwner, { from: newOwner })
         assert.equal(newPools[0].toString(), poolId)
-        assert.equal(pool[4], newOwner)
+        assert.equal(pool[5], newOwner)
         owner = newOwner
     })
 
@@ -50,7 +52,7 @@ contract("Access to Locked Deal", (accounts) => {
         date.setDate(date.getDate() + 1)
         let startTime = Math.floor(date.getTime() / 1000)
         let finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, {
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId
@@ -68,7 +70,7 @@ contract("Access to Locked Deal", (accounts) => {
         date.setDate(date.getDate() + 1)
         let startTime = Math.floor(date.getTime() / 1000)
         let finishTime = startTime + 60 * 60 * 24 * 30
-        let tx = await instance.CreateNewPool(Token.address, startTime, finishTime, allow, owner, { from: fromAddress })
+        let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, { from: fromAddress })
         const amount = 25
         allow -= amount
         // const tx = await instance.SplitPoolAmount.call(poolId, amount, owner, {from: owner})
@@ -79,9 +81,9 @@ contract("Access to Locked Deal", (accounts) => {
         const pAmount = tx.logs[0].args.StartAmount
         assert.equal(amount, pAmount, "invalid start amount")
         const pool = await instance.AllPoolz(poolId, { from: owner })
-        assert.equal(pool[2], allow)
+        assert.equal(pool[3], allow)
         const newPool = await instance.AllPoolz(pid, { from: owner })
-        assert.equal(newPool[2], amount)
+        assert.equal(newPool[3], amount)
     })
 
     it("Split Pool Amount with new address", async () => {
@@ -91,9 +93,9 @@ contract("Access to Locked Deal", (accounts) => {
         const tx = await instance.SplitPoolAmount(poolId, amount, approvedAddress, { from: owner })
         const pid = tx.logs[0].args.PoolId
         const pool = await instance.AllPoolz(poolId, { from: owner })
-        assert.equal(pool[2], allow)
+        assert.equal(pool[3], allow)
         const newPool = await instance.AllPoolz(pid, { from: approvedAddress })
-        assert.equal(newPool[2], amount)
+        assert.equal(newPool[3], amount)
     })
 
     it("returns new pool id", async () => {
@@ -127,7 +129,7 @@ contract("Access to Locked Deal", (accounts) => {
             const tx = await instance.SplitPoolAmountFrom(poolId, approvalAmount, newOwner, { from: spender })
             const newPoolId = tx.logs[0].args.PoolId
             const data = await instance.AllPoolz(newPoolId, { from: newOwner })
-            assert.equal(approvalAmount, data[2])
+            assert.equal(approvalAmount, data[3])
         })
     })
 
@@ -150,7 +152,7 @@ contract("Access to Locked Deal", (accounts) => {
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 60 * 60 * 24
             await truffleAssert.reverts(
-                instance.CreateNewPool(Token.address, startTime, finishTime, allow, constants.ZERO_ADDRESS, {
+                instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, constants.ZERO_ADDRESS, {
                     from: fromAddress
                 }),
                 "Zero Address is not allowed"
@@ -200,7 +202,7 @@ contract("Access to Locked Deal", (accounts) => {
             const amount = data[3]
             await truffleAssert.reverts(
                 instance.SplitPoolAmount(poolId, amount, owner, { from: owner }),
-                "Pool is Unlocked"
+                "Not Enough Amount Balance"
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
         })

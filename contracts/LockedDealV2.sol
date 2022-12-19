@@ -25,6 +25,7 @@ contract LockedDealV2 is LockedPoolzData {
     //@dev no use of revert to make sure the loop will work
     function WithdrawToken(uint256 _PoolId)
         external
+        isLocked(_PoolId)
         returns (uint256 withdrawnAmount)
     {
         //pool is finished + got left overs + did not took them

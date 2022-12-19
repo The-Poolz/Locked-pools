@@ -8,18 +8,20 @@ contract LockedCreation is LockedPoolz {
     function CreateNewPool(
         address _Token, //token to lock address
         uint256 _StartTime, //Until what time the pool will start
+        uint256 _LockTime, //Before LockTime can't withdraw tokens 
         uint256 _FinishTime, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
     ) external payable notZeroAddress(_Owner) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         payFee(_Token, Fee);
-        CreatePool(_Token, _StartTime, _FinishTime, _StartAmount, _Owner);
+        CreatePool(_Token, _StartTime, _LockTime, _FinishTime, _StartAmount, _Owner);
     }
 
     function CreateMassPools(
         address _Token,
         uint256[] calldata _StartTime,
+        uint256[] calldata _LockTime,
         uint256[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
@@ -33,13 +35,13 @@ contract LockedCreation is LockedPoolz {
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         TransferInToken(_Token, msg.sender, Array.getArraySum(_StartAmount));
-        uint256 feeAmount = Fee * _Owner.length;
-        payFee(_Token, feeAmount);
+        payFee(_Token, Fee * _Owner.length);
         uint256 firstPoolId = Index;
         for (uint256 i = 0; i < _Owner.length; i++) {
             CreatePool(
                 _Token,
                 _StartTime[i],
+                _LockTime[i],
                 _FinishTime[i],
                 _StartAmount[i],
                 _Owner[i]
@@ -53,13 +55,13 @@ contract LockedCreation is LockedPoolz {
     function CreatePoolsWrtTime(
         address _Token,
         uint256[] calldata _StartTime,
+        uint256[] calldata _LockTime,
         uint256[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
         address[] calldata _Owner
     )
         external
         payable
-        isGreaterThanZero(_StartTime.length)
         isBelowLimit(_Owner.length * _FinishTime.length)
     {
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
@@ -70,13 +72,13 @@ contract LockedCreation is LockedPoolz {
             Array.getArraySum(_StartAmount) * _FinishTime.length
         );
         uint256 firstPoolId = Index;
-        uint256 feeAmount = Fee * _Owner.length * _FinishTime.length;
-        payFee(_Token, feeAmount);
+        payFee(_Token, Fee * _Owner.length * _FinishTime.length);
         for (uint256 i = 0; i < _FinishTime.length; i++) {
             for (uint256 j = 0; j < _Owner.length; j++) {
                 CreatePool(
                     _Token,
                     _StartTime[i],
+                    _LockTime[i],
                     _FinishTime[i],
                     _StartAmount[j],
                     _Owner[j]

@@ -17,6 +17,7 @@ contract LockedDealModifiers {
 
     struct Pool {
         uint256 StartTime;
+        uint256 LockTime;
         uint256 FinishTime;
         uint256 StartAmount;
         uint256 DebitedAmount;
@@ -28,7 +29,7 @@ contract LockedDealModifiers {
         require(_address != address(0x0), "Zero Address is not allowed");
         _;
     }
-    
+
     modifier isPoolValid(uint256 _PoolId) {
         require(_PoolId < Index, "Pool does not exist");
         _;
@@ -51,7 +52,7 @@ contract LockedDealModifiers {
     }
 
     modifier isLocked(uint256 _PoolId) {
-        require(AllPoolz[_PoolId].DebitedAmount == 0, "Pool is Unlocked");
+        require(AllPoolz[_PoolId].LockTime <= block.timestamp, "Can't withdraw before Lock Period");
         _;
     }
 
