@@ -29,8 +29,7 @@ contract LockedControl is LockedCreation {
         notZeroAddress(_NewOwner)
         returns (uint256)
     {
-        uint256 poolId = SplitPool(_PoolId, _NewAmount, _NewOwner);
-        return poolId;
+        return SplitPool(_PoolId, _NewAmount, _NewOwner);
     }
 
     function ApproveAllowance(
@@ -58,11 +57,10 @@ contract LockedControl is LockedCreation {
         isAllowed(_PoolId, _Amount)
         isLocked(_PoolId)
         notZeroAddress(_Address)
-        returns (uint256)
+        returns (uint256 poolId)
     {
-        uint256 poolId = SplitPool(_PoolId, _Amount, _Address);
+        poolId = SplitPool(_PoolId, _Amount, _Address);
         uint256 _NewAmount = Allowance[_PoolId][msg.sender] - _Amount;
         Allowance[_PoolId][msg.sender] = _NewAmount;
-        return poolId;
     }
 }
