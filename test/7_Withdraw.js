@@ -193,10 +193,13 @@ contract("Withdraw", (accounts) => {
     describe("Withdraw after Split Pool Amount From", () => {
         it("should Split Pool Amount From to 50% and withdraw 50%", async () => {
             const spender = accounts[8]
+            const year = 364
             const date = new Date()
             const startTime = Math.floor(date.getTime() / 1000)
-            const finishTime = startTime + 120 // add two minutes
-            const halfTime = finishTime - 60 // 1 min after start time
+            date.setDate(date.getDate() + year)
+            const finishTime = Math.floor(date.getTime() / 1000)
+            date.setDate(date.getDate() - year / 2)
+            const halfTime = Math.floor(date.getTime() / 1000)
             let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
