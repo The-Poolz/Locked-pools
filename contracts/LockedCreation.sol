@@ -28,7 +28,6 @@ contract LockedCreation is LockedPoolz {
     )
         external
         payable
-        isGreaterThanZero(_Owner.length)
         isBelowLimit(_Owner.length)
     {
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");

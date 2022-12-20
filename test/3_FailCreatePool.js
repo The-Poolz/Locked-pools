@@ -125,7 +125,7 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreateMassPools(Token.address, startArray, startArray, finishArray, amountArray, ownerArray, {
                 from: fromAddress
             }),
-            "Max array length limit exceeded"
+            "Invalid array length limit"
         )
     })
 
@@ -148,7 +148,7 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreatePoolsWrtTime(Token.address, startTime, cliffTime, finishTime, amountArray, ownerArray, {
                 from: fromAddress
             }),
-            "Max array length limit exceeded"
+            "Invalid array length limit"
         )
     })
 })

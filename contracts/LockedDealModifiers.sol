@@ -51,13 +51,8 @@ contract LockedDealModifiers {
         _;
     }
 
-    modifier isGreaterThanZero(uint256 _num) {
-        require(_num > 0, "Array length should be greater than zero");
-        _;
-    }
-
     modifier isBelowLimit(uint256 _num) {
-        require(_num <= maxTransactionLimit, "Max array length limit exceeded");
+        require(_num > 0 && _num <= maxTransactionLimit, "Invalid array length limit");
         _;
     }
 }
