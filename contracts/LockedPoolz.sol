@@ -21,7 +21,7 @@ contract LockedPoolz is LockedManageable {
         poolId = CreatePool(
             pool.Token,
             pool.StartTime,
-            pool.LockTime,
+            pool.CliffTime,
             pool.FinishTime,
             _NewAmount,
             _NewOwner
@@ -33,7 +33,7 @@ contract LockedPoolz is LockedManageable {
     function CreatePool(
         address _Token, // token to lock address
         uint256 _StartTime, // Until what time the pool will Start
-        uint256 _LockTime, // Before LockTime can't withdraw tokens 
+        uint256 _CliffTime, // Before CliffTime can't withdraw tokens 
         uint256 _FinishTime, // Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
@@ -45,7 +45,7 @@ contract LockedPoolz is LockedManageable {
         //register the pool
         AllPoolz[Index] = Pool(
             _StartTime,
-            _LockTime,
+            _CliffTime,
             _FinishTime,
             _StartAmount,
             0,
@@ -57,7 +57,7 @@ contract LockedPoolz is LockedManageable {
             Index,
             _Token,
             _StartTime,
-            _LockTime,
+            _CliffTime,
             _FinishTime,
             _StartAmount,
             _Owner

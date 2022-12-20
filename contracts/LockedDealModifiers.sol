@@ -17,7 +17,7 @@ contract LockedDealModifiers {
 
     struct Pool {
         uint256 StartTime;
-        uint256 LockTime;
+        uint256 CliffTime;
         uint256 FinishTime;
         uint256 StartAmount;
         uint256 DebitedAmount;
@@ -48,11 +48,6 @@ contract LockedDealModifiers {
             _amount <= Allowance[_PoolId][msg.sender],
             "Not enough Allowance"
         );
-        _;
-    }
-
-    modifier isLocked(uint256 _PoolId) {
-        require(AllPoolz[_PoolId].LockTime <= block.timestamp, "Can't withdraw before Lock Period");
         _;
     }
 

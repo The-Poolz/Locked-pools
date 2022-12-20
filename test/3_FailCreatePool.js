@@ -7,7 +7,7 @@ contract("Fail Create Pool", (accounts) => {
     let instance,
         Token,
         fromAddress = accounts[0]
-    let date, future, startTime, finishTime, lockTime
+    let date, future, startTime, finishTime, cliffTime
     const allow = 100
     const owner = accounts[6]
 
@@ -17,13 +17,13 @@ contract("Fail Create Pool", (accounts) => {
         date = new Date()
         date.setDate(date.getDate() + 1)
         future = Math.floor(date.getTime() / 1000)
-        lockTime = startTime = future
+        cliffTime = startTime = future
         finishTime = future + 60 * 60 * 24 * 30
     })
 
     it("Fail to Create Pool when approval is not given", async () => {
         await truffleAssert.reverts(
-            instance.CreateNewPool(Token.address, startTime, lockTime, finishTime, allow, fromAddress, { from: fromAddress }),
+            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, fromAddress, { from: fromAddress }),
             "no allowance"
         )
     })
@@ -39,7 +39,7 @@ contract("Fail Create Pool", (accounts) => {
         finishTime = startTime - 1
         await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
         await truffleAssert.reverts(
-            instance.CreateNewPool(Token.address, startTime, lockTime, finishTime, allow, fromAddress, { from: fromAddress }),
+            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, fromAddress, { from: fromAddress }),
             "StartTime is greater than FinishTime"
         )
     })
@@ -132,7 +132,7 @@ contract("Fail Create Pool", (accounts) => {
     it("Fail to Create Pool wrt Time when max limit is exceeded", async () => {
         let ownerArray = [],
             startTime = [],
-            lockTime = [],
+            cliffTime = [],
             finishTime = [],
             amountArray = []
         for (let i = 0; i < 41; i++) {
@@ -143,9 +143,9 @@ contract("Fail Create Pool", (accounts) => {
             startTime.push(future + i * 3600)
             finishTime.push(future + i * 3600 + 60 * 60)
         }
-        lockTime = startTime
+        cliffTime = startTime
         await truffleAssert.reverts(
-            instance.CreatePoolsWrtTime(Token.address, startTime, lockTime, finishTime, amountArray, ownerArray, {
+            instance.CreatePoolsWrtTime(Token.address, startTime, cliffTime, finishTime, amountArray, ownerArray, {
                 from: fromAddress
             }),
             "Max array length limit exceeded"

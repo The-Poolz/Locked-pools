@@ -18,9 +18,9 @@ contract("LockedDealV2", (accounts) => {
         await Token.approve(instance.address, constants.MAX_UINT256)
         date.setDate(date.getDate() + 1) // add a day
         const startTime = Math.floor(date.getTime() / 1000)
-        const lockTime = 0
+        const cliffTime = 0
         const finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, lockTime, finishTime, allow, owner)
+        const tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, owner)
         poolId = tx.logs[1].args.PoolId
         const mypoolz = await instance.GetAllMyPoolsId(owner, { from: owner })
         assert.equal(mypoolz.length, 1)
@@ -36,9 +36,9 @@ contract("LockedDealV2", (accounts) => {
         const date = new Date()
         date.setDate(date.getDate() - 1) // sub a day
         const startTime = Math.floor(date.getTime() / 1000)
-        const lockTime = startTime
+        const cliffTime = startTime
         const finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, lockTime, finishTime, allow, accounts[1])
+        const tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, accounts[1])
         poolId = tx.logs[1].args.PoolId
         const mypoolz = await instance.GetAllMyPoolsId(owner, { from: accounts[1] })
         assert.equal(mypoolz.length, 1)
