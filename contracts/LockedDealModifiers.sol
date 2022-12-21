@@ -43,14 +43,6 @@ contract LockedDealModifiers {
         _;
     }
 
-    modifier isAllowed(uint256 _PoolId, uint256 _amount) {
-        require(
-            _amount <= Allowance[_PoolId][msg.sender],
-            "Not enough Allowance"
-        );
-        _;
-    }
-
     modifier isBelowLimit(uint256 _num) {
         require(_num > 0 && _num <= maxTransactionLimit, "Invalid array length limit");
         _;

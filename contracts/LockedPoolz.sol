@@ -9,24 +9,24 @@ contract LockedPoolz is LockedManageable {
         _;
     }
 
-    function SplitPool(
+    function TransferPool(
         uint256 _PoolId,
-        uint256 _NewAmount,
+        uint256 _transferAmount,
         address _NewOwner
-    ) internal returns (uint256 poolId) {
+    ) internal returns (uint256 newPoolId) {
         Pool storage pool = AllPoolz[_PoolId];
-        require(pool.StartAmount - pool.DebitedAmount >= _NewAmount, "Not Enough Amount Balance");
-        uint256 poolAmount = pool.StartAmount - _NewAmount;
-        pool.StartAmount = poolAmount;
-        poolId = CreatePool(
+        require(pool.StartAmount - pool.DebitedAmount >= _transferAmount, "Not Enough Amount Balance");
+        newPoolId = ReplicatePool(
             pool.Token,
             pool.StartTime,
             pool.CliffTime,
             pool.FinishTime,
-            _NewAmount,
+            pool.StartAmount,
+            pool.DebitedAmount,
             _NewOwner
         );
-        emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
+        pool.StartAmount = pool.StartAmount - _transferAmount;
+        emit PoolTransferred(_PoolId, newPoolId, _transferAmount, pool.Owner, _NewOwner);
     }
 
     //create a new pool
@@ -60,6 +60,41 @@ contract LockedPoolz is LockedManageable {
             _CliffTime,
             _FinishTime,
             _StartAmount,
+            _Owner
+        );
+        poolId = Index;
+        Index++;
+    }
+
+    //Replicate a new pool
+    function ReplicatePool(
+        address _Token, // token to lock address
+        uint256 _StartTime, // Until what time the pool will Start
+        uint256 _CliffTime, // Before CliffTime can't withdraw tokens 
+        uint256 _FinishTime, // Until what time the pool will end
+        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
+        uint256 _debitedAmount, // used only for splittingPool to replicate the old pool
+        address _Owner // Who the tokens belong to,
+    ) private isTokenValid(_Token) returns (uint256 poolId) {
+        //register the pool
+        AllPoolz[Index] = Pool(
+            _StartTime,
+            _CliffTime,
+            _FinishTime,
+            _StartAmount,
+            _debitedAmount,
+            _Owner,
+            _Token
+        );
+        MyPoolz[_Owner].push(Index);
+        emit PoolReplicated(
+            Index,
+            _Token,
+            _StartTime,
+            _CliffTime,
+            _FinishTime,
+            _StartAmount,
+            _debitedAmount,
             _Owner
         );
         poolId = Index;
