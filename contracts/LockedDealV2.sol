@@ -31,7 +31,7 @@ contract LockedDealV2 is LockedPoolzData {
         Pool storage pool = AllPoolz[_PoolId];
         if (
             _PoolId < Index &&
-            pool.StartTime <= block.timestamp &&
+            pool.CliffTime <= block.timestamp &&
             pool.StartAmount - pool.DebitedAmount > 0
         ) {
             withdrawnAmount = getWithdrawableAmount(_PoolId);

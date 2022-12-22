@@ -27,7 +27,7 @@ contract("Pools - events", (accounts) => {
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 60 * 60 * 24
 
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, {
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
             poolId = tx.logs[1].args.PoolId
@@ -48,7 +48,7 @@ contract("Pools - events", (accounts) => {
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 60 * 60 * 24
             const owner = accounts[1]
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, {
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
 
@@ -68,13 +68,13 @@ contract("Pools - events", (accounts) => {
 
             let startTime = Math.floor(date.getTime() / 1000)
             let finishTime = startTime + 60 * 60 * 24
-            await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, {
+            await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
             date.setDate(date.getDate() + 1)
             startTime = Math.floor(date.getTime() / 1000)
             finishTime = startTime + 60 * 60 * 24
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, {
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
             poolId = tx.logs[1].args.PoolId
@@ -99,7 +99,7 @@ contract("Pools - events", (accounts) => {
 
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 60 * 60 * 24
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, {
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
             poolId = tx.logs[1].args.PoolId
@@ -124,7 +124,7 @@ contract("Pools - events", (accounts) => {
             const startTime = Math.floor(date.getTime() / 1000)
             const finishTime = startTime + 60 * 60 * 24
 
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, finishTime, allow, owner, {
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
                 from: fromAddress
             })
             poolId = tx.logs[1].args.PoolId

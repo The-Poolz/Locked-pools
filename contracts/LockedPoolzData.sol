@@ -43,6 +43,7 @@ contract LockedPoolzData is LockedControl {
             require(_ids[i] < Index, "Pool does not exist");
             data[i] = Pool(
                 AllPoolz[_ids[i]].StartTime,
+                AllPoolz[_ids[i]].CliffTime,
                 AllPoolz[_ids[i]].FinishTime,
                 AllPoolz[_ids[i]].StartAmount,
                 AllPoolz[_ids[i]].DebitedAmount,

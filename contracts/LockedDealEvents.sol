@@ -8,6 +8,7 @@ contract LockedDealEvents {
         uint256 PoolId,
         address indexed Token,
         uint256 StartTime,
+        uint256 CliffTime,
         uint256 FinishTime,
         uint256 StartAmount,
         address indexed Owner
