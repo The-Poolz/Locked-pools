@@ -15,12 +15,13 @@ contract LockedPoolz is LockedManageable {
         address _NewOwner
     ) internal returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
+        uint256 leftAmount = remainingAmount(_PoolId);
         require(
-            remainingAmount(_PoolId) >= _NewAmount,
+            leftAmount >= _NewAmount,
             "Not Enough Amount Balance"
         );
         uint256 _percent = percentageRatio(
-            remainingAmount(_PoolId),
+            leftAmount,
             _NewAmount
         );
         uint256 newPoolStartAmount = (pool.StartAmount * _percent) / 100_000_000;
@@ -38,34 +39,6 @@ contract LockedPoolz is LockedManageable {
         );
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
     }
-    // function SplitPool(
-    //     uint256 _PoolId,
-    //     uint256 _NewAmount,
-    //     address _NewOwner
-    // ) internal returns (uint256 poolId) {
-    //     Pool storage pool = AllPoolz[_PoolId];
-    //     require(
-    //         remainingAmount(_PoolId) >= _NewAmount,
-    //         "Not Enough Amount Balance"
-    //     );
-    //     uint256 _percent = percentageRatio(
-    //         pool.StartAmount,
-    //         pool.DebitedAmount
-    //     );
-    //     uint256 _newDebitedAmount = ((_percent * _NewAmount) / 100) / 1_000_000;
-    //     uint256 poolAmount = pool.StartAmount - _NewAmount;
-    //     pool.StartAmount = poolAmount;
-    //     poolId = CreatePool(
-    //         pool.Token,
-    //         pool.StartTime,
-    //         pool.CliffTime,
-    //         pool.FinishTime,
-    //         _NewAmount,
-    //         _newDebitedAmount,
-    //         _NewOwner
-    //     );
-    //     emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
-    // }
 
     //create a new pool
     function CreatePool(
@@ -115,15 +88,7 @@ contract LockedPoolz is LockedManageable {
         pure
         returns (uint256 ratio)
     {
-        // Solidity doesn't support decimals.
+        // uint doesn't support decimals.
         ratio =  (_splitAmount * 100_000_000) / _remainingAmount;
     }
-    // function percentageRatio(uint256 _StartAmount, uint256 _DebitedAmount)
-    //     internal
-    //     pure
-    //     returns (uint256 ratio)
-    // {
-    //     // Solidity doesn't support decimals.
-    //     ratio = _DebitedAmount > 0 ? (_DebitedAmount * 100_000_000) / _StartAmount : _DebitedAmount;
-    // }
 }
