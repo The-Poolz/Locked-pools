@@ -15,8 +15,9 @@ contract LockedPoolz is LockedManageable {
         address _NewOwner
     ) internal returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
+        uint256 leftAmount = remainingAmount(_PoolId);
         require(
-            remainingAmount(_PoolId) >= _NewAmount,
+            leftAmount >= _NewAmount,
             "Not Enough Amount Balance"
         );
         if (pool.DebitedAmount == 0) {
@@ -106,7 +107,7 @@ contract LockedPoolz is LockedManageable {
         pure
         returns (uint256 ratio)
     {
-        // Solidity doesn't support decimals.
-        ratio = (_splitAmount * 100_000_000) / _remainingAmount;
+        // uint doesn't support decimals.
+        ratio =  (_splitAmount * 100_000_000) / _remainingAmount;
     }
 }
