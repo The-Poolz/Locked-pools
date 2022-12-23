@@ -19,53 +19,38 @@ contract LockedPoolz is LockedManageable {
             remainingAmount(_PoolId) >= _NewAmount,
             "Not Enough Amount Balance"
         );
-        uint256 _percent = percentageRatio(
-            remainingAmount(_PoolId),
-            _NewAmount
-        );
-        uint256 newPoolStartAmount = (pool.StartAmount * _percent) / 100_000_000;
-        uint256 newPoolDebitedAmount = (pool.DebitedAmount * _percent) / 100_000_000;
-        pool.StartAmount = pool.StartAmount - newPoolStartAmount;
-        pool.DebitedAmount = pool.DebitedAmount - newPoolDebitedAmount;
-        poolId = CreatePool(
-            pool.Token,
-            pool.StartTime,
-            pool.CliffTime,
-            pool.FinishTime,
-            newPoolStartAmount,
-            newPoolDebitedAmount,
-            _NewOwner
-        );
+        if (pool.DebitedAmount == 0) {
+            pool.StartAmount -= _NewAmount;
+            poolId = CreatePool(
+                pool.Token,
+                pool.StartTime,
+                pool.CliffTime,
+                pool.FinishTime,
+                _NewAmount,
+                0,
+                _NewOwner
+            );
+        } else {
+            uint256 _percent = percentageRatio(
+                remainingAmount(_PoolId),
+                _NewAmount
+            );
+            uint256 newPoolStartAmount = (pool.StartAmount * _percent) / 100_000_000;
+            uint256 newPoolDebitedAmount = (pool.DebitedAmount * _percent) / 100_000_000;
+            pool.StartAmount -= newPoolStartAmount;
+            pool.DebitedAmount -= newPoolDebitedAmount;
+            poolId = CreatePool(
+                pool.Token,
+                pool.StartTime,
+                pool.CliffTime,
+                pool.FinishTime,
+                newPoolStartAmount,
+                newPoolDebitedAmount,
+                _NewOwner
+            );
+        }
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
     }
-    // function SplitPool(
-    //     uint256 _PoolId,
-    //     uint256 _NewAmount,
-    //     address _NewOwner
-    // ) internal returns (uint256 poolId) {
-    //     Pool storage pool = AllPoolz[_PoolId];
-    //     require(
-    //         remainingAmount(_PoolId) >= _NewAmount,
-    //         "Not Enough Amount Balance"
-    //     );
-    //     uint256 _percent = percentageRatio(
-    //         pool.StartAmount,
-    //         pool.DebitedAmount
-    //     );
-    //     uint256 _newDebitedAmount = ((_percent * _NewAmount) / 100) / 1_000_000;
-    //     uint256 poolAmount = pool.StartAmount - _NewAmount;
-    //     pool.StartAmount = poolAmount;
-    //     poolId = CreatePool(
-    //         pool.Token,
-    //         pool.StartTime,
-    //         pool.CliffTime,
-    //         pool.FinishTime,
-    //         _NewAmount,
-    //         _newDebitedAmount,
-    //         _NewOwner
-    //     );
-    //     emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
-    // }
 
     //create a new pool
     function CreatePool(
@@ -106,8 +91,14 @@ contract LockedPoolz is LockedManageable {
         Index++;
     }
 
-    function remainingAmount(uint256 _PoolId) internal view returns (uint256 amount) {
-        amount = AllPoolz[_PoolId].StartAmount - AllPoolz[_PoolId].DebitedAmount;
+    function remainingAmount(uint256 _PoolId)
+        internal
+        view
+        returns (uint256 amount)
+    {
+        amount =
+            AllPoolz[_PoolId].StartAmount -
+            AllPoolz[_PoolId].DebitedAmount;
     }
 
     function percentageRatio(uint256 _remainingAmount, uint256 _splitAmount)
@@ -116,14 +107,6 @@ contract LockedPoolz is LockedManageable {
         returns (uint256 ratio)
     {
         // Solidity doesn't support decimals.
-        ratio =  (_splitAmount * 100_000_000) / _remainingAmount;
+        ratio = (_splitAmount * 100_000_000) / _remainingAmount;
     }
-    // function percentageRatio(uint256 _StartAmount, uint256 _DebitedAmount)
-    //     internal
-    //     pure
-    //     returns (uint256 ratio)
-    // {
-    //     // Solidity doesn't support decimals.
-    //     ratio = _DebitedAmount > 0 ? (_DebitedAmount * 100_000_000) / _StartAmount : _DebitedAmount;
-    // }
 }
