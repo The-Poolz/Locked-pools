@@ -89,9 +89,8 @@ contract("Split Pool", (accounts) => {
         const splitTx = await instance.SplitPoolAmount(poolId, amount / 4, splitOwner, { from: owner })
         const splitPoolId = splitTx.logs[0].args.PoolId.toString()
         const poolData = await instance.AllPoolz(splitPoolId)
-        assert.equal(poolData.StartAmount, amount / 4)
-        const splitDebitedAmount = parseInt(withdrawAmount / 4)
-        assert.equal(poolData.DebitedAmount.toString(), parseInt(withdrawAmount / 4))
+        assert.equal(poolData.StartAmount - poolData.DebitedAmount, amount / 4)
+        assert.equal(parseInt(poolData.DebitedAmount / 2), parseInt(withdrawAmount / 4))
         assert.equal(poolData.Owner, splitOwner)
         await timeMachine.advanceBlockAndSetTime(finishTime)
         await instance.WithdrawToken(splitPoolId)
@@ -100,7 +99,7 @@ contract("Split Pool", (accounts) => {
         const splitOwnerBal = new BigNumber(await Token.balanceOf(splitOwner))
         assert.equal(
             splitOwnerBal.toString(),
-            BigNumber.sum(splitOwnerOldBal, amount / 4).toString() - splitDebitedAmount,
+            BigNumber.sum(splitOwnerOldBal, amount / 4).toString(),
             "split owner balance"
         )
         assert.equal(ownerBal.toString(), BigNumber.sum(ownerOldBal, (amount * 3) / 4).toString(), "owner balance")
