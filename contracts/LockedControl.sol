@@ -13,15 +13,8 @@ contract LockedControl is LockedCreation {
     {
         Pool storage pool = AllPoolz[_PoolId];
         require(_NewOwner != pool.Owner, "Can't be the same owner");
-        uint256 _remainingAmount = remainingAmount(_PoolId);
-        newPoolId = SplitPool(_PoolId, _remainingAmount, _NewOwner);
-        emit PoolTransferred(
-            _PoolId,
-            newPoolId,
-            _remainingAmount,
-            msg.sender,
-            _NewOwner
-        );
+        newPoolId = SplitPool(_PoolId, pool.StartAmount, _NewOwner);
+        emit PoolTransferred(_PoolId, newPoolId, msg.sender, _NewOwner);
     }
 
     function SplitPoolAmount(

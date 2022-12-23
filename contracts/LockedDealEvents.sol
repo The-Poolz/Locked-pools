@@ -21,7 +21,6 @@ contract LockedDealEvents {
     event PoolTransferred(
         uint256 oldPoolId,
         uint256 newPoolId,
-        uint256 transferedAmount,
         address indexed OldOwner,
         address indexed NewOwner
     );
