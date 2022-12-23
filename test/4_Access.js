@@ -181,9 +181,9 @@ contract("Access to Locked Deal", (accounts) => {
             await timeMachine.advanceBlockAndSetTime(finishTime)
             await instance.WithdrawToken(poolId)
             const data = await instance.AllPoolz(poolId, { from: owner })
-            const amount = data[4]
+            const amount = data[3]
             await truffleAssert.reverts(
-                instance.SplitPoolAmount(poolId, amount + 1, owner, { from: owner }),
+                instance.SplitPoolAmount(poolId, amount, owner, { from: owner }),
                 "Not Enough Amount Balance"
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
