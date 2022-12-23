@@ -114,7 +114,7 @@ contract("Split Pool", (accounts) => {
         assert.equal(
             BigNumber.sum(poolData.StartAmount, splitPoolData.StartAmount),
             amount.toString(),
-            "check final debited amount"
+            "check start amount"
         )
     })
 
