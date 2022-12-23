@@ -20,7 +20,7 @@ contract LockedDealModifiers {
         uint256 CliffTime;
         uint256 FinishTime;
         uint256 StartAmount;
-        uint256 DebitedAmount;
+        uint256 DebitedAmount; // withdrawn amount
         address Owner;
         address Token;
     }
@@ -43,8 +43,19 @@ contract LockedDealModifiers {
         _;
     }
 
+    modifier isAllowed(uint256 _PoolId, uint256 _amount) {
+        require(
+            _amount <= Allowance[_PoolId][msg.sender],
+            "Not enough Allowance"
+        );
+        _;
+    }
+
     modifier isBelowLimit(uint256 _num) {
-        require(_num > 0 && _num <= maxTransactionLimit, "Invalid array length limit");
+        require(
+            _num > 0 && _num <= maxTransactionLimit,
+            "Invalid array length limit"
+        );
         _;
     }
 }

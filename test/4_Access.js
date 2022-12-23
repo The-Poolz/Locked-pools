@@ -38,31 +38,13 @@ contract("Access to Locked Deal", (accounts) => {
     it("Pool Transfer", async () => {
         const newOwner = accounts[8]
         poolId = 1
-        await instance.PoolTransfer(poolId, newOwner, { from: owner })
+        await instance.TransferPoolOwnership(poolId, newOwner, { from: owner })
         poolId++
         const pool = await instance.AllPoolz(poolId, { from: newOwner })
         const newPools = await instance.GetAllMyPoolsId(newOwner, { from: newOwner })
         assert.equal(newPools[0].toString(), poolId)
         assert.equal(pool[5], newOwner)
         owner = newOwner
-    })
-
-    it("should get pool transfer status", async () => {
-        let date = new Date()
-        date.setDate(date.getDate() + 1)
-        let startTime = Math.floor(date.getTime() / 1000)
-        let finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
-            from: fromAddress
-        })
-        poolId = tx.logs[1].args.PoolId
-        await timeMachine.advanceBlockAndSetTime(finishTime)
-        const status = await instance.isTransferPoolActive(poolId)
-        await instance.WithdrawToken(poolId)
-        const failStatus = await instance.isTransferPoolActive(poolId)
-        assert.equal(status, true)
-        assert.equal(failStatus, false)
-        await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
     })
 
     it("Split Pool Amount with owner address", async () => {
@@ -136,11 +118,11 @@ contract("Access to Locked Deal", (accounts) => {
     describe("Fail Tests", () => {
         it("Fail to transfer ownership when called from wrong address", async () => {
             await truffleAssert.reverts(
-                instance.PoolTransfer(poolId, accounts[5], { from: fromAddress }),
+                instance.TransferPoolOwnership(poolId, accounts[5], { from: fromAddress }),
                 "You are not Pool Owner"
             )
             await truffleAssert.reverts(
-                instance.PoolTransfer(poolId, accounts[8], { from: accounts[8] }),
+                instance.TransferPoolOwnership(poolId, accounts[8], { from: accounts[8] }),
                 "Can't be the same owner"
             )
         })
@@ -161,7 +143,7 @@ contract("Access to Locked Deal", (accounts) => {
 
         it("Fail to transfer ownership to 0 address", async () => {
             await truffleAssert.reverts(
-                instance.PoolTransfer(poolId, constants.ZERO_ADDRESS, { from: owner }),
+                instance.TransferPoolOwnership(poolId, constants.ZERO_ADDRESS, { from: owner }),
                 "Zero Address is not allowed"
             )
         })
@@ -186,7 +168,7 @@ contract("Access to Locked Deal", (accounts) => {
         it("Fail to execute when Pool ID is invalid", async () => {
             const invalidId = 99
             await truffleAssert.reverts(
-                instance.PoolTransfer(invalidId, accounts[5], { from: owner }),
+                instance.TransferPoolOwnership(invalidId, accounts[5], { from: owner }),
                 "Pool does not exist"
             )
         })

@@ -12,8 +12,7 @@ contract LockedDealV2 is LockedPoolzData {
     {
         Pool storage pool = AllPoolz[_PoolId];
         if (block.timestamp < pool.StartTime) return 0;
-        if (pool.FinishTime < block.timestamp)
-            return pool.StartAmount - pool.DebitedAmount;
+        if (pool.FinishTime < block.timestamp) return remainingAmount(_PoolId);
         uint256 totalPoolDuration = pool.FinishTime - pool.StartTime;
         uint256 timePassed = block.timestamp - pool.StartTime;
         uint256 timePassedPermille = timePassed * 1000;
@@ -32,7 +31,7 @@ contract LockedDealV2 is LockedPoolzData {
         if (
             _PoolId < Index &&
             pool.CliffTime <= block.timestamp &&
-            pool.StartAmount - pool.DebitedAmount > 0
+            remainingAmount(_PoolId) > 0
         ) {
             withdrawnAmount = getWithdrawableAmount(_PoolId);
             uint256 tempDebitAmount = withdrawnAmount + pool.DebitedAmount;
