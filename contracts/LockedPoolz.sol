@@ -20,23 +20,36 @@ contract LockedPoolz is LockedManageable {
             leftAmount >= _NewAmount,
             "Not Enough Amount Balance"
         );
-        uint256 _percent = percentageRatio(
-            leftAmount,
-            _NewAmount
-        );
-        uint256 newPoolStartAmount = (pool.StartAmount * _percent) / 100_000_000;
-        uint256 newPoolDebitedAmount = (pool.DebitedAmount * _percent) / 100_000_000;
-        pool.StartAmount = pool.StartAmount - newPoolStartAmount;
-        pool.DebitedAmount = pool.DebitedAmount - newPoolDebitedAmount;
-        poolId = CreatePool(
-            pool.Token,
-            pool.StartTime,
-            pool.CliffTime,
-            pool.FinishTime,
-            newPoolStartAmount,
-            newPoolDebitedAmount,
-            _NewOwner
-        );
+        if (pool.DebitedAmount == 0) {
+            pool.StartAmount -= _NewAmount;
+            poolId = CreatePool(
+                pool.Token,
+                pool.StartTime,
+                pool.CliffTime,
+                pool.FinishTime,
+                _NewAmount,
+                0,
+                _NewOwner
+            );
+        } else {
+            uint256 _percent = percentageRatio(
+                remainingAmount(_PoolId),
+                _NewAmount
+            );
+            uint256 newPoolStartAmount = (pool.StartAmount * _percent) / 100_000_000;
+            uint256 newPoolDebitedAmount = (pool.DebitedAmount * _percent) / 100_000_000;
+            pool.StartAmount -= newPoolStartAmount;
+            pool.DebitedAmount -= newPoolDebitedAmount;
+            poolId = CreatePool(
+                pool.Token,
+                pool.StartTime,
+                pool.CliffTime,
+                pool.FinishTime,
+                newPoolStartAmount,
+                newPoolDebitedAmount,
+                _NewOwner
+            );
+        }
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
     }
 
@@ -79,8 +92,14 @@ contract LockedPoolz is LockedManageable {
         Index++;
     }
 
-    function remainingAmount(uint256 _PoolId) internal view returns (uint256 amount) {
-        amount = AllPoolz[_PoolId].StartAmount - AllPoolz[_PoolId].DebitedAmount;
+    function remainingAmount(uint256 _PoolId)
+        internal
+        view
+        returns (uint256 amount)
+    {
+        amount =
+            AllPoolz[_PoolId].StartAmount -
+            AllPoolz[_PoolId].DebitedAmount;
     }
 
     function percentageRatio(uint256 _remainingAmount, uint256 _splitAmount)
