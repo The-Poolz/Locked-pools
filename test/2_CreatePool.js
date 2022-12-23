@@ -164,8 +164,8 @@ contract("Create Pool", (accounts) => {
     it("should transfer locked pool", async () => {
         const owner = accounts[7]
         const newOwner = accounts[2]
-        const result = await instance.PoolTransfer(poolId, newOwner, { from: owner })
-        assert.equal(result.logs[result.logs.length - 1].args.PoolId.toString(), parseInt(poolId) + 1)
+        const result = await instance.TransferPoolOwnership(poolId, newOwner, { from: owner })
+        assert.equal(result.logs[result.logs.length - 1].args.newPoolId.toString(), parseInt(poolId) + 1)
         assert.equal(result.logs[result.logs.length - 1].args.oldPoolId.toString(), poolId.toString())
         assert.equal(result.logs[result.logs.length - 1].args.OldOwner.toString(), owner)
         assert.equal(result.logs[result.logs.length - 1].args.NewOwner.toString(), newOwner.toString())

@@ -83,7 +83,7 @@ contract("Pools - events", (accounts) => {
         it("Pool transfer event is emitted", async () => {
             const newOwner = accounts[8]
 
-            result = await lockedDeal.PoolTransfer(poolId, newOwner, { from: owner })
+            result = await lockedDeal.TransferPoolOwnership(poolId, newOwner, { from: owner })
             // Check event
             truffleAssert.eventEmitted(result, "PoolTransferred")
         })

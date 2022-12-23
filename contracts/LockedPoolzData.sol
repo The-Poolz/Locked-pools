@@ -76,8 +76,4 @@ contract LockedPoolzData is LockedControl {
         poolIds = GetMyPoolsIdByToken(_UserAddress, _Tokens);
         pools = GetPoolsData(poolIds);
     }
-
-    function isTransferPoolActive(uint256 _PoolId) public view returns (bool) {
-        return AllPoolz[_PoolId].DebitedAmount == 0;
-    }
 }

@@ -4,16 +4,24 @@ pragma solidity ^0.8.0;
 import "./LockedCreation.sol";
 
 contract LockedControl is LockedCreation {
-    function PoolTransfer(uint256 _PoolId, address _NewOwner)
+    function TransferPoolOwnership(uint256 _PoolId, address _NewOwner)
         external
         isPoolValid(_PoolId)
         isPoolOwner(_PoolId)
         notZeroAddress(_NewOwner)
+        returns (uint256 newPoolId)
     {
         Pool storage pool = AllPoolz[_PoolId];
         require(_NewOwner != pool.Owner, "Can't be the same owner");
-        uint256 newPoolId = SplitPool(_PoolId, pool.StartAmount, _NewOwner);
-        emit PoolTransferred(newPoolId, _PoolId, _NewOwner, msg.sender);
+        uint256 _remainingAmount = remainingAmount(_PoolId);
+        newPoolId = SplitPool(_PoolId, _remainingAmount, _NewOwner);
+        emit PoolTransferred(
+            _PoolId,
+            newPoolId,
+            _remainingAmount,
+            msg.sender,
+            _NewOwner
+        );
     }
 
     function SplitPoolAmount(

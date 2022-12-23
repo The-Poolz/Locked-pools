@@ -15,7 +15,15 @@ contract LockedPoolz is LockedManageable {
         address _NewOwner
     ) internal returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
-        require(pool.StartAmount - pool.DebitedAmount >= _NewAmount, "Not Enough Amount Balance");
+        require(
+            remainingAmount(_PoolId) >= _NewAmount,
+            "Not Enough Amount Balance"
+        );
+        uint256 _percent = percentageRatio(
+            pool.StartAmount,
+            pool.DebitedAmount
+        );
+        uint256 _newDebitedAmount = ((_percent * _NewAmount) / 100) / 100_000_0;
         uint256 poolAmount = pool.StartAmount - _NewAmount;
         pool.StartAmount = poolAmount;
         poolId = CreatePool(
@@ -24,6 +32,7 @@ contract LockedPoolz is LockedManageable {
             pool.CliffTime,
             pool.FinishTime,
             _NewAmount,
+            _newDebitedAmount,
             _NewOwner
         );
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
@@ -33,9 +42,10 @@ contract LockedPoolz is LockedManageable {
     function CreatePool(
         address _Token, // token to lock address
         uint256 _StartTime, // Until what time the pool will Start
-        uint256 _CliffTime, // Before CliffTime can't withdraw tokens 
+        uint256 _CliffTime, // Before CliffTime can't withdraw tokens
         uint256 _FinishTime, // Until what time the pool will end
-        uint256 _StartAmount, //Total amount of the tokens to sell in the pool
+        uint256 _StartAmount, // Total amount of the tokens to sell in the pool
+        uint256 _DebitedAmount, // Withdrawn amount
         address _Owner // Who the tokens belong to
     ) internal isTokenValid(_Token) returns (uint256 poolId) {
         require(
@@ -48,7 +58,7 @@ contract LockedPoolz is LockedManageable {
             _CliffTime,
             _FinishTime,
             _StartAmount,
-            0,
+            _DebitedAmount,
             _Owner,
             _Token
         );
@@ -60,9 +70,23 @@ contract LockedPoolz is LockedManageable {
             _CliffTime,
             _FinishTime,
             _StartAmount,
+            _DebitedAmount,
             _Owner
         );
         poolId = Index;
         Index++;
+    }
+
+    function remainingAmount(uint256 _PoolId) internal view returns (uint256) {
+        return AllPoolz[_PoolId].StartAmount - AllPoolz[_PoolId].DebitedAmount;
+    }
+
+    function percentageRatio(uint256 _StartAmount, uint256 _DebitedAmount)
+        internal
+        pure
+        returns (uint256)
+    {
+        // Solidity doesn't support decimals.
+        return _DebitedAmount > 0 ? (_DebitedAmount * 100_000_000) / _StartAmount : _DebitedAmount;
     }
 }
