@@ -30,6 +30,14 @@ contract LockedDealModifiers {
         _;
     }
 
+    modifier gotAmount(uint256 leftAmount, uint256 _NewAmount) {
+        require(
+            leftAmount >= _NewAmount,
+            "Not Enough Amount Balance"
+        );
+        _;
+    }
+
     modifier isPoolValid(uint256 _PoolId) {
         require(_PoolId < Index, "Pool does not exist");
         _;

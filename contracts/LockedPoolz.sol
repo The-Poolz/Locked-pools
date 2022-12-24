@@ -13,19 +13,14 @@ contract LockedPoolz is LockedManageable {
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
-    ) internal returns (uint256 poolId) {
+    ) internal gotAmount(remainingAmount(_PoolId), _NewAmount) returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
-        uint256 leftAmount = remainingAmount(_PoolId);
-        require(
-            leftAmount >= _NewAmount,
-            "Not Enough Amount Balance"
-        );
-            uint256 _percent = percentageRatio(
-                remainingAmount(_PoolId),
-                _NewAmount
-            );
             (uint256 newPoolStartAmount,uint256 newPoolDebitedAmount) =
-                 calcAmountss(pool.StartAmount, pool.DebitedAmount, _percent);
+                 calcAmountss(pool.StartAmount, pool.DebitedAmount,
+                    percentageRatio(
+                        remainingAmount(_PoolId),
+                        _NewAmount
+            ));
             pool.StartAmount -= newPoolStartAmount;
             pool.DebitedAmount -= newPoolDebitedAmount;
             poolId = CreatePool(
