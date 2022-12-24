@@ -5,7 +5,8 @@ contract LockedDealEvents {
     event TokenWithdrawn(
         uint256 PoolId,
         address indexed Recipient,
-        uint256 Amount
+        uint256 Amount,
+        uint256 StartAmount
     );
     event MassPoolsCreated(uint256 FirstPoolId, uint256 LastPoolId);
     event NewPoolCreated(

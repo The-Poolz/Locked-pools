@@ -75,7 +75,7 @@ contract("Access to Locked Deal", (accounts) => {
         const tx = await instance.SplitPoolAmount(poolId, amount, approvedAddress, { from: owner })
         const pid = tx.logs[0].args.PoolId
         const pool = await instance.AllPoolz(poolId, { from: owner })
-        assert.equal(pool[3], allow)
+        assert.equal(pool[3], allow) // why we check allow here?
         const newPool = await instance.AllPoolz(pid, { from: approvedAddress })
         assert.equal(newPool[3], amount)
     })

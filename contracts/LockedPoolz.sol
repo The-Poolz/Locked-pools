@@ -15,20 +15,15 @@ contract LockedPoolz is LockedManageable {
         address _NewOwner
     ) internal gotAmount(remainingAmount(_PoolId), _NewAmount) returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
-        (uint256 newPoolStartAmount,uint256 newPoolDebitedAmount) =
-            calcAmountss(pool.StartAmount, pool.DebitedAmount,
-                percentageRatio(
-                remainingAmount(_PoolId),
-                _NewAmount
-            ));
-        pool.StartAmount -= newPoolStartAmount;
+        uint256 newPoolDebitedAmount = (pool.DebitedAmount * ((_NewAmount * 10**18) / pool.StartAmount)) / 10**18;
+        pool.StartAmount -= _NewAmount;
         pool.DebitedAmount -= newPoolDebitedAmount;
         poolId = CreatePool(
             pool.Token,
             pool.StartTime,
             pool.CliffTime,
             pool.FinishTime,
-            newPoolStartAmount,
+            _NewAmount,
             newPoolDebitedAmount,
             _NewOwner
         );
@@ -82,23 +77,5 @@ contract LockedPoolz is LockedManageable {
         amount =
             AllPoolz[_PoolId].StartAmount -
             AllPoolz[_PoolId].DebitedAmount;
-    }
-
-    function percentageRatio(uint256 _remainingAmount, uint256 _splitAmount)
-        internal
-        pure
-        returns (uint256 ratio)
-    {
-        // uint doesn't support decimals.
-        ratio =  (_splitAmount * 100_000_000) / _remainingAmount;
-    }
-
-    function calcAmountss(uint256 StartAmount,uint256 DebitedAmount,uint256 _percent)
-        internal
-        pure
-        returns (uint256 newPoolStartAmount,uint256 newPoolDebitedAmount)
-    {
-            newPoolStartAmount = (StartAmount * _percent) / 100_000_000;
-            newPoolDebitedAmount = (DebitedAmount * _percent) / 100_000_000;
     }
 }
