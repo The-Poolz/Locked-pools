@@ -15,15 +15,17 @@ contract LockedPoolz is LockedManageable {
         address _NewOwner
     ) internal gotAmount(remainingAmount(_PoolId), _NewAmount) returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
-        uint256 newPoolDebitedAmount = (pool.DebitedAmount * ((_NewAmount * 10**18) / pool.StartAmount)) / 10**18;
-        pool.StartAmount -= _NewAmount;
+        uint256 _Ratio = (_NewAmount * 10**18) / remainingAmount(_PoolId);
+        uint256 newPoolDebitedAmount = (pool.DebitedAmount * _Ratio) / 10**18;
+        uint256 NewStartAmount = (pool.StartAmount * _Ratio) / 10**18;
+        pool.StartAmount -= NewStartAmount;
         pool.DebitedAmount -= newPoolDebitedAmount;
         poolId = CreatePool(
             pool.Token,
             pool.StartTime,
             pool.CliffTime,
             pool.FinishTime,
-            _NewAmount,
+            NewStartAmount,
             newPoolDebitedAmount,
             _NewOwner
         );
