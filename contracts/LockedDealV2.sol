@@ -10,7 +10,7 @@ contract LockedDealV2 is LockedPoolzData {
         isPoolValid(_PoolId)
         returns (uint256)
     {
-        Pool storage pool = AllPoolz[_PoolId];
+        Pool memory pool = AllPoolz[_PoolId];
         if (block.timestamp < pool.StartTime) return 0;
         if (pool.FinishTime < block.timestamp) return remainingAmount(_PoolId);
         uint256 totalPoolDuration = pool.FinishTime - pool.StartTime;
@@ -37,7 +37,10 @@ contract LockedDealV2 is LockedPoolzData {
             uint256 tempDebitAmount = withdrawnAmount + pool.DebitedAmount;
             pool.DebitedAmount = tempDebitAmount;
             TransferToken(pool.Token, pool.Owner, withdrawnAmount);
-            emit TokenWithdrawn(_PoolId, pool.Owner, withdrawnAmount);
+            emit TokenWithdrawn(_PoolId,
+                pool.Owner,
+                withdrawnAmount,        
+                pool.StartAmount);
         }
     }
 }

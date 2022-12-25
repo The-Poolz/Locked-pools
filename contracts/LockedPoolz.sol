@@ -13,26 +13,18 @@ contract LockedPoolz is LockedManageable {
         uint256 _PoolId,
         uint256 _NewAmount,
         address _NewOwner
-    ) internal returns (uint256 poolId) {
+    ) internal gotAmount(remainingAmount(_PoolId), _NewAmount) returns (uint256 poolId) {
         Pool storage pool = AllPoolz[_PoolId];
-        require(
-            remainingAmount(_PoolId) >= _NewAmount,
-            "Not Enough Amount Balance"
-        );
-        uint256 _percent = percentageRatio(
-            pool.StartAmount,
-            pool.DebitedAmount
-        );
-        uint256 _newDebitedAmount = ((_percent * _NewAmount) / 100) / 100_000_0;
-        uint256 poolAmount = pool.StartAmount - _NewAmount;
-        pool.StartAmount = poolAmount;
+        uint256 newPoolDebitedAmount = (pool.DebitedAmount * ((_NewAmount * 10**18) / pool.StartAmount)) / 10**18;
+        pool.StartAmount -= _NewAmount;
+        pool.DebitedAmount -= newPoolDebitedAmount;
         poolId = CreatePool(
             pool.Token,
             pool.StartTime,
             pool.CliffTime,
             pool.FinishTime,
             _NewAmount,
-            _newDebitedAmount,
+            newPoolDebitedAmount,
             _NewOwner
         );
         emit PoolSplit(_PoolId, poolId, _NewAmount, _NewOwner);
@@ -77,16 +69,13 @@ contract LockedPoolz is LockedManageable {
         Index++;
     }
 
-    function remainingAmount(uint256 _PoolId) internal view returns (uint256) {
-        return AllPoolz[_PoolId].StartAmount - AllPoolz[_PoolId].DebitedAmount;
-    }
-
-    function percentageRatio(uint256 _StartAmount, uint256 _DebitedAmount)
+    function remainingAmount(uint256 _PoolId)
         internal
-        pure
-        returns (uint256)
+        view
+        returns (uint256 amount)
     {
-        // Solidity doesn't support decimals.
-        return _DebitedAmount > 0 ? (_DebitedAmount * 100_000_000) / _StartAmount : _DebitedAmount;
+        amount =
+            AllPoolz[_PoolId].StartAmount -
+            AllPoolz[_PoolId].DebitedAmount;
     }
 }

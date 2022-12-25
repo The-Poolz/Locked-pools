@@ -88,21 +88,136 @@ contract("Split Pool", (accounts) => {
         const withdrawAmount = data.logs[data.logs.length - 1].args.Amount.toString()
         const splitTx = await instance.SplitPoolAmount(poolId, amount / 4, splitOwner, { from: owner })
         const splitPoolId = splitTx.logs[0].args.PoolId.toString()
-        const poolData = await instance.AllPoolz(splitPoolId)
-        assert.equal(poolData.StartAmount, amount / 4)
-        const splitDebitedAmount = parseInt(withdrawAmount / 4)
-        assert.equal(poolData.DebitedAmount.toString(), parseInt(withdrawAmount / 4))
+        let poolData = await instance.AllPoolz(splitPoolId)
+        assert.equal(poolData.StartAmount - poolData.DebitedAmount, amount / 4)
+        assert.equal(parseInt(poolData.DebitedAmount / 2), parseInt(withdrawAmount / 4))
         assert.equal(poolData.Owner, splitOwner)
         await timeMachine.advanceBlockAndSetTime(finishTime)
         await instance.WithdrawToken(splitPoolId)
         await instance.WithdrawToken(poolId)
         const ownerBal = new BigNumber(await Token.balanceOf(owner))
         const splitOwnerBal = new BigNumber(await Token.balanceOf(splitOwner))
+        poolData = await instance.AllPoolz(poolId)
+        let splitPoolData = await instance.AllPoolz(splitPoolId)
         assert.equal(
             splitOwnerBal.toString(),
-            BigNumber.sum(splitOwnerOldBal, amount / 4).toString() - splitDebitedAmount,
+            BigNumber.sum(splitOwnerOldBal, amount / 4).toString(),
             "split owner balance"
         )
         assert.equal(ownerBal.toString(), BigNumber.sum(ownerOldBal, (amount * 3) / 4).toString(), "owner balance")
+        assert.equal(BigNumber.sum(splitOwnerBal, ownerBal).toString(), amount.toString(), "check final balance")
+        assert.equal(
+            BigNumber.sum(poolData.DebitedAmount, splitPoolData.DebitedAmount).toString(),
+            amount.toString(),
+            "check final debited amount"
+        )
+        assert.equal(
+            BigNumber.sum(poolData.StartAmount, splitPoolData.StartAmount),
+            amount.toString(),
+            "check start amount"
+        )
+    })
+
+    it("split pool for 4 parts and withdraw tokens", async () => {
+        const date = new Date()
+        const startTime = Math.floor(date.getTime() / 1000)
+        date.setDate(date.getDate() + year)
+        const finishTime = Math.floor(date.getTime() / 1000)
+        date.setDate(date.getDate() - year / 2)
+        const halfYear = Math.floor(date.getTime() / 1000)
+        let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+        poolId = tx.logs[1].args.PoolId
+        const splitPoolIds = []
+        for (let i = 0; i < 4; i++) {
+            const tx = await instance.SplitPoolAmount(poolId, amount / 4, accounts[i + 4], { from: owner })
+            splitPoolIds.push(tx.logs[0].args.PoolId.toString())
+        }
+        await timeMachine.advanceBlockAndSetTime(finishTime)
+        const poolsData = []
+        for (let i = 0; i < 4; i++) {
+            await instance.WithdrawToken(splitPoolIds[i])
+            poolsData.push(await instance.AllPoolz(splitPoolIds[i]))
+        }
+        const totalStartAmount = BigNumber.sum(
+            BigNumber.sum(poolsData[0].StartAmount, poolsData[1].StartAmount),
+            BigNumber.sum(poolsData[2].StartAmount, poolsData[3].StartAmount)
+        )
+        const totalDebitedAmount = BigNumber.sum(
+            BigNumber.sum(poolsData[0].DebitedAmount, poolsData[1].DebitedAmount),
+            BigNumber.sum(poolsData[2].DebitedAmount, poolsData[3].DebitedAmount)
+        )
+        assert.equal(totalStartAmount, amount)
+        assert.equal(totalDebitedAmount, amount)
+    })
+
+    it("split pool for 3 parts after half time and withdraw tokens", async () => {
+        const date = new Date()
+        const startTime = Math.floor(date.getTime() / 1000)
+        date.setDate(date.getDate() + year)
+        const finishTime = Math.floor(date.getTime() / 1000)
+        date.setDate(date.getDate() - year / 2)
+        const halfYear = Math.floor(date.getTime() / 1000)
+        let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+        poolId = tx.logs[1].args.PoolId
+        const splitPoolIds = []
+        await timeMachine.advanceBlockAndSetTime(halfYear)
+        for (let i = 0; i < 2; i++) {
+            const tx = await instance.SplitPoolAmount(poolId, parseInt(amount / 3), accounts[i + 4], { from: owner })
+            splitPoolIds.push(tx.logs[0].args.PoolId.toString())
+        }
+        tx = await instance.SplitPoolAmount(poolId, parseInt(amount / 3) + 1, accounts[6], { from: owner })
+        splitPoolIds.push(tx.logs[0].args.PoolId.toString())
+        await timeMachine.advanceBlockAndSetTime(finishTime)
+        const poolsData = []
+        for (let i = 0; i < 3; i++) {
+            await instance.WithdrawToken(splitPoolIds[i])
+            poolsData.push(await instance.AllPoolz(splitPoolIds[i]))
+        }
+        const totalStartAmount = BigNumber.sum(
+            BigNumber.sum(poolsData[0].StartAmount, poolsData[1].StartAmount),
+            poolsData[2].StartAmount
+        )
+        const totalDebitedAmount = BigNumber.sum(
+            BigNumber.sum(poolsData[0].DebitedAmount, poolsData[1].DebitedAmount),
+            poolsData[2].DebitedAmount
+        )
+        assert.equal(totalStartAmount, amount)
+        assert.equal(totalDebitedAmount, amount)
+    })
+
+    describe("TransferPoolOwnership", () => {
+        it("transfer pool after withdraw", async () => {
+            Token = await TestToken.new("TestToken", "TEST")
+            await Token.approve(instance.address, constants.MAX_UINT256)
+            const date = new Date()
+            const startTime = Math.floor(date.getTime() / 1000)
+            date.setDate(date.getDate() + year)
+            const finishTime = Math.floor(date.getTime() / 1000)
+            date.setDate(date.getDate() - year / 2)
+            const halfYear = Math.floor(date.getTime() / 1000)
+            let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+            poolId = tx.logs[1].args.PoolId
+            await timeMachine.advanceBlockAndSetTime(halfYear)
+            await instance.WithdrawToken(poolId)
+            let data = await instance.AllPoolz(poolId)
+            const result = await instance.TransferPoolOwnership(poolId, splitOwner, { from: owner })
+            poolId = result.logs[result.logs.length - 1].args.newPoolId
+            let splitdata = await instance.AllPoolz(poolId)
+            assert.equal(splitdata.StartAmount.toString(), amount)
+            assert.equal(data.StartAmount.toString(), splitdata.StartAmount.toString())
+            await timeMachine.advanceBlockAndSetTime(finishTime)
+            await instance.WithdrawToken(poolId)
+            const splitOwnerOldBal = new BigNumber(await Token.balanceOf(splitOwner))
+            const ownerOldBal = new BigNumber(await Token.balanceOf(owner))
+            data = await instance.AllPoolz(poolId)
+            assert.equal(data.StartAmount.toString(), amount)
+            assert.equal(data.DebitedAmount.toString(), amount)
+            assert.equal(BigNumber.sum(splitOwnerOldBal, ownerOldBal), amount)
+        })
+    })
+
+    after(async () => {
+        const currentTime = Math.floor(Date.now() / 1000) // unix timestamp in seconds
+        await timeMachine.advanceBlockAndSetTime(currentTime)
     })
 })
