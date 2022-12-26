@@ -138,16 +138,24 @@ contract("Split Pool", (accounts) => {
             await instance.WithdrawToken(splitPoolIds[i])
             poolsData.push(await instance.AllPoolz(splitPoolIds[i]))
         }
+        await instance.WithdrawToken(poolId)
+        poolsData.push(await instance.AllPoolz(poolId))
         const totalStartAmount = BigNumber.sum(
-            BigNumber.sum(poolsData[0].StartAmount, poolsData[1].StartAmount),
-            BigNumber.sum(poolsData[2].StartAmount, poolsData[3].StartAmount)
+            BigNumber.sum(
+                BigNumber.sum(poolsData[0].StartAmount, poolsData[1].StartAmount),
+                BigNumber.sum(poolsData[2].StartAmount, poolsData[3].StartAmount)
+            ),
+            poolsData[4].StartAmount
         )
         const totalDebitedAmount = BigNumber.sum(
-            BigNumber.sum(poolsData[0].DebitedAmount, poolsData[1].DebitedAmount),
-            BigNumber.sum(poolsData[2].DebitedAmount, poolsData[3].DebitedAmount)
+            BigNumber.sum(
+                BigNumber.sum(poolsData[0].DebitedAmount, poolsData[1].DebitedAmount),
+                BigNumber.sum(poolsData[2].DebitedAmount, poolsData[3].DebitedAmount)
+            ),
+            poolsData[4].DebitedAmount
         )
-        assert.equal(totalStartAmount, amount)
-        assert.equal(totalDebitedAmount, amount)
+        assert.equal(totalDebitedAmount.toString(), amount)
+        assert.equal(totalStartAmount.toString(), amount)
     })
 
     it("split pool for 3 parts after half time and withdraw tokens", async () => {
@@ -173,16 +181,18 @@ contract("Split Pool", (accounts) => {
             await instance.WithdrawToken(splitPoolIds[i])
             poolsData.push(await instance.AllPoolz(splitPoolIds[i]))
         }
+        await instance.WithdrawToken(poolId)
+        poolsData.push(await instance.AllPoolz(poolId))
         const totalStartAmount = BigNumber.sum(
             BigNumber.sum(poolsData[0].StartAmount, poolsData[1].StartAmount),
-            poolsData[2].StartAmount
+            BigNumber.sum(poolsData[2].StartAmount, poolsData[3].StartAmount)
         )
         const totalDebitedAmount = BigNumber.sum(
             BigNumber.sum(poolsData[0].DebitedAmount, poolsData[1].DebitedAmount),
-            poolsData[2].DebitedAmount
+            BigNumber.sum(poolsData[2].DebitedAmount, poolsData[3].DebitedAmount)
         )
-        assert.equal(totalStartAmount, amount)
-        assert.equal(totalDebitedAmount, amount)
+        assert.equal(totalStartAmount.toString(), amount)
+        assert.equal(totalDebitedAmount.toString(), amount)
     })
 
     describe("TransferPoolOwnership", () => {
