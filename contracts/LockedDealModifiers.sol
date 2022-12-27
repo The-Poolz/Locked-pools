@@ -35,6 +35,11 @@ contract LockedDealModifiers {
         _;
     }
 
+    modifier notZeroValue(uint256 _Amount) {
+        require(_Amount > 0, "The amount must be greater than zero");
+        _;
+    }
+
     modifier isPoolOwner(uint256 _PoolId) {
         require(
             AllPoolz[_PoolId].Owner == msg.sender,

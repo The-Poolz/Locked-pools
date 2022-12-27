@@ -11,6 +11,7 @@ contract("Access to Locked Deal", (accounts) => {
     let instance,
         Token,
         owner = accounts[9],
+        spender = accounts[1],
         poolId,
         poolAmount = 100
     const splittingAmount = 25
@@ -68,8 +69,7 @@ contract("Access to Locked Deal", (accounts) => {
     })
 
     describe("Giving approval and splitting pool", () => {
-        const approvalAmount = 10,
-            spender = accounts[1]
+        const approvalAmount = 10
 
         it("giving approval", async () => {
             const { startTime, cliffTime, finishTime } = poolTime()
@@ -120,6 +120,18 @@ contract("Access to Locked Deal", (accounts) => {
             )
         })
 
+        it("Fail to Create Pool with 0 amount", async () => {
+            let date = new Date()
+            date.setDate(date.getDate() + 1)
+            const startTime = Math.floor(date.getTime() / 1000)
+            const finishTime = startTime + 60 * 60 * 24
+            const zeroAmount = 0
+            await truffleAssert.reverts(
+                instance.CreateNewPool(Token.address, startTime, startTime, finishTime, zeroAmount, owner),
+                "The amount must be greater than zero"
+            )
+        })
+
         it("Fail to transfer ownership to 0 address", async () => {
             await truffleAssert.reverts(
                 instance.TransferPoolOwnership(poolId, constants.ZERO_ADDRESS, { from: owner }),
@@ -133,6 +145,24 @@ contract("Access to Locked Deal", (accounts) => {
             await truffleAssert.reverts(
                 instance.SplitPoolAmount(poolId, invalidAmount, owner, { from: owner }),
                 "Not Enough Amount Balance"
+            )
+        })
+
+        it("Fail to split pool with zero amount", async () => {
+            const zeroAmount = 0
+            const approvalAmount = 10
+            await truffleAssert.reverts(
+                instance.SplitPoolAmount(poolId, zeroAmount, owner, { from: owner }),
+                "The amount must be greater than zero"
+            )
+            await instance.ApproveAllowance(poolId, approvalAmount, spender, { from: owner })
+            await truffleAssert.reverts(
+                instance.SplitPoolAmountFrom(poolId, zeroAmount, owner, { from: spender }),
+                "The amount must be greater than zero"
+            )
+            await truffleAssert.reverts(
+                instance.ApproveAllowance(poolId, zeroAmount, owner, { from: owner }),
+                "The amount must be greater than zero"
             )
         })
 
