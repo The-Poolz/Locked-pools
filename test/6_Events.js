@@ -2,6 +2,8 @@ const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const truffleAssert = require("truffle-assertions")
 const constants = require("@openzeppelin/test-helpers/src/constants.js")
+const { poolTime } = require("./helper.js")
+const timeMachine = require("ganache-time-traveler")
 
 contract("Pools - events", (accounts) => {
     let lockedDeal
@@ -11,7 +13,7 @@ contract("Pools - events", (accounts) => {
     let owner = accounts[9]
 
     let poolId
-    let allow = 100
+    let poolAmount = 100
     let result
 
     before(async () => {
@@ -22,18 +24,14 @@ contract("Pools - events", (accounts) => {
 
     describe("TokenWithdrawn event is emitted", async () => {
         before(async () => {
-            let date = new Date()
-            date.setDate(date.getDate() - 1)
-            const startTime = Math.floor(date.getTime() / 1000)
-            const finishTime = startTime + 60 * 60 * 24
-
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
+            const { startTime, cliffTime, finishTime } = poolTime()
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, cliffTime, finishTime, poolAmount, owner)
             poolId = tx.logs[1].args.PoolId
         })
 
         it("TokenWithdrawn event is emitted", async () => {
+            const finishTime = await lockedDeal.AllPoolz(poolId)
+            await timeMachine.advanceBlockAndSetTime(parseInt(finishTime.FinishTime))
             result = await lockedDeal.WithdrawToken(poolId.toNumber())
             // Check event
             truffleAssert.eventEmitted(result, "TokenWithdrawn")
@@ -42,16 +40,9 @@ contract("Pools - events", (accounts) => {
 
     describe("NewPoolCreated event is emitted", async () => {
         before(async () => {
-            let date = new Date()
-            date.setDate(date.getDate() + 1)
-
-            const startTime = Math.floor(date.getTime() / 1000)
-            const finishTime = startTime + 60 * 60 * 24
+            const { startTime, cliffTime, finishTime } = poolTime()
             const owner = accounts[1]
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
-
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, cliffTime, finishTime, poolAmount, owner)
             result = tx
         })
 
@@ -63,26 +54,14 @@ contract("Pools - events", (accounts) => {
 
     describe("Pool transfer event is emitted", async () => {
         before(async () => {
-            let date = new Date()
-            date.setDate(date.getDate() + 1)
-
-            let startTime = Math.floor(date.getTime() / 1000)
-            let finishTime = startTime + 60 * 60 * 24
-            await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
-            date.setDate(date.getDate() + 1)
-            startTime = Math.floor(date.getTime() / 1000)
-            finishTime = startTime + 60 * 60 * 24
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
+            const { startTime, cliffTime, finishTime } = poolTime()
+            await lockedDeal.CreateNewPool(testToken.address, startTime, cliffTime, finishTime, poolAmount, owner)
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, cliffTime, finishTime, poolAmount, owner)
             poolId = tx.logs[1].args.PoolId
         })
 
         it("Pool transfer event is emitted", async () => {
             const newOwner = accounts[8]
-
             result = await lockedDeal.TransferPoolOwnership(poolId, newOwner, { from: owner })
             // Check event
             truffleAssert.eventEmitted(result, "PoolTransferred")
@@ -94,14 +73,8 @@ contract("Pools - events", (accounts) => {
         const spender = accounts[1]
 
         before(async () => {
-            let date = new Date()
-            date.setDate(date.getDate() + 1)
-
-            const startTime = Math.floor(date.getTime() / 1000)
-            const finishTime = startTime + 60 * 60 * 24
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
+            const { startTime, cliffTime, finishTime } = poolTime()
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, cliffTime, finishTime, poolAmount, owner)
             poolId = tx.logs[1].args.PoolId
         })
 
@@ -116,17 +89,9 @@ contract("Pools - events", (accounts) => {
         const amount = 10
 
         before(async () => {
-            allow -= amount
-
-            let date = new Date()
-            date.setDate(date.getDate() + 1)
-
-            const startTime = Math.floor(date.getTime() / 1000)
-            const finishTime = startTime + 60 * 60 * 24
-
-            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
+            poolAmount -= amount
+            const { startTime, cliffTime, finishTime } = poolTime()
+            const tx = await lockedDeal.CreateNewPool(testToken.address, startTime, cliffTime, finishTime, poolAmount, owner)
             poolId = tx.logs[1].args.PoolId
         })
 
