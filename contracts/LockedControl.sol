@@ -32,6 +32,7 @@ contract LockedControl is LockedCreation {
         external
         isPoolValid(_PoolId)
         isPoolOwner(_PoolId)
+        notZeroValue(_NewAmount)
         notZeroAddress(_NewOwner)
         returns (uint256)
     {
@@ -46,6 +47,7 @@ contract LockedControl is LockedCreation {
         external
         isPoolValid(_PoolId)
         isPoolOwner(_PoolId)
+        notZeroValue(_Amount)
         notZeroAddress(_Spender)
     {
         Allowance[_PoolId][_Spender] = _Amount;
@@ -60,6 +62,7 @@ contract LockedControl is LockedCreation {
         external
         isPoolValid(_PoolId)
         isAllowed(_PoolId, _Amount)
+        notZeroValue(_Amount)
         notZeroAddress(_Address)
         returns (uint256 poolId)
     {

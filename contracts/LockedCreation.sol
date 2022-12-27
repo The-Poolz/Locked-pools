@@ -12,7 +12,7 @@ contract LockedCreation is LockedPoolz {
         uint256 _FinishTime, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    ) external payable notZeroAddress(_Owner) {
+    ) external payable notZeroAddress(_Owner) notZeroValue(_StartAmount) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         payFee(_Token, Fee);
         CreatePool(
