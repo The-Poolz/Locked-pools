@@ -145,7 +145,7 @@ contract("Access to Locked Deal", (accounts) => {
             const zeroAmount = 0
             await truffleAssert.reverts(
                 instance.CreateNewPool(Token.address, startTime, startTime, finishTime, zeroAmount, owner),
-                "Amount should be more than zero"
+                "The amount must be greater than zero"
             )
         })
 
@@ -170,16 +170,16 @@ contract("Access to Locked Deal", (accounts) => {
             const approvalAmount = 10
             await truffleAssert.reverts(
                 instance.SplitPoolAmount(poolId, zeroAmount, owner, { from: owner }),
-                "Amount should be more than zero"
+                "The amount must be greater than zero"
             )
             await instance.ApproveAllowance(poolId, approvalAmount, spender, { from: owner })
             await truffleAssert.reverts(
                 instance.SplitPoolAmountFrom(poolId, zeroAmount, owner, { from: spender }),
-                "Amount should be more than zero"
+                "The amount must be greater than zero"
             )
             await truffleAssert.reverts(
                 instance.ApproveAllowance(poolId, zeroAmount, owner, { from: owner }),
-                "Amount should be more than zero"
+                "The amount must be greater than zero"
             )
         })
 
