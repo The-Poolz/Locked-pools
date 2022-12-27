@@ -2,28 +2,26 @@ const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const truffleAssert = require("truffle-assertions")
 const constants = require("@openzeppelin/test-helpers/src/constants.js")
+const { poolTime } = require("./helper.js")
 
 contract("Fail Create Pool", (accounts) => {
     let instance,
         Token,
         fromAddress = accounts[0]
     let date, future, startTime, finishTime, cliffTime
-    const allow = 100
+    const poolAmount = 100
     const owner = accounts[6]
 
     before(async () => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new("TestToken", "TEST")
-        date = new Date()
-        date.setDate(date.getDate() + 1)
-        future = Math.floor(date.getTime() / 1000)
-        cliffTime = startTime = future
-        finishTime = future + 60 * 60 * 24 * 30
+        ;({ startTime, cliffTime, finishTime } = poolTime())
+        future = startTime
     })
 
     it("Fail to Create Pool when approval is not given", async () => {
         await truffleAssert.reverts(
-            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, fromAddress, { from: fromAddress }),
+            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, fromAddress),
             "no allowance"
         )
     })
@@ -37,9 +35,9 @@ contract("Fail Create Pool", (accounts) => {
         date.setDate(date.getDate() + 1)
         startTime = Math.floor(date.getTime() / 1000)
         finishTime = startTime - 1
-        await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
+        await Token.approve(instance.address, constants.MAX_UINT256)
         await truffleAssert.reverts(
-            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, fromAddress, { from: fromAddress }),
+            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, fromAddress),
             "StartTime is greater than FinishTime"
         )
     })
@@ -51,9 +49,8 @@ contract("Fail Create Pool", (accounts) => {
                 [startTime, startTime],
                 [startTime, startTime],
                 [finishTime, finishTime],
-                [allow, allow],
-                [accounts[0]],
-                { from: fromAddress }
+                [poolAmount, poolAmount],
+                [accounts[0]]
             ),
             "Date Array Invalid"
         )
@@ -63,9 +60,8 @@ contract("Fail Create Pool", (accounts) => {
                 [startTime],
                 [startTime],
                 [finishTime, finishTime],
-                [allow, allow],
-                [accounts[0], accounts[1]],
-                { from: fromAddress }
+                [poolAmount, poolAmount],
+                [accounts[0], accounts[1]]
             ),
             "Date Array Invalid"
         )
@@ -75,9 +71,8 @@ contract("Fail Create Pool", (accounts) => {
                 [startTime, startTime],
                 [startTime, startTime],
                 [finishTime, finishTime],
-                [allow],
-                [accounts[0], accounts[1]],
-                { from: fromAddress }
+                [poolAmount],
+                [accounts[0], accounts[1]]
             ),
             "Amount Array Invalid"
         )
@@ -90,21 +85,19 @@ contract("Fail Create Pool", (accounts) => {
                 [startTime, startTime],
                 [startTime, startTime],
                 [finishTime, finishTime],
-                [allow],
-                [accounts[0], accounts[1]],
-                { from: fromAddress }
+                [poolAmount],
+                [accounts[0], accounts[1]]
             ),
             "Amount Array Invalid"
-         )
+        )
         await truffleAssert.reverts(
             instance.CreatePoolsWrtTime(
                 Token.address,
                 [startTime],
                 [startTime],
                 [finishTime, finishTime],
-                [allow, allow],
-                [accounts[0], accounts[1]],
-                { from: fromAddress }
+                [poolAmount, poolAmount],
+                [accounts[0], accounts[1]]
             ),
             "Date Array Invalid"
         )
@@ -119,12 +112,10 @@ contract("Fail Create Pool", (accounts) => {
             ownerArray.push(owner)
             startArray.push(future)
             finishArray.push(future + 60 * 60 * 24)
-            amountArray.push(allow)
+            amountArray.push(poolAmount)
         }
         await truffleAssert.reverts(
-            instance.CreateMassPools(Token.address, startArray, startArray, finishArray, amountArray, ownerArray, {
-                from: fromAddress
-            }),
+            instance.CreateMassPools(Token.address, startArray, startArray, finishArray, amountArray, ownerArray),
             "Invalid array length limit"
         )
     })
@@ -137,7 +128,7 @@ contract("Fail Create Pool", (accounts) => {
             amountArray = []
         for (let i = 0; i < 41; i++) {
             ownerArray.push(owner)
-            amountArray.push(allow)
+            amountArray.push(poolAmount)
         }
         for (let i = 1; i <= 10; i++) {
             startTime.push(future + i * 3600)
@@ -145,9 +136,7 @@ contract("Fail Create Pool", (accounts) => {
         }
         cliffTime = startTime
         await truffleAssert.reverts(
-            instance.CreatePoolsWrtTime(Token.address, startTime, cliffTime, finishTime, amountArray, ownerArray, {
-                from: fromAddress
-            }),
+            instance.CreatePoolsWrtTime(Token.address, startTime, cliffTime, finishTime, amountArray, ownerArray),
             "Invalid array length limit"
         )
     })

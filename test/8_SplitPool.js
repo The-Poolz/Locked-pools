@@ -4,13 +4,13 @@ const { assert } = require("chai")
 const timeMachine = require("ganache-time-traveler")
 const constants = require("@openzeppelin/test-helpers/src/constants.js")
 const BigNumber = require("bignumber.js")
+const { poolTime } = require("./helper.js")
 
 contract("Split Pool", (accounts) => {
     let instance, Token, poolId
     const owner = accounts[7]
     const splitOwner = accounts[9]
     const amount = 1000
-    const year = 364
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -19,20 +19,15 @@ contract("Split Pool", (accounts) => {
     })
 
     it("split pool before cliff time", async () => {
-        const date = new Date()
-        const startTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() + year)
-        const finishTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() - year / 2)
-        const halfYear = Math.floor(date.getTime() / 1000)
-        let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+        const { startTime, cliffTime, finishTime } = poolTime()
+        let tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, amount, owner)
         poolId = tx.logs[1].args.PoolId
         await timeMachine.advanceBlockAndSetTime(startTime)
         const splitTx = await instance.SplitPoolAmount(poolId, amount / 4, splitOwner, { from: owner })
         const splitPoolId = splitTx.logs[0].args.PoolId
         const splitPoolData = await instance.AllPoolz(splitPoolId)
         assert.equal(splitPoolData.StartTime, startTime)
-        assert.equal(splitPoolData.CliffTime, halfYear)
+        assert.equal(splitPoolData.CliffTime, cliffTime)
         assert.equal(splitPoolData.FinishTime, finishTime)
         assert.equal(splitPoolData.StartAmount, amount / 4)
         assert.equal(splitPoolData.DebitedAmount, "0")
@@ -40,7 +35,7 @@ contract("Split Pool", (accounts) => {
         assert.equal(splitPoolData.Token, Token.address)
         const poolData = await instance.AllPoolz(poolId)
         assert.equal(poolData.StartTime, startTime)
-        assert.equal(poolData.CliffTime, halfYear)
+        assert.equal(poolData.CliffTime, cliffTime)
         assert.equal(poolData.FinishTime, finishTime)
         assert.equal(poolData.StartAmount, amount - amount / 4)
         assert.equal(poolData.DebitedAmount, "0")
@@ -50,13 +45,8 @@ contract("Split Pool", (accounts) => {
 
     it("Split Pool Amount From before cliff time", async () => {
         const spender = accounts[8]
-        const date = new Date()
-        const startTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() + year)
-        const finishTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() - year / 2)
-        const halfYear = Math.floor(date.getTime() / 1000)
-        let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+        const { startTime, cliffTime, finishTime } = poolTime()
+        let tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, amount, owner)
         poolId = tx.logs[1].args.PoolId
         await timeMachine.advanceBlockAndSetTime(startTime)
         await instance.ApproveAllowance(poolId, amount / 2, spender, { from: owner })
@@ -64,7 +54,7 @@ contract("Split Pool", (accounts) => {
         poolId = tx.logs[0].args.PoolId
         const poolData = await instance.AllPoolz(poolId)
         assert.equal(poolData.StartTime, startTime)
-        assert.equal(poolData.CliffTime, halfYear)
+        assert.equal(poolData.CliffTime, cliffTime)
         assert.equal(poolData.FinishTime, finishTime)
         assert.equal(poolData.StartAmount, amount / 2)
         assert.equal(poolData.DebitedAmount, "0")
@@ -73,17 +63,12 @@ contract("Split Pool", (accounts) => {
     })
 
     it("should split after withdraw", async () => {
-        const date = new Date()
-        const startTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() + year)
-        const finishTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() - year / 2)
-        const halfYear = Math.floor(date.getTime() / 1000)
-        let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+        const { startTime, cliffTime, finishTime } = poolTime()
+        let tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, amount, owner)
         poolId = tx.logs[1].args.PoolId
         const splitOwnerOldBal = new BigNumber(await Token.balanceOf(splitOwner))
         const ownerOldBal = new BigNumber(await Token.balanceOf(owner))
-        await timeMachine.advanceBlockAndSetTime(halfYear)
+        await timeMachine.advanceBlockAndSetTime(cliffTime)
         const data = await instance.WithdrawToken(poolId)
         const withdrawAmount = data.logs[data.logs.length - 1].args.Amount.toString()
         const splitTx = await instance.SplitPoolAmount(poolId, amount / 4, splitOwner, { from: owner })
@@ -119,13 +104,8 @@ contract("Split Pool", (accounts) => {
     })
 
     it("split pool for 4 parts and withdraw tokens", async () => {
-        const date = new Date()
-        const startTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() + year)
-        const finishTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() - year / 2)
-        const halfYear = Math.floor(date.getTime() / 1000)
-        let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+        const { startTime, cliffTime, finishTime } = poolTime()
+        let tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, amount, owner)
         poolId = tx.logs[1].args.PoolId
         const splitPoolIds = []
         for (let i = 0; i < 4; i++) {
@@ -159,16 +139,11 @@ contract("Split Pool", (accounts) => {
     })
 
     it("split pool for 3 parts after half time and withdraw tokens", async () => {
-        const date = new Date()
-        const startTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() + year)
-        const finishTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() - year / 2)
-        const halfYear = Math.floor(date.getTime() / 1000)
-        let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+        const { startTime, cliffTime, finishTime } = poolTime()
+        let tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, amount, owner)
         poolId = tx.logs[1].args.PoolId
         const splitPoolIds = []
-        await timeMachine.advanceBlockAndSetTime(halfYear)
+        await timeMachine.advanceBlockAndSetTime(cliffTime)
         for (let i = 0; i < 2; i++) {
             const tx = await instance.SplitPoolAmount(poolId, parseInt(amount / 3), accounts[i + 4], { from: owner })
             splitPoolIds.push(tx.logs[0].args.PoolId.toString())
@@ -199,15 +174,10 @@ contract("Split Pool", (accounts) => {
         it("transfer pool after withdraw", async () => {
             Token = await TestToken.new("TestToken", "TEST")
             await Token.approve(instance.address, constants.MAX_UINT256)
-            const date = new Date()
-            const startTime = Math.floor(date.getTime() / 1000)
-            date.setDate(date.getDate() + year)
-            const finishTime = Math.floor(date.getTime() / 1000)
-            date.setDate(date.getDate() - year / 2)
-            const halfYear = Math.floor(date.getTime() / 1000)
-            let tx = await instance.CreateNewPool(Token.address, startTime, halfYear, finishTime, amount, owner)
+            const { startTime, cliffTime, finishTime } = poolTime()
+            let tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, amount, owner)
             poolId = tx.logs[1].args.PoolId
-            await timeMachine.advanceBlockAndSetTime(halfYear)
+            await timeMachine.advanceBlockAndSetTime(cliffTime)
             await instance.WithdrawToken(poolId)
             let data = await instance.AllPoolz(poolId)
             const result = await instance.TransferPoolOwnership(poolId, splitOwner, { from: owner })

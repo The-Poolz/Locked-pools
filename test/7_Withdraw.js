@@ -8,7 +8,7 @@ const BigNumber = require("bignumber.js")
 contract("Withdraw", (accounts) => {
     let instance, Token, fromAddress, poolId
     const owner = accounts[1],
-        allow = 10000,
+        poolAmount = 10000,
         MyPoolz = []
     const year = 364
 
@@ -16,7 +16,7 @@ contract("Withdraw", (accounts) => {
         instance = await LockedDealV2.new()
         Token = await TestToken.new("TestToken", "TEST")
         fromAddress = await instance.owner()
-        await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
+        await Token.approve(instance.address, constants.MAX_UINT256)
     })
 
     it("should create a single new pool", async () => {
@@ -24,9 +24,7 @@ contract("Withdraw", (accounts) => {
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
-            from: fromAddress
-        })
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, owner)
         poolId = tx.logs[1].args.PoolId.toString()
         MyPoolz.push(poolId)
     })
@@ -81,9 +79,7 @@ contract("Withdraw", (accounts) => {
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 1)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
-            from: fromAddress
-        })
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, owner)
         poolId = tx.logs[1].args.PoolId.toString()
         MyPoolz.push(poolId)
         const data = await instance.AllPoolz(poolId, { from: owner })
@@ -117,7 +113,7 @@ contract("Withdraw", (accounts) => {
         const startTime = Math.floor(date.getTime() / 1000)
         date.setDate(date.getDate() + 2)
         const finishTime = Math.floor(date.getTime() / 1000)
-        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
+        const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId.toString()
@@ -146,9 +142,7 @@ contract("Withdraw", (accounts) => {
             startTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() + 4)
             finishTime = Math.floor(date.getTime() / 1000)
-            const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, ownerAddr, {
-                from: fromAddress
-            })
+            const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, ownerAddr)
             poolId = tx.logs[1].args.PoolId.toString()
         })
 
@@ -163,7 +157,7 @@ contract("Withdraw", (accounts) => {
             const oldBal = await Token.balanceOf(newOwner)
             const tx = await instance.WithdrawToken(poolId)
             const currentBal = await Token.balanceOf(newOwner)
-            const expectedResult = allow / 2
+            const expectedResult = poolAmount / 2
             assert.equal(oldBal, "0")
             assert.equal(tx.logs[tx.logs.length - 1].args.Amount.toString(), expectedResult, "check amount value")
             assert.equal(currentBal.toString(), expectedResult)
@@ -190,13 +184,11 @@ contract("Withdraw", (accounts) => {
             const startTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() + year)
             const finishTime = Math.floor(date.getTime() / 1000)
-            let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
+            let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, owner)
             const oldPoolId = tx.logs[1].args.PoolId.toString()
             date.setDate(date.getDate() - year / 2)
             const halfYear = Math.floor(date.getTime() / 1000)
-            tx = await instance.SplitPoolAmount(oldPoolId, allow / 2, splitOwner, { from: owner })
+            tx = await instance.SplitPoolAmount(oldPoolId, poolAmount / 2, splitOwner, { from: owner })
             poolId = tx.logs[0].args.PoolId
             const ownerOldBal = new BigNumber(await Token.balanceOf(owner))
             const splitOwnerOldBal = new BigNumber(await Token.balanceOf(splitOwner))
@@ -207,12 +199,12 @@ contract("Withdraw", (accounts) => {
             const splitOwnerBal = new BigNumber(await Token.balanceOf(splitOwner))
             assert.equal(
                 ownerBal.toString(),
-                BigNumber.sum(ownerOldBal, allow / 4).toString(),
+                BigNumber.sum(ownerOldBal, poolAmount / 4).toString(),
                 "invalid pool owner balance"
             )
             assert.equal(
                 splitOwnerBal.toString(),
-                BigNumber.sum(splitOwnerOldBal, allow / 4).toString(),
+                BigNumber.sum(splitOwnerOldBal, poolAmount / 4).toString(),
                 "invalid split pool owner balance"
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
@@ -228,12 +220,10 @@ contract("Withdraw", (accounts) => {
             const finishTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() - year / 2)
             const halfTime = Math.floor(date.getTime() / 1000)
-            let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, allow, owner, {
-                from: fromAddress
-            })
+            let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, owner)
             const oldPoolId = tx.logs[1].args.PoolId.toString()
-            await instance.ApproveAllowance(oldPoolId, allow / 2, spender, { from: owner })
-            tx = await instance.SplitPoolAmountFrom(oldPoolId, allow / 2, spender, { from: spender })
+            await instance.ApproveAllowance(oldPoolId, poolAmount / 2, spender, { from: owner })
+            tx = await instance.SplitPoolAmountFrom(oldPoolId, poolAmount / 2, spender, { from: spender })
             poolId = tx.logs[0].args.PoolId
             const ownerOldBal = new BigNumber(await Token.balanceOf(owner))
             const spenderOldBal = new BigNumber(await Token.balanceOf(spender))
@@ -244,12 +234,12 @@ contract("Withdraw", (accounts) => {
             const spenderBal = new BigNumber(await Token.balanceOf(spender))
             assert.equal(
                 ownerBal.toString(),
-                BigNumber.sum(ownerOldBal, allow / 4).toString(),
+                BigNumber.sum(ownerOldBal, poolAmount / 4).toString(),
                 "invalid pool owner balance"
             )
             assert.equal(
                 spenderBal.toString(),
-                BigNumber.sum(spenderOldBal, allow / 4).toString(),
+                BigNumber.sum(spenderOldBal, poolAmount / 4).toString(),
                 "invalid split pool owner balance"
             )
         })

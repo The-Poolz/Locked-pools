@@ -2,6 +2,7 @@ const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
 const { assert } = require("chai")
 const constants = require("@openzeppelin/test-helpers/src/constants.js")
+const { poolTime } = require("./helper.js")
 
 contract("Create Pool", (accounts) => {
     let instance, Token
@@ -9,7 +10,7 @@ contract("Create Pool", (accounts) => {
     let startTime, finishTime, cliffTime
     const owner = accounts[1],
         fromAddress = accounts[0]
-    const allow = 100
+    const poolAmount = 100
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -19,12 +20,8 @@ contract("Create Pool", (accounts) => {
 
     it("should create a single new pool", async () => {
         await Token.approve(instance.address, constants.MAX_UINT256, { from: fromAddress })
-        let date = new Date()
-        date.setDate(date.getDate() + 1)
-        startTime = Math.floor(date.getTime() / 1000)
-        cliffTime = startTime
-        finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, owner, {
+        ;({ startTime, cliffTime, finishTime } = poolTime())
+        const tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, owner, {
             from: fromAddress
         })
         poolId = tx.logs[1].args.PoolId
@@ -33,7 +30,6 @@ contract("Create Pool", (accounts) => {
     })
 
     it("should create pools in mass", async () => {
-        const allow = 100
         const numberOfPools = 5
         let date = new Date()
         date.setDate(date.getDate() + 1)
@@ -52,7 +48,7 @@ contract("Create Pool", (accounts) => {
         finishTimeStamps.push(future + 7200)
         finishTimeStamps.push(future - 7200)
         const cliffTimeStamps = startTimeStamps
-        const startAmounts = [allow, allow, allow, allow, allow]
+        const startAmounts = [poolAmount, poolAmount, poolAmount, poolAmount, poolAmount]
         const owners = [accounts[9], accounts[8], accounts[7], accounts[6], accounts[5]]
         const tx = await instance.CreateMassPools(
             Token.address,
@@ -78,7 +74,6 @@ contract("Create Pool", (accounts) => {
     })
 
     it("should create pools with respect to finish time", async () => {
-        const allow = 100
         const numberOfOwners = 3
         const numberOfTimestamps = 6
         let date = new Date()
@@ -96,7 +91,7 @@ contract("Create Pool", (accounts) => {
             finishTimeStamps.push(future + 3600 * i)
         }
         const cliffTimeStamps = startTimeStamps
-        const startAmounts = [allow, allow, allow]
+        const startAmounts = [poolAmount, poolAmount, poolAmount]
         const owners = [accounts[9], accounts[8], accounts[7]]
         // const result = await instance.CreatePoolsWrtTime.call(Token.address, startTimeStamps, startAmounts, owners, {from: fromAddress})
         const tx = await instance.CreatePoolsWrtTime(
@@ -176,19 +171,15 @@ contract("Create Pool", (accounts) => {
         const result = await instance.GetMyPoolDataByToken(owner, [Token.address], { from: owner })
         assert.equal(result[0].length, 0)
         assert.equal(result[1].length, 0)
-        let date = new Date()
-        date.setDate(date.getDate() + 1)
-        startTime = Math.floor(date.getTime() / 1000)
-        cliffTime = startTime
-        finishTime = startTime + 60 * 60 * 24 * 30
-        const tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, allow, owner)
+        const { startTime, cliffTime, finishTime } = poolTime()
+        const tx = await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, owner)
         poolId = tx.logs[1].args.PoolId
         const data = await instance.GetMyPoolDataByToken(owner, [Token.address], { from: owner })
         assert.equal(1, data[0].length)
         assert.equal(1, data[1].length)
         assert.equal(startTime, data[0][0].StartTime)
         assert.equal(finishTime, data[0][0].FinishTime)
-        assert.equal(allow, data[0][0].StartAmount)
+        assert.equal(poolAmount, data[0][0].StartAmount)
         assert.equal(0, data[0][0].DebitedAmount)
         assert.equal(owner, data[0][0].Owner)
         assert.equal(Token.address, data[0][0].Token)
