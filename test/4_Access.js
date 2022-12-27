@@ -160,7 +160,7 @@ contract("Access to Locked Deal", (accounts) => {
             const amount = data[3]
             await truffleAssert.reverts(
                 instance.SplitPoolAmount(poolId, amount, owner, { from: owner }),
-                "Not Enough Amount Balance"
+                "Pool is Empty"
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
         })
