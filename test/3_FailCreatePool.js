@@ -58,7 +58,7 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreateMassPools(
                 Token.address,
                 [startTime],
-                [startTime],
+                [cliffTime, cliffTime],
                 [finishTime, finishTime],
                 [poolAmount, poolAmount],
                 [accounts[0], accounts[1]]
@@ -69,12 +69,23 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreateMassPools(
                 Token.address,
                 [startTime, startTime],
-                [startTime, startTime],
+                [cliffTime, cliffTime],
                 [finishTime, finishTime],
                 [poolAmount],
                 [accounts[0], accounts[1]]
             ),
             "Amount Array Invalid"
+        )
+        await truffleAssert.reverts(
+            instance.CreateMassPools(
+                Token.address,
+                [startTime, startTime],
+                [cliffTime],
+                [finishTime, finishTime],
+                [poolAmount, poolAmount],
+                [accounts[0], accounts[1]]
+            ),
+            "CliffTime Array Invalid"
         )
     })
 
@@ -83,12 +94,23 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreatePoolsWrtTime(
                 Token.address,
                 [startTime, startTime],
-                [startTime, startTime],
+                [cliffTime, cliffTime],
                 [finishTime, finishTime],
                 [poolAmount],
                 [accounts[0], accounts[1]]
             ),
             "Amount Array Invalid"
+        )
+        await truffleAssert.reverts(
+            instance.CreatePoolsWrtTime(
+                Token.address,
+                [startTime, startTime],
+                [cliffTime],
+                [finishTime, finishTime],
+                [poolAmount, poolAmount],
+                [accounts[0], accounts[1]]
+            ),
+            "CliffTime Array Invalid"
         )
         await truffleAssert.reverts(
             instance.CreatePoolsWrtTime(

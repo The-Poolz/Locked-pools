@@ -37,6 +37,7 @@ contract LockedCreation is LockedPoolz {
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        require(_CliffTime.length == _FinishTime.length,"CliffTime Array Invalid");
         TransferInToken(_Token, msg.sender, Array.getArraySum(_StartAmount));
         payFee(_Token, Fee * _Owner.length);
         uint256 firstPoolId = Index;
@@ -66,6 +67,7 @@ contract LockedCreation is LockedPoolz {
     ) external payable isBelowLimit(_Owner.length * _FinishTime.length) {
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         require(_FinishTime.length == _StartTime.length, "Date Array Invalid");
+        require(_CliffTime.length == _FinishTime.length, "CliffTime Array Invalid");
         TransferInToken(
             _Token,
             msg.sender,

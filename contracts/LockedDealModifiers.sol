@@ -36,7 +36,7 @@ contract LockedDealModifiers {
     }
 
     modifier notZeroValue(uint256 _Amount) {
-        require(_Amount > 0, "The amount must be greater than zero");
+        require(_Amount > 0, "Amount must be greater than zero");
         _;
     }
 
