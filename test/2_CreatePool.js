@@ -3,6 +3,7 @@ const TestToken = artifacts.require("ERC20Token")
 const { assert } = require("chai")
 const constants = require("@openzeppelin/test-helpers/src/constants.js")
 const { poolTime } = require("./helper.js")
+const timeMachine = require("ganache-time-traveler")
 
 contract("Create Pool", (accounts) => {
     let instance, Token
@@ -164,6 +165,62 @@ contract("Create Pool", (accounts) => {
         assert.equal(result.logs[result.logs.length - 1].args.oldPoolId.toString(), poolId.toString())
         assert.equal(result.logs[result.logs.length - 1].args.OldOwner.toString(), owner)
         assert.equal(result.logs[result.logs.length - 1].args.NewOwner.toString(), newOwner.toString())
+    })
+
+    it("should get user data of pools", async () => {
+        const userAddress = accounts[3]
+        await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, userAddress)
+        const tx = await instance.CreateNewPool(
+            Token.address,
+            startTime,
+            cliffTime,
+            finishTime,
+            poolAmount,
+            userAddress
+        )
+        poolId = tx.logs[1].args.PoolId
+        await timeMachine.advanceBlockAndSetTime(finishTime)
+        await instance.WithdrawToken(poolId)
+        const result = await instance.GetMyPoolsData(userAddress)
+        assert.equal(1, result.length)
+        assert.equal(startTime, result[0].StartTime)
+        assert.equal(finishTime, result[0].FinishTime)
+        assert.equal(100, result[0].StartAmount)
+        assert.equal(0, result[0].DebitedAmount)
+        assert.equal(userAddress, result[0].Owner)
+        assert.equal(Token.address, result[0].Token)
+        await timeMachine.advanceBlockAndSetTime(startTime)
+    })
+
+    it("should get all pools user data", async () => {
+        const userAddress = accounts[0]
+        await instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, userAddress)
+        const tx = await instance.CreateNewPool(
+            Token.address,
+            startTime,
+            cliffTime,
+            finishTime,
+            poolAmount,
+            userAddress
+        )
+        poolId = tx.logs[1].args.PoolId
+        await timeMachine.advanceBlockAndSetTime(finishTime)
+        await instance.WithdrawToken(poolId)
+        const result = await instance.GetAllMyPoolsData(userAddress)
+        assert.equal(2, result.length)
+        assert.equal(startTime, result[0].StartTime)
+        assert.equal(finishTime, result[0].FinishTime)
+        assert.equal(100, result[0].StartAmount)
+        assert.equal(0, result[0].DebitedAmount)
+        assert.equal(userAddress, result[0].Owner)
+        assert.equal(Token.address, result[0].Token)
+        assert.equal(startTime, result[1].StartTime)
+        assert.equal(finishTime, result[1].FinishTime)
+        assert.equal(100, result[1].StartAmount)
+        assert.equal(100, result[1].DebitedAmount)
+        assert.equal(userAddress, result[1].Owner)
+        assert.equal(Token.address, result[1].Token)
+        await timeMachine.advanceBlockAndSetTime(startTime)
     })
 
     it("should get my pools data by token", async () => {
