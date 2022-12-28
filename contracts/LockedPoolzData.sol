@@ -77,7 +77,7 @@ contract LockedPoolzData is LockedControl {
     }
 
     function GetMyPoolsData(address _UserAddress)
-        public
+        external
         view
         returns (Pool[] memory data)
     {
@@ -85,7 +85,7 @@ contract LockedPoolzData is LockedControl {
     }
 
     function GetAllMyPoolsData(address _UserAddress)
-        public
+        external
         view
         returns (Pool[] memory data)
     {
