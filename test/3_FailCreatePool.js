@@ -26,16 +26,6 @@ contract("Fail Create Pool", (accounts) => {
         )
     })
 
-    it("Fail to Create Pool when creator doesn't have tokens", async () => {
-        await Token.approve(instance.address, constants.MAX_UINT256, { from: accounts[9] })
-        await truffleAssert.reverts(
-            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, fromAddress, {
-                from: accounts[9]
-            }),
-            "Transfer amount exceeds balance"
-        )
-    })
-
     it("Failed to get data when pool does not exist", async () => {
         await truffleAssert.reverts(instance.GetPoolsData([55], { from: accounts[1] }), "Pool does not exist")
     })
@@ -68,7 +58,7 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreateMassPools(
                 Token.address,
                 [startTime],
-                [startTime],
+                [cliffTime, cliffTime],
                 [finishTime, finishTime],
                 [poolAmount, poolAmount],
                 [accounts[0], accounts[1]]
@@ -79,12 +69,23 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreateMassPools(
                 Token.address,
                 [startTime, startTime],
-                [startTime, startTime],
+                [cliffTime, cliffTime],
                 [finishTime, finishTime],
                 [poolAmount],
                 [accounts[0], accounts[1]]
             ),
             "Amount Array Invalid"
+        )
+        await truffleAssert.reverts(
+            instance.CreateMassPools(
+                Token.address,
+                [startTime, startTime],
+                [cliffTime],
+                [finishTime, finishTime],
+                [poolAmount, poolAmount],
+                [accounts[0], accounts[1]]
+            ),
+            "CliffTime Array Invalid"
         )
     })
 
@@ -93,12 +94,23 @@ contract("Fail Create Pool", (accounts) => {
             instance.CreatePoolsWrtTime(
                 Token.address,
                 [startTime, startTime],
-                [startTime, startTime],
+                [cliffTime, cliffTime],
                 [finishTime, finishTime],
                 [poolAmount],
                 [accounts[0], accounts[1]]
             ),
             "Amount Array Invalid"
+        )
+        await truffleAssert.reverts(
+            instance.CreatePoolsWrtTime(
+                Token.address,
+                [startTime, startTime],
+                [cliffTime],
+                [finishTime, finishTime],
+                [poolAmount, poolAmount],
+                [accounts[0], accounts[1]]
+            ),
+            "CliffTime Array Invalid"
         )
         await truffleAssert.reverts(
             instance.CreatePoolsWrtTime(

@@ -12,13 +12,7 @@ contract LockedCreation is LockedPoolz {
         uint256 _FinishTime, //Until what time the pool will end
         uint256 _StartAmount, //Total amount of the tokens to sell in the pool
         address _Owner // Who the tokens belong to
-    )
-        external
-        payable
-        notZeroAddress(_Owner)
-        notZeroValue(_StartAmount)
-        isValidBalance(_Token, _StartAmount)
-    {
+    ) external payable notZeroAddress(_Owner) notZeroValue(_StartAmount) {
         TransferInToken(_Token, msg.sender, _StartAmount);
         payFee(_Token, Fee);
         CreatePool(
@@ -38,16 +32,12 @@ contract LockedCreation is LockedPoolz {
         uint256[] calldata _CliffTime,
         uint256[] calldata _FinishTime,
         uint256[] calldata _StartAmount,
-        address[] memory _Owner // memory keyword to avoid `Stack too deep` error
-    )
-        external
-        payable
-        isBelowLimit(_Owner.length)
-        isValidBalance(_Token, Array.getArraySum(_StartAmount))
-    {
+        address[] calldata _Owner
+    ) external payable isBelowLimit(_Owner.length) {
         require(_Owner.length == _FinishTime.length, "Date Array Invalid");
         require(_StartTime.length == _FinishTime.length, "Date Array Invalid");
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
+        require(_CliffTime.length == _StartAmount.length, "CliffTime Array Invalid");
         TransferInToken(_Token, msg.sender, Array.getArraySum(_StartAmount));
         payFee(_Token, Fee * _Owner.length);
         uint256 firstPoolId = Index;
@@ -72,19 +62,12 @@ contract LockedCreation is LockedPoolz {
         uint256[] calldata _StartTime,
         uint256[] calldata _CliffTime,
         uint256[] calldata _FinishTime,
-        uint256[] memory _StartAmount, // memory keyword to avoid `Stack too deep` error
-        address[] memory _Owner
-    )
-        external
-        payable
-        isBelowLimit(_Owner.length * _FinishTime.length)
-        isValidBalance(
-            _Token,
-            Array.getArraySum(_StartAmount) * _FinishTime.length
-        )
-    {
+        uint256[] calldata _StartAmount,
+        address[] calldata _Owner
+    ) external payable isBelowLimit(_Owner.length * _FinishTime.length) {
         require(_Owner.length == _StartAmount.length, "Amount Array Invalid");
         require(_FinishTime.length == _StartTime.length, "Date Array Invalid");
+        require(_CliffTime.length == _StartAmount.length, "CliffTime Array Invalid");
         TransferInToken(
             _Token,
             msg.sender,

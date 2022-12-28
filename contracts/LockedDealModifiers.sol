@@ -65,12 +65,4 @@ contract LockedDealModifiers {
         );
         _;
     }
-
-    modifier isValidBalance(address _token, uint256 _amount) {
-        require(
-            ERC20(_token).balanceOf(msg.sender) >= _amount,
-            "Transfer amount exceeds balance"
-        );
-        _;
-    }
 }
