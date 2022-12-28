@@ -5,7 +5,7 @@ import "./LockedControl.sol";
 
 contract LockedPoolzData is LockedControl {
     function GetAllMyPoolsId(address _UserAddress)
-        external
+        public
         view
         returns (uint256[] memory)
     {
@@ -13,9 +13,8 @@ contract LockedPoolzData is LockedControl {
     }
 
     // function GetMyPoolzwithBalance
-    // reconsider msg.sender
     function GetMyPoolsId(address _UserAddress)
-        external
+        public
         view
         returns (uint256[] memory)
     {
@@ -75,5 +74,21 @@ contract LockedPoolzData is LockedControl {
     ) external view returns (Pool[] memory pools, uint256[] memory poolIds) {
         poolIds = GetMyPoolsIdByToken(_UserAddress, _Tokens);
         pools = GetPoolsData(poolIds);
+    }
+
+    function GetMyPoolsData(address _UserAddress)
+        public
+        view
+        returns (Pool[] memory data)
+    {
+        data = GetPoolsData(GetMyPoolsId(_UserAddress));
+    }
+
+    function GetAllMyPoolsData(address _UserAddress)
+        public
+        view
+        returns (Pool[] memory data)
+    {
+        data = GetPoolsData(GetAllMyPoolsId(_UserAddress));
     }
 }
