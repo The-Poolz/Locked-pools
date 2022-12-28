@@ -37,12 +37,10 @@ contract LockedDealV2 is LockedPoolzData {
             uint256 tempDebitAmount = withdrawnAmount + pool.DebitedAmount;
             pool.DebitedAmount = tempDebitAmount;
             TransferToken(pool.Token, pool.Owner, withdrawnAmount);
-            emit TokenWithdrawn(
-                _PoolId,
+            emit TokenWithdrawn(_PoolId,
                 pool.Owner,
-                withdrawnAmount,
-                remainingAmount(_PoolId)
-            );
+                withdrawnAmount,        
+                pool.StartAmount);
         }
     }
 }
