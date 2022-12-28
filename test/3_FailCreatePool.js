@@ -26,6 +26,16 @@ contract("Fail Create Pool", (accounts) => {
         )
     })
 
+    it("Fail to Create Pool when creator doesn't have tokens", async () => {
+        await Token.approve(instance.address, constants.MAX_UINT256, { from: accounts[9] })
+        await truffleAssert.reverts(
+            instance.CreateNewPool(Token.address, startTime, cliffTime, finishTime, poolAmount, fromAddress, {
+                from: accounts[9]
+            }),
+            "Transfer amount exceeds balance"
+        )
+    })
+
     it("Failed to get data when pool does not exist", async () => {
         await truffleAssert.reverts(instance.GetPoolsData([55], { from: accounts[1] }), "Pool does not exist")
     })

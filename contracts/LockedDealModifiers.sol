@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 /// @title contains modifiers and stores variables.
 contract LockedDealModifiers {
     mapping(uint256 => mapping(address => uint256)) public Allowance;
@@ -36,7 +38,7 @@ contract LockedDealModifiers {
     }
 
     modifier notZeroValue(uint256 _Amount) {
-        require(_Amount > 0, "The amount must be greater than zero");
+        require(_Amount > 0, "Amount must be greater than zero");
         _;
     }
 
@@ -60,6 +62,14 @@ contract LockedDealModifiers {
         require(
             _num > 0 && _num <= maxTransactionLimit,
             "Invalid array length limit"
+        );
+        _;
+    }
+
+    modifier isValidBalance(address _token, uint256 _amount) {
+        require(
+            ERC20(_token).balanceOf(msg.sender) >= _amount,
+            "Transfer amount exceeds balance"
         );
         _;
     }
