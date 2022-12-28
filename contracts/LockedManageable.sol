@@ -51,6 +51,7 @@ contract LockedManageable is
         returns (bool)
     {
         return
+            WhiteList_Address == address(0) ||
             !isTokenFilterOn ||
             IWhiteList(WhiteList_Address).Check(
                 _tokenAddress,
