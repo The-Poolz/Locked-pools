@@ -56,8 +56,6 @@ contract LockedCreation is LockedPoolz {
         emit MassPoolsCreated(firstPoolId, lastPoolId);
     }
 
-    event cliffTime(uint256 _amount, uint256 _amount2);
-
     // create pools with respect to finish time
     function CreatePoolsWrtTime(
         address _Token,
