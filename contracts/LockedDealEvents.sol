@@ -6,7 +6,7 @@ contract LockedDealEvents {
         uint256 PoolId,
         address indexed Recipient,
         uint256 Amount,
-        uint256 StartAmount
+        uint256 LeftAmount
     );
     event MassPoolsCreated(uint256 FirstPoolId, uint256 LastPoolId);
     event NewPoolCreated(
