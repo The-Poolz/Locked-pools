@@ -33,7 +33,14 @@ contract LockedPoolz is LockedManageable {
             newPoolDebitedAmount,
             _NewOwner
         );
-        emit PoolSplit(_PoolId, newPoolId, _NewAmount, _NewOwner);
+        emit PoolSplit(
+            _PoolId,
+            newPoolId,
+            remainingAmount(_PoolId),
+            _NewAmount,
+            msg.sender,
+            _NewOwner
+        );
     }
 
     //create a new pool
