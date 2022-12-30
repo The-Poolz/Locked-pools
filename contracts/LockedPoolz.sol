@@ -17,7 +17,7 @@ contract LockedPoolz is LockedManageable {
         uint256 leftAmount = remainingAmount(_PoolId);
         require(leftAmount > 0, "Pool is Empty");
         require(leftAmount >= _NewAmount, "Not Enough Amount Balance");
-        require(_NewAmount * 10**18 >= _NewAmount, "Invalid amount");
+        assert(_NewAmount * 10**18 > _NewAmount);
         Pool storage pool = AllPoolz[_PoolId];
         uint256 _Ratio = (_NewAmount * 10**18) / leftAmount;
         uint256 newPoolDebitedAmount = (pool.DebitedAmount * _Ratio) / 10**18;
