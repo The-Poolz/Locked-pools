@@ -19,18 +19,13 @@ contract LockedDealEvents {
         uint256 DebitedAmount,
         address indexed Owner
     );
-    event PoolTransferred(
-        uint256 oldPoolId,
-        uint256 newPoolId,
-        uint256 transferedAmount,
-        address indexed OldOwner,
-        address indexed NewOwner
-    );
     event PoolApproval(uint256 PoolId, address indexed Spender, uint256 Amount);
     event PoolSplit(
         uint256 OldPoolId,
         uint256 NewPoolId,
+        uint256 OriginalLeftAmount,
         uint256 NewAmount,
+        address indexed OldOwner,
         address indexed NewOwner
     );
 }

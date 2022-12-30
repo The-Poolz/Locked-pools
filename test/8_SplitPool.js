@@ -181,7 +181,7 @@ contract("Split Pool", (accounts) => {
             await instance.WithdrawToken(poolId)
             let data = await instance.AllPoolz(poolId)
             const result = await instance.TransferPoolOwnership(poolId, splitOwner, { from: owner })
-            poolId = result.logs[result.logs.length - 1].args.newPoolId
+            poolId = result.logs[result.logs.length - 1].args.NewPoolId
             let splitdata = await instance.AllPoolz(poolId)
             assert.equal(splitdata.StartAmount.toString(), amount)
             assert.equal(data.StartAmount.toString(), splitdata.StartAmount.toString())

@@ -64,7 +64,7 @@ contract("Pools - events", (accounts) => {
             const newOwner = accounts[8]
             result = await lockedDeal.TransferPoolOwnership(poolId, newOwner, { from: owner })
             // Check event
-            truffleAssert.eventEmitted(result, "PoolTransferred")
+            truffleAssert.eventEmitted(result, "PoolSplit")
         })
     })
 

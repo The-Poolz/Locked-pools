@@ -149,7 +149,7 @@ contract("Withdraw", (accounts) => {
         it("transfer pool and withdraw after 50% time", async () => {
             const newOwner = accounts[5]
             const result = await instance.TransferPoolOwnership(poolId, newOwner, { from: ownerAddr })
-            poolId = result.logs[result.logs.length - 1].args.newPoolId
+            poolId = result.logs[result.logs.length - 1].args.NewPoolId
             const date = new Date()
             date.setDate(date.getDate() + 2)
             const halfTime = Math.floor(date.getTime() / 1000)

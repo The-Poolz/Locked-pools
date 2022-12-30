@@ -160,11 +160,15 @@ contract("Create Pool", (accounts) => {
     it("should transfer locked pool", async () => {
         const owner = accounts[7]
         const newOwner = accounts[2]
+        const transferAmount = await instance.AllPoolz(poolId)
         const result = await instance.TransferPoolOwnership(poolId, newOwner, { from: owner })
-        assert.equal(result.logs[result.logs.length - 1].args.newPoolId.toString(), parseInt(poolId) + 1)
-        assert.equal(result.logs[result.logs.length - 1].args.oldPoolId.toString(), poolId.toString())
-        assert.equal(result.logs[result.logs.length - 1].args.OldOwner.toString(), owner)
-        assert.equal(result.logs[result.logs.length - 1].args.NewOwner.toString(), newOwner.toString())
+        const data = result.logs[result.logs.length - 1].args
+        assert.equal(data.NewPoolId.toString(), parseInt(poolId) + 1)
+        assert.equal(data.OldPoolId.toString(), poolId.toString())
+        assert.equal(data.OriginalLeftAmount.toString(), "0")
+        assert.equal(data.NewAmount.toString(), (transferAmount.StartAmount - transferAmount.DebitedAmount).toString())
+        assert.equal(data.OldOwner.toString(), owner)
+        assert.equal(data.NewOwner.toString(), newOwner.toString())
     })
 
     it("should get user data of pools", async () => {
