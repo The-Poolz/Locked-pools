@@ -160,10 +160,6 @@ contract("Access to Locked Deal", (accounts) => {
                 instance.SplitPoolAmountFrom(poolId, zeroAmount, owner, { from: spender }),
                 "Amount must be greater than zero"
             )
-            await truffleAssert.reverts(
-                instance.ApproveAllowance(poolId, zeroAmount, owner, { from: owner }),
-                "Amount must be greater than zero"
-            )
         })
 
         it("Not enough Allowance when split pool amount", async () => {

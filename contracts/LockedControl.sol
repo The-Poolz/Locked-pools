@@ -40,7 +40,6 @@ contract LockedControl is LockedCreation {
         external
         isPoolValid(_PoolId)
         isPoolOwner(_PoolId)
-        notZeroValue(_Amount)
         notZeroAddress(_Spender)
     {
         Allowance[_PoolId][_Spender] = _Amount;
