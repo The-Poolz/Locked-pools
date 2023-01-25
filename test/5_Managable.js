@@ -1,6 +1,5 @@
 const LockedDealV2 = artifacts.require("LockedDealV2")
 const TestToken = artifacts.require("ERC20Token")
-const BigNumber = require("bignumber.js")
 const { assert } = require("chai")
 
 contract("Managable", (accounts) => {
@@ -70,9 +69,9 @@ contract("Managable", (accounts) => {
     })
 
     it("should set decimal multiplier", async () => {
-        const twoDecimals = 1000 // 10*10**2
+        const twoDecimals = 2
         let multiplier = await instance.DecimalMultiplier()
-        const defaultMultiplier = new BigNumber(10 ** 18)
+        const defaultMultiplier = 18
         assert.equal(multiplier.toString(), defaultMultiplier.toString(), "check default decimal value")
         await instance.setDecimalMultiplier(twoDecimals)
         multiplier = await instance.DecimalMultiplier()

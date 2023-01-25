@@ -190,5 +190,10 @@ contract("Access to Locked Deal", (accounts) => {
             )
             await timeMachine.advanceBlockAndSetTime(Math.floor(Date.now() / 1000))
         })
+
+        it("Fail to set invalid multiplier", async () => {
+            const invalidMultiplier = 37
+            await truffleAssert.reverts(instance.setDecimalMultiplier(invalidMultiplier), "invalid multiplier value")
+        })
     })
 })

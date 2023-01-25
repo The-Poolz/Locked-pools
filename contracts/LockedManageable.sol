@@ -14,7 +14,7 @@ contract LockedManageable is
     constructor() {
         maxTransactionLimit = 400;
         isTokenFilterOn = false; // disable token filter whitelist
-        DecimalMultiplier = 10**18; // Increases the transience of ticks for calculating tokens for withdrawal.
+        DecimalMultiplier = 18; // Increases the transience of ticks for calculating tokens for withdrawal.
     }
 
     function setWhiteListAddress(address _address) external onlyOwner {
@@ -75,6 +75,10 @@ contract LockedManageable is
     }
 
     function setDecimalMultiplier(uint256 _multiplier) external onlyOwner {
-        DecimalMultiplier = _multiplier; 
+        require(
+            _multiplier > 0 && _multiplier <= 18,
+            "invalid multiplier value"
+        );
+        DecimalMultiplier = _multiplier;
     }
 }
