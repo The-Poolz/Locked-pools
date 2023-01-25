@@ -14,6 +14,7 @@ contract LockedDealModifiers {
     uint256 public TokenFilterWhiteListId;
     uint256 public UserWhiteListId;
     uint256 public maxTransactionLimit;
+    uint256 public DecimalMultiplier; // Increases the transience of ticks for calculating tokens for withdrawal
 
     struct Pool {
         uint256 StartTime;

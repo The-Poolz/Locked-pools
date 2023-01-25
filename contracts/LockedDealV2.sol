@@ -15,9 +15,9 @@ contract LockedDealV2 is LockedPoolzData {
         if (pool.FinishTime < block.timestamp) return remainingAmount(_PoolId);
         uint256 totalPoolDuration = pool.FinishTime - pool.StartTime;
         uint256 timePassed = block.timestamp - pool.StartTime;
-        uint256 timePassedPermille = timePassed * 10**18;
+        uint256 timePassedPermille = timePassed * DecimalMultiplier;
         uint256 ratioPermille = timePassedPermille / totalPoolDuration;
-        uint256 debitableAmount = (pool.StartAmount * ratioPermille) / 10**18;
+        uint256 debitableAmount = (pool.StartAmount * ratioPermille) / DecimalMultiplier;
         return debitableAmount - pool.DebitedAmount;
     }
 

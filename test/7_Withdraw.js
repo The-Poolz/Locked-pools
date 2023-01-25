@@ -10,7 +10,7 @@ contract("Withdraw", (accounts) => {
     const owner = accounts[1],
         poolAmount = 10000,
         MyPoolz = []
-    const year = 364
+    const year = 31556926 // seconds
 
     before(async () => {
         instance = await LockedDealV2.new()
@@ -28,7 +28,7 @@ contract("Withdraw", (accounts) => {
         poolId = tx.logs[1].args.PoolId.toString()
         MyPoolz.push(poolId)
     })
-    
+
     it("get withdrawable amount", async () => {
         const data = await instance.AllPoolz(poolId, { from: owner })
         const startAmount = data[3].toString()
@@ -52,11 +52,9 @@ contract("Withdraw", (accounts) => {
     it("fail to withdraw before cliff time", async () => {
         const amount = 10000
         const date = new Date()
-        const startTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() + year)
-        const finishTime = Math.floor(date.getTime() / 1000)
-        date.setDate(date.getDate() - year / 2)
-        const halfYear = Math.floor(date.getTime() / 1000)
+        const startTime = parseInt(Math.floor(date.getTime() / 1000))
+        const finishTime = startTime + year
+        const halfYear = startTime + year / 2
         const oldOwnerBal = new BigNumber(await Token.balanceOf(owner))
         let tx = await instance.CreateNewPool(Token.address, startTime, finishTime, finishTime, amount, owner)
         poolId = tx.logs[1].args.PoolId
@@ -142,7 +140,14 @@ contract("Withdraw", (accounts) => {
             startTime = Math.floor(date.getTime() / 1000)
             date.setDate(date.getDate() + 4)
             finishTime = Math.floor(date.getTime() / 1000)
-            const tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, ownerAddr)
+            const tx = await instance.CreateNewPool(
+                Token.address,
+                startTime,
+                startTime,
+                finishTime,
+                poolAmount,
+                ownerAddr
+            )
             poolId = tx.logs[1].args.PoolId.toString()
         })
 
@@ -181,13 +186,11 @@ contract("Withdraw", (accounts) => {
         it("should split pool to 50% and withdraw 50% amount", async () => {
             const splitOwner = accounts[7]
             const date = new Date()
-            const startTime = Math.floor(date.getTime() / 1000)
-            date.setDate(date.getDate() + year)
-            const finishTime = Math.floor(date.getTime() / 1000)
+            const startTime = parseInt(Math.floor(date.getTime() / 1000))
+            const finishTime = startTime + year
             let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, owner)
             const oldPoolId = tx.logs[1].args.PoolId.toString()
-            date.setDate(date.getDate() - year / 2)
-            const halfYear = Math.floor(date.getTime() / 1000)
+            const halfYear = startTime + year / 2
             tx = await instance.SplitPoolAmount(oldPoolId, poolAmount / 2, splitOwner, { from: owner })
             poolId = tx.logs[0].args.PoolId
             const ownerOldBal = new BigNumber(await Token.balanceOf(owner))
@@ -215,11 +218,9 @@ contract("Withdraw", (accounts) => {
         it("should Split Pool Amount From to 50% and withdraw 50%", async () => {
             const spender = accounts[8]
             const date = new Date()
-            const startTime = Math.floor(date.getTime() / 1000)
-            date.setDate(date.getDate() + year)
-            const finishTime = Math.floor(date.getTime() / 1000)
-            date.setDate(date.getDate() - year / 2)
-            const halfTime = Math.floor(date.getTime() / 1000)
+            const startTime = parseInt(Math.floor(date.getTime() / 1000))
+            const finishTime = startTime + year
+            const halfTime = startTime + year / 2
             let tx = await instance.CreateNewPool(Token.address, startTime, startTime, finishTime, poolAmount, owner)
             const oldPoolId = tx.logs[1].args.PoolId.toString()
             await instance.ApproveAllowance(oldPoolId, poolAmount / 2, spender, { from: owner })

@@ -14,6 +14,7 @@ contract LockedManageable is
     constructor() {
         maxTransactionLimit = 400;
         isTokenFilterOn = false; // disable token filter whitelist
+        DecimalMultiplier = 10**18; // Increases the transience of ticks for calculating tokens for withdrawal.
     }
 
     function setWhiteListAddress(address _address) external onlyOwner {
@@ -71,5 +72,9 @@ contract LockedManageable is
 
     function setMaxTransactionLimit(uint256 _newLimit) external onlyOwner {
         maxTransactionLimit = _newLimit;
+    }
+
+    function setDecimalMultiplier(uint256 _multiplier) external onlyOwner {
+        DecimalMultiplier = _multiplier; 
     }
 }
