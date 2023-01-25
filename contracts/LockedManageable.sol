@@ -76,7 +76,7 @@ contract LockedManageable is
 
     function setDecimalMultiplier(uint256 _multiplier) external onlyOwner {
         require(
-            _multiplier > 0 && _multiplier <= 18,
+            _multiplier > 0 && _multiplier <= 20,
             "invalid multiplier value"
         );
         DecimalMultiplier = _multiplier;
