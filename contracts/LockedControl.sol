@@ -112,7 +112,7 @@ contract LockedControl is LockedPoolz{
     function getArraySum(uint256[] calldata _array) internal pure returns(uint256) {
         uint256 sum = 0;
         for(uint i=0 ; i<_array.length ; i++){
-            sum = sum + _array[i];
+            sum = SafeMath.add(sum ,_array[i]);
         }
         return sum;
     }
